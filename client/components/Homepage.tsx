@@ -4,19 +4,18 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    View,
+    View,   
   } from 'react-native';
 import { HomepageCard } from "./HomepageCard";
-  
 
 export const Homepage = () => {
   
   return (
     <SafeAreaView>
-       <ScrollView
+       <ScrollView  style={styles.container}
         contentInsetAdjustmentBehavior="automatic"
         >
-        <View style={styles.container}>
+        <View>
             <Text style={styles.title}>
                 Bienvenue sur CooK<Text style={styles.titleYellow}>itchen</Text> ! 
             </Text>  

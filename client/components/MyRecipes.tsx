@@ -13,13 +13,11 @@ export const MyRecipes = () => {
     <SafeAreaView>
        <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        >
-        <View>
+        > 
          
             <Text>page mes recettes </Text>  
-       
-        </View>
-      </ScrollView> 
+          
+    </ScrollView>
      
     </SafeAreaView>
   );

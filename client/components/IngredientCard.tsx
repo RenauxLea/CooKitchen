@@ -40,28 +40,35 @@ const getIllustration = (category  : string | undefined) : ImageSourcePropType =
     }
     return linkIllustration as ImageSourcePropType
 }
-export const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
+const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     const navigation = useNavigation();
     const linkIllustration = getIllustration(ingredient.category);
-    const expirationDate = format(ingredient.expiration, 'dd/mm/yyyy')
+
+    let expirationDate : string = "";
+    if (ingredient.expiration !== undefined) {
+        expirationDate = ingredient.expiration.getDate() +'/'+(ingredient.expiration.getMonth()+1)+'/'+ingredient.expiration.getFullYear();
+    }
    
     return (
        
         <Pressable 
             style= {styles.item}
-            onPress={() => navigation.navigate('Ingrédient' as never)}
+            onPress={() => navigation.navigate('Ingredient' as never, {ingredient: ingredient} as never )}
         >
             
             <Image style={styles.image} source={linkIllustration}></Image>
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
-                <Text style={styles.quantity}>Quantité: {ingredient.quantity}</Text> 
-                <View style={styles.expiration} > 
-                    <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image>
-                    <Text style={styles.expirationDate}>
-                        {expirationDate} 
-                    </Text> 
-                </View>     
+                <Text style={styles.quantity}>Quantité: {ingredient.quantity} {ingredient.unit && ingredient.unit}</Text> 
+                
+                { ingredient.expiration && 
+                    <View style={styles.expiration} > 
+                        <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image> 
+                        <Text style={styles.expirationDate}>
+                             {expirationDate}  
+                        </Text> 
+                    </View>
+                }     
             </View>
           
         </Pressable>
@@ -72,12 +79,12 @@ export const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     item: {
         backgroundColor: '#EEEDED',
         padding: 10,
-        marginTop: 40,
+        marginTop: 15,
         flexDirection: "row",
         borderRadius: 10   
     },
     title: {
-        fontSize: 16,
+        fontSize: 18,
         color: '#000000',
         fontWeight: "600",
     },
@@ -88,9 +95,8 @@ export const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
         justifyContent: "center"
     },
     image: {
-        width: 70,
-        height: 70,
-        marginRight:10,
+        width: 60,
+        height: 60,
         borderRadius: 10
     },
     quantity: {
@@ -106,8 +112,8 @@ export const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     },
 
     icon: {
-        width: 20,
-        height: 20,
+        width: 15,
+        height: 15,
         marginRight: 3
     },
 
@@ -115,7 +121,10 @@ export const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
         fontSize: 12,
         fontWeight: "400",
         fontStyle: "italic",
+        color: "black",
     }
   
   });
+
+  export const Ingredient = React.memo(IngredientCard)
   
