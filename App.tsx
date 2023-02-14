@@ -32,7 +32,7 @@ const App = () => {
         <Stack.Screen name="Mes Recettes" component={MyRecipes} />
         <Stack.Screen name="Garde-manger" component={Pantry} />
         <Stack.Screen name="Ingredient" component={Ingredient} />
-        <Stack.Screen name="Création Ingrédient" component={CreateIngredient} />
+        <Stack.Screen name="Nouvel Ingrédient" component={CreateIngredient} />
 
       </Stack.Navigator>
     </NavigationContainer> 
