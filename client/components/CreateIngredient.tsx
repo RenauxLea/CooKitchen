@@ -1,6 +1,7 @@
 import React from "react";
 import {
     Button,
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -10,6 +11,7 @@ import {
     
   } from 'react-native';
 import DatePicker from "react-native-date-picker";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import SelectDropdown from "react-native-select-dropdown";
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -125,10 +127,20 @@ export const CreateIngredient = () => {
                 <Text style={styles.text} >
                     {visibleDate && expirationDate } 
                 </Text> 
-
-                <Button title="Open" onPress={() => setOpen(true)} />
+                <Pressable
+                    style={styles.button}
+                    onPress={() => setOpen(true)}
+                >
+                    <Text style={styles.buttonText}> Choisir une date </Text>
+                </Pressable>
                 <DatePicker
                     modal
+                    mode={"date"}
+                    locale={"fr"}
+                    title={"Sélectionne une date"}
+                    confirmText={"valider"}
+                    cancelText={"annuler"}
+                    minimumDate={new Date("2023-05-19")}
                     open={open}
                     date={date}
                     onConfirm={(date) => {
@@ -210,6 +222,19 @@ const styles = StyleSheet.create({
         color: '#000000', 
         textAlign: 'left'
     },
+
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 20,
+        paddingHorizontal: 32,
+        borderRadius: 10,
+        borderWidth: 2,
+    },
+
+    buttonText : {
+        fontSize: 20,
+    }
     
      
 });
