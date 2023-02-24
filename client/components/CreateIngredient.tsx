@@ -13,6 +13,7 @@ import DatePicker from "react-native-date-picker";
 import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
+import moment from "moment";
   
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
@@ -27,7 +28,7 @@ export const CreateIngredient = () => {
    
     let expirationDate =""
     if (date !== undefined) {
-        expirationDate =date.getDate() +'/'+(date.getMonth()+1)+'/'+date.getFullYear();
+       expirationDate =  moment(date).format("DD-MM-YYYY")
     }
    
     const categories = [ 
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     },
     
     text: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: '400',
         color: "#000000",
         paddingTop: 20,
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 32,
         borderRadius: 10,
-        borderWidth: 2,
+        borderWidth: 1,
     },
     buttonText : {
         fontSize: 16,
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 20,
+        paddingVertical: 10,
         paddingHorizontal: 12,
         marginHorizontal: 10,
         display: "flex",
