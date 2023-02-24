@@ -1,6 +1,5 @@
 import React from "react";
 import {
-    Button,
     Pressable,
     SafeAreaView,
     ScrollView,
@@ -11,9 +10,8 @@ import {
     
   } from 'react-native';
 import DatePicker from "react-native-date-picker";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import SelectDropdown from "react-native-select-dropdown";
-
+import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
   
 export const CreateIngredient = () => { 
@@ -24,6 +22,8 @@ export const CreateIngredient = () => {
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState("");
     const [unit, setUnit] = React.useState("");
+
+    const navigation = useNavigation();
    
     let expirationDate =""
     if (date !== undefined) {
@@ -49,7 +49,7 @@ export const CreateIngredient = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View >
+            <View  >
                 <Text style={styles.title}>Nouvel ingrédient</Text>
                 <Text style={styles.subtitle}>Créé un ingrédient pour l'ajouter dans ton garde-manger</Text>
                 <Text style={styles.text}>Nom:</Text>
@@ -121,11 +121,9 @@ export const CreateIngredient = () => {
                     }}
                 /> 
 
-
-
                 <Text style={styles.text}>Date de péremption:</Text>
-                <Text style={styles.text} >
-                    {visibleDate && expirationDate } 
+                <Text style={styles.textDate} >
+                    {visibleDate ? expirationDate : "Aucune date sélectionnée"} 
                 </Text> 
                 <Pressable
                     style={styles.button}
@@ -156,6 +154,9 @@ export const CreateIngredient = () => {
                 
             </View>
         </ScrollView>
+        <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}>
+          <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
+        </Pressable>
     </SafeAreaView> 
    );
 }
@@ -164,6 +165,8 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
+        marginBottom: 20,
+        height: "85%",  
     },
     title: {
         fontSize: 32,
@@ -226,15 +229,32 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 20,
+        paddingVertical: 10,
         paddingHorizontal: 32,
         borderRadius: 10,
         borderWidth: 2,
     },
-
     buttonText : {
+        fontSize: 16,
+        color: "#000000"
+    },
+    textDate: {
+        paddingVertical: 10
+    },
+    buttonPrimary: {
+        elevation: 8,
+        backgroundColor: "#FFCC29",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginHorizontal: 10,
+        display: "flex",
+        alignItems: "center",
+    },
+    buttonPrimaryText: {
         fontSize: 20,
+        fontWeight: "500",
+        color:  "#000000",
     }
-    
      
 });
