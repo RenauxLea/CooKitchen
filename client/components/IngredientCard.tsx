@@ -75,7 +75,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     )
 };
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     item: {
         backgroundColor: '#EEEDED',
         padding: 10,
