@@ -11,7 +11,13 @@ import {
   } from 'react-native';
 import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import { IngredientsByCategory } from "./utils/IngredientsByCategory";
+import { ingredientFixtures } from "./Pantry";
+
+ 
+const ingredientsByCategories = IngredientsByCategory(ingredientFixtures)
   
 export const CreateRecipe = () => { 
     const [name, setName] = React.useState('');
@@ -38,6 +44,10 @@ export const CreateRecipe = () => {
         {name : "1h30", id: "90"},
         {name : "plus de 1h30", id: "more"},
     ]
+
+    const onSelectedIngredientsChange = (selectedItems :any) => {
+        setLinkedIngredients(selectedItems);
+      };
 
    return (
     <SafeAreaView>
@@ -70,7 +80,7 @@ export const CreateRecipe = () => {
                         return item.name
                     }}
                     renderDropdownIcon={ () => 
-                          <Icon name="chevron-down"  size={25} color="#000000" />
+                          <Icon name="keyboard-arrow-down"  size={25} color="#000000" />
                     }
                     dropdownIconPosition={'right'}
                     defaultButtonText={'Sélectionne une catégorie'}
@@ -95,7 +105,7 @@ export const CreateRecipe = () => {
                         return item.name
                     }}
                     renderDropdownIcon={ () => 
-                          <Icon name="chevron-down"  size={25} color="#000000" />
+                          <Icon name="keyboard-arrow-down"  size={25} color="#000000" />
                     }
                     dropdownIconPosition={'right'}
                     defaultButtonText={'Temps de préparation'}
@@ -127,6 +137,39 @@ export const CreateRecipe = () => {
                 />
 
                 <Text style={styles.text}>Ingrédients:</Text>
+                <SectionedMultiSelect
+                    items={ingredientsByCategories}
+                    // @ts-expect-error
+                    IconRenderer={Icon}
+                    uniqueKey="id"
+                    subKey="children"
+                    selectText="Ingrédients"
+                    showDropDowns={true}
+                    readOnlyHeadings={true}
+                    onSelectedItemsChange={onSelectedIngredientsChange}
+                    selectedItems={linkedIngredients}
+                    styles={{
+                        selectToggle: {
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            paddingVertical: 10,
+                            marginTop: 10,
+                            paddingHorizontal: 10    
+                        },
+                        confirmText: {
+                            color: '#000000'
+                        }
+
+                    }}
+                    colors={{ primary: '#FFCC29'  }}
+                    noItemsComponent={<Text>Pas d'ingrédient disponible, veuillez en créer dans le garde-manger</Text>}
+                    noResultsComponent={<Text>Aucun résultat</Text>}
+                    searchPlaceholderText={"tomate, poivron..."}
+                    confirmText={"Valider"}
+                    showChips={false}
+                    selectedText={"sélectionnés"}
+                    
+                />
 
                 <Text style={styles.text}>Description:</Text>
                 <TextInput
@@ -137,8 +180,6 @@ export const CreateRecipe = () => {
                     onChangeText={(text) => setDesciption(text)}
                     value={description}
                 />
-
-
                 
             </View>
         </ScrollView>
@@ -178,7 +219,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color:"#000000",
         borderWidth: 1,
-        borderRadius: 5
+        borderRadius: 5,
+        paddingHorizontal: 10   
     },
     textarea: {
         backgroundColor: 'white',
@@ -223,9 +265,6 @@ const styles = StyleSheet.create({
     buttonText : {
         fontSize: 16,
         color: "#000000"
-    },
-    textDate: {
-        paddingVertical: 10
     },
     buttonPrimary: {
         elevation: 8,

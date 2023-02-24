@@ -19,7 +19,7 @@ export const MyRecipes = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Liste des recettes</Text>  
         <Text style={styles.subtitle}>
-          Quelle recette te ferait envie aujourd-hui ?
+          Quelle recette te ferait envie aujourd'hui ?
         </Text> 
       
         {recipesFixtures.length === 0 ? 

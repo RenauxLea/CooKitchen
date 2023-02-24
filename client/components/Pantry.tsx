@@ -9,7 +9,7 @@ import { EmptyDataIngredient } from "./EmptyDataIngredient";
 import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 
-const ingredientFixtures : IngredientType[]= [ 
+export const ingredientFixtures : IngredientType[]= [ 
   {
     id: "1",
     name: "maïs",
