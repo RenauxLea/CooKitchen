@@ -5,7 +5,7 @@ import { TextInput, FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
-import { EmptyData } from "./EmptyData";
+import { EmptyDataIngredient } from "./EmptyDataIngredient";
 import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 
@@ -128,17 +128,14 @@ export const Pantry = () => {
  
 
   return (
-    <SafeAreaView>
-    
-      <View style={styles.container}>
-       
+    <SafeAreaView> 
+      <View style={styles.container}> 
            <Text style={styles.title}>
                 Garde-manger
             </Text>  
             <Text style={styles.subtitle}>
                 Liste les ingrédients présents dans ta cuisine
             </Text>
-
           {/* <TextInput 
             style={styles.input}  
             editable
@@ -175,7 +172,7 @@ export const Pantry = () => {
             keyExtractor={keyExtractor}
             getItemLayout={getItemLayout}
             maxToRenderPerBatch={5}
-            ListEmptyComponent={<EmptyData/>}
+            ListEmptyComponent={<EmptyDataIngredient/>}
             style= {styles.flatList}
             />
        */}
