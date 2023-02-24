@@ -145,7 +145,7 @@ export const Pantry = () => {
             />
        }
 
-        <TouchableOpacity onPress={() => navigation.navigate('Création Ingrédient' as never)} style={styles.button}>
+        <TouchableOpacity onPress={() => navigation.navigate('Nouvel Ingrédient' as never)} style={styles.button}>
           <Text style={styles.buttonText}>Ajouter un ingrédient</Text>
         </TouchableOpacity>
 
