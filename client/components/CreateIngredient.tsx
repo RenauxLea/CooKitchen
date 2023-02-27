@@ -13,7 +13,8 @@ import DatePicker from "react-native-date-picker";
 import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
-  
+import { openDatabase } from 'react-native-sqlite-storage';
+
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
     const [quantity, setQuantity] = React.useState('');

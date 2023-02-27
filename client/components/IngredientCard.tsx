@@ -1,14 +1,17 @@
 
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { format } from "date-fns";
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
 import { IngredientType } from "../types/ingredient";
-
+import { openDatabase } from "react-native-sqlite-storage";
 
 export type IngredientCardprops = {
     ingredient : IngredientType, 
 }
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
+
 
 const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
     let linkIllustration : string;
@@ -41,6 +44,24 @@ const getIllustration = (category  : string | undefined) : ImageSourcePropType =
     return linkIllustration as ImageSourcePropType
 }
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
+    useEffect(()=>{
+        db.transaction(function (txn) {
+            txn.executeSql(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
+              [],
+              function (tx, res) {
+                if (res.rows.length == 0) {
+                  txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
+                  txn.executeSql(
+                    'CREATE TABLE IF NOT EXISTS ingredients( id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), quantity INT(10), category VARCHAR(100), unit VARCHAR(100), expiration DATE )',
+                    []
+                  );
+                }
+              }
+            );
+          })
+    })
+
     const navigation = useNavigation();
     const linkIllustration = getIllustration(ingredient.category);
 
