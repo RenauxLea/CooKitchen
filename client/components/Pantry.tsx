@@ -62,7 +62,9 @@ export const ingredientFixtures : IngredientType[]= [
 
 
 ]
-var db = openDatabase({ name: 'ingredientDatabase.db'});
+
+var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
+
 
 // const ingredientFixtures  : IngredientType[]= []
 

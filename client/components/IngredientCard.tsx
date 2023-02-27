@@ -45,8 +45,12 @@ export const getIllustration = (category  : string | undefined) : ImageSourcePro
     return linkIllustration as ImageSourcePropType
 }
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
+    console.log('before effect');
+    
     useEffect(()=>{
         db.transaction(function (txn) {
+            console.log('je suis dans le transaction');
+            
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
@@ -78,7 +82,9 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
             );
           }
         );*/
-    })
+    }, [])
+    console.log('after effect');
+    
 
     const navigation = useNavigation();
     const linkIllustration = getIllustration(ingredient.category);
