@@ -90,7 +90,6 @@ export const Pantry = () => {
         'SELECT * FROM ingredients',
         [],
         (tx : any, results : any) => {
-          console.log(results.rows.length);
           var list = results.rows.item;
           var listSQL = []
           for (let i = 0; i < results.rows.length; ++i){
@@ -112,7 +111,6 @@ export const Pantry = () => {
       }
       ); 
     })
-  console.log(listItem);
   
   const navigation = useNavigation();
   // const [searchValue, setSearchValue] = useState(""); // POUR LA RECHERCHE

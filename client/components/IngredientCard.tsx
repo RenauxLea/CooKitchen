@@ -45,45 +45,6 @@ export const getIllustration = (category  : string | undefined) : ImageSourcePro
     return linkIllustration as ImageSourcePropType
 }
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
-    console.log('before effect');
-    
-    useEffect(()=>{
-        db.transaction(function (txn) {
-            console.log('je suis dans le transaction');
-            
-            txn.executeSql(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
-              [],
-              function (tx, res) {
-                console.log(res);
-                if (res.rows.length == 0) {
-                  txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
-                  txn.executeSql(
-                    'CREATE TABLE IF NOT EXISTS ingredients( id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), quantity INT(10), category VARCHAR(100), unit VARCHAR(100), expiration DATE )',
-                    []
-                  );
-                }
-              }
-            );
-          }
-        )
-        //JE SUIS LE SELECT
-        /*db.transaction((tx) => {
-            tx.executeSql(
-              'SELECT * FROM ingredients',
-              [],
-              (tx, results) => {
-                console.log('iui');
-                console.log(results);
-                for (let i = 0; i < results.rows.length; ++i)
-                  console.log(results.rows.item(i));
-              }
-              
-            );
-          }
-        );*/
-    }, [])
-    console.log('after effect');
     
 
     const navigation = useNavigation();

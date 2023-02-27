@@ -1,7 +1,9 @@
 
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
+import { openDatabase } from "react-native-sqlite-storage";
+
 
 export type HomepageCardprops = {
     title: string,
@@ -9,7 +11,30 @@ export type HomepageCardprops = {
     illustration : ImageSourcePropType,
     link: string,
 }
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
+
 export const HomepageCard = (  {title, description, illustration, link} : HomepageCardprops )  => {
+
+    
+    useEffect(()=>{
+        db.transaction(function (txn) {
+            txn.executeSql(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
+              [],
+              function (tx, res) {+
+                if (res.rows.length == 0) {
+                  txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
+                  txn.executeSql(
+                    'CREATE TABLE IF NOT EXISTS ingredients( id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), quantity INT(10), category VARCHAR(100), unit VARCHAR(100), expiration DATE )',
+                    []
+                  );
+                }
+              }
+            );
+          }
+        )
+    })
     const navigation = useNavigation();
 
     return (
