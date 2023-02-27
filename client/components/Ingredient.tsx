@@ -11,6 +11,7 @@ import {
 import { IngredientType } from "../types/ingredient";
 import { getIllustration } from "./IngredientCard";
 import moment from "moment";
+import { firstLetterInUppercase } from "./utils/FirstLetterInUppercase";
   
 const getCategoryName = (category : string | undefined) => {
     switch (category) {
@@ -64,7 +65,7 @@ export const Ingredient = () => {
                        
             <View style={styles.header}>
                 <Image style={styles.image} source={linkIllustration}></Image>
-                <Text style={styles.title}>{ingredient.name}</Text>
+                <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
             </View>
             <Text style={styles.titleInformation}>Catégorie:</Text>
             <Text style={styles.information}>{getCategoryName(ingredient.category)}</Text>
