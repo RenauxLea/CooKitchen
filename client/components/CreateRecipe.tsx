@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    FlatList,
     Pressable,
     SafeAreaView,
     ScrollView,
@@ -7,14 +8,14 @@ import {
     Text,
     TextInput,
     View,
-    
-  } from 'react-native';
+ } from 'react-native';
 import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { IngredientsByCategory } from "./utils/IngredientsByCategory";
 import { ingredientFixtures } from "./Pantry";
+import { IngredientLinkedType,  } from "../types/ingredient";
 
  
 const ingredientsByCategories = IngredientsByCategory(ingredientFixtures)
@@ -25,7 +26,8 @@ export const CreateRecipe = () => {
     const [preparationTime  , setPreparationTime ] = React.useState("");
     const [cookingTime   , setCookingTime  ] = React.useState("");
     const [quantity, setQuantity] = React.useState('');
-    const [linkedIngredients, setLinkedIngredients] = React.useState([]);
+    const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<string[]>([]);
+    const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
     
     const navigation = useNavigation();
@@ -45,12 +47,40 @@ export const CreateRecipe = () => {
         {name : "plus de 1h30", id: "more"},
     ]
 
-    const onSelectedIngredientsChange = (selectedItems :any) => {
-        setLinkedIngredients(selectedItems);
+    const renderItem =  ({item } : any) =><Text key={item.key} > {item.name} {item.quantity} {item.unit} </Text>;
+
+    const keyExtractor = (item :any) => item.id;
+
+
+    const onSelectedIngredientsChange = (selectedItems : string[]) => {
+        setLinkedIngredientIds(selectedItems)
       };
 
+    const getLinkedIngredientsInformation = () => {
+        let ingredients : IngredientLinkedType[] = [];
+        ingredientFixtures.forEach((element) => {
+            const isSelected = linkedIngredientIds.find( id => id === element.id)
+                if(isSelected) {
+                    ingredients.push( {
+                            id : element.id,
+                            name : element.name,
+                            quantityForRecipe : element.quantity,
+                            category : element.category,
+                            unit : element.unit
+                        }
+                    );
+               }
+            }   
+        )
+        setLinkedIngredients(ingredients);
+    }
+
+    React.useEffect(() => {
+        getLinkedIngredientsInformation()
+    }, [linkedIngredientIds])
+
    return (
-    <SafeAreaView>
+    <SafeAreaView>  
         <ScrollView  
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
@@ -147,7 +177,7 @@ export const CreateRecipe = () => {
                     showDropDowns={true}
                     readOnlyHeadings={true}
                     onSelectedItemsChange={onSelectedIngredientsChange}
-                    selectedItems={linkedIngredients}
+                    selectedItems={linkedIngredientIds}
                     styles={{
                         selectToggle: {
                             borderWidth: 1,
@@ -170,6 +200,15 @@ export const CreateRecipe = () => {
                     selectedText={"sélectionnés"}
                     
                 />
+    
+                {linkedIngredientIds.length > 0 &&
+                    <FlatList
+                        data={linkedIngredients}
+                        renderItem={renderItem}
+                        keyExtractor={keyExtractor}
+                        horizontal={true}
+                    />
+                }
 
                 <Text style={styles.text}>Description:</Text>
                 <TextInput
@@ -181,11 +220,11 @@ export const CreateRecipe = () => {
                     value={description}
                 />
                 
-            </View>
+        </View>
         </ScrollView>
         <Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
-        </Pressable>
+        </Pressable>  
     </SafeAreaView> 
    );
 }
