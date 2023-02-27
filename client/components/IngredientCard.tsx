@@ -1,16 +1,20 @@
 
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { format } from "date-fns";
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
 import { IngredientType } from "../types/ingredient";
-
+import { openDatabase } from "react-native-sqlite-storage";
+import moment from "moment";
 
 export type IngredientCardprops = {
     ingredient : IngredientType, 
 }
 
-const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
+var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
+
+
+export const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
     let linkIllustration : string;
     switch (category) {
         case "vegetable":
@@ -41,13 +45,15 @@ const getIllustration = (category  : string | undefined) : ImageSourcePropType =
     return linkIllustration as ImageSourcePropType
 }
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
+    
+
     const navigation = useNavigation();
     const linkIllustration = getIllustration(ingredient.category);
 
     let expirationDate : string = "";
-    if (ingredient.expiration !== undefined) {
-        expirationDate = ingredient.expiration.getDate() +'/'+(ingredient.expiration.getMonth()+1)+'/'+ingredient.expiration.getFullYear();
-    }
+    if (ingredient.expiration !== undefined) { 
+       expirationDate =  ingredient.expiration
+     }
    
     return (
        
@@ -65,7 +71,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
                     <View style={styles.expiration} > 
                         <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image> 
                         <Text style={styles.expirationDate}>
-                             {expirationDate}  
+                             {expirationDate}             
                         </Text> 
                     </View>
                 }     
@@ -75,7 +81,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     )
 };
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     item: {
         backgroundColor: '#EEEDED',
         padding: 10,

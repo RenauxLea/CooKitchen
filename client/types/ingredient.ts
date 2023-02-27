@@ -4,6 +4,14 @@ export type IngredientType = {
     quantity : number,
     category?: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct",
     unit? : "g" | "cl" ,
-    expiration ?: Date,
+    expiration ?: string,
 
+}
+
+export type IngredientLinkedType = {
+    id: string,
+    name : string,
+    quantityForRecipe: number,
+    category? :  "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct" | "other",
+    unit? : "g" | "cl" , 
 }

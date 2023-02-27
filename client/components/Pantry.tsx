@@ -1,14 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
  
-import React, {  useState } from "react";
+import React, {  useState, useEffect } from "react";
 import { TextInput, FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
-import { EmptyData } from "./EmptyData";
+import { EmptyDataIngredient } from "./EmptyDataIngredient";
 import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
+import { openDatabase } from "react-native-sqlite-storage";
+import moment from "moment";
 
-const ingredientFixtures : IngredientType[]= [ 
+export const ingredientFixtures : IngredientType[]= [ 
   {
     id: "1",
     name: "maïs",
@@ -21,7 +23,7 @@ const ingredientFixtures : IngredientType[]= [
     name: "banane",
     quantity: 6,
     category: "fruit",
-    expiration: new Date(),
+    expiration:  moment(new Date()).format("DD-MM-YYYY"),
   },
   {
     id: "3",
@@ -61,6 +63,9 @@ const ingredientFixtures : IngredientType[]= [
 
 ]
 
+var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
+
+
 // const ingredientFixtures  : IngredientType[]= []
 
 const renderItem =  ({item } : any) =><IngredientCard key={item.key} ingredient={item} /> ;
@@ -78,6 +83,35 @@ const getItemLayout = (data : any, index : number) => {
 
 
 export const Pantry = () => {
+  let [listItem, setListItem] = useState([])
+  useEffect(() => {
+    db.transaction((tx : any) => {
+      tx.executeSql(
+        'SELECT * FROM ingredients',
+        [],
+        (tx : any, results : any) => {
+          var list = results.rows.item;
+          var listSQL = []
+          for (let i = 0; i < results.rows.length; ++i){
+            var sqlObj =   {
+              id: list(i)['id'],
+              name: list(i)['name'],
+              quantity: list(i)['quantity'],
+              category: list(i)['category'],
+              expiration: list(i)['expiration'],
+            }
+            listSQL.push(sqlObj)
+          }
+          // @ts-expect-error
+          setListItem(listSQL)
+          
+        }
+        
+        );
+      }
+      ); 
+    })
+  
   const navigation = useNavigation();
   // const [searchValue, setSearchValue] = useState(""); // POUR LA RECHERCHE
   //  const [ingredients, setIngredients] = useState(ingredientFixtures)
@@ -96,17 +130,14 @@ export const Pantry = () => {
  
 
   return (
-    <SafeAreaView>
-    
-      <View style={styles.container}>
-       
+    <SafeAreaView> 
+      <View style={styles.container}> 
            <Text style={styles.title}>
                 Garde-manger
             </Text>  
             <Text style={styles.subtitle}>
                 Liste les ingrédients présents dans ta cuisine
             </Text>
-
           {/* <TextInput 
             style={styles.input}  
             editable
@@ -116,8 +147,11 @@ export const Pantry = () => {
             // value={searchValue} // POUR LA RECHERCHE
             // onChangeText={searchFunction}
             
-          > */}
-          {/* </TextInput>     */}
+          > */
+          }
+          {
+          /* </TextInput>     */
+          }
           
         {/* {ingredients.length === 0 ? <EmptyData/>: // POUR LA RECHERCHE
           <FlatList
@@ -131,8 +165,8 @@ export const Pantry = () => {
             style= {styles.flatList}
             />
        } */}
-
-{ingredientFixtures.length === 0 ? <EmptyData/>:
+        
+        {/*ingredientFixtures.length === 0 ? <EmptyData/>:
           <FlatList
             data={ingredientFixtures}
             renderItem={renderItem}
@@ -140,12 +174,25 @@ export const Pantry = () => {
             keyExtractor={keyExtractor}
             getItemLayout={getItemLayout}
             maxToRenderPerBatch={5}
-            ListEmptyComponent={<EmptyData/>}
+            ListEmptyComponent={<EmptyDataIngredient/>}
+            style= {styles.flatList}
+            />
+       */}
+
+        {listItem.length === 0 ? <EmptyDataIngredient/>:
+          <FlatList
+            data={listItem}
+            renderItem={renderItem}
+            initialNumToRender={4}
+            keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
+            maxToRenderPerBatch={5}
+            ListEmptyComponent={<EmptyDataIngredient/>}
             style= {styles.flatList}
             />
        }
 
-        <TouchableOpacity onPress={() => navigation.navigate('Création Ingrédient' as never)} style={styles.button}>
+        <TouchableOpacity onPress={() => navigation.navigate('Nouvel Ingrédient' as never)} style={styles.button}>
           <Text style={styles.buttonText}>Ajouter un ingrédient</Text>
         </TouchableOpacity>
 
@@ -169,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#000000",
     fontWeight: "500",
     alignSelf: "center",
