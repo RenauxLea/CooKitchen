@@ -16,10 +16,24 @@ import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { IngredientsByCategory } from "./utils/IngredientsByCategory";
 import { ingredientFixtures } from "./Pantry";
 import { IngredientLinkedType,  } from "../types/ingredient";
-
+import { LinkedIngredientCard } from "./LinkedIngredientCard";
  
 const ingredientsByCategories = IngredientsByCategory(ingredientFixtures)
-  
+
+const FlatListItemSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "70%",
+          alignSelf: "center",
+          margin: 15,
+          backgroundColor: "#FFCC29",
+        }}
+      />
+    );
+  }
+
 export const CreateRecipe = () => { 
     const [name, setName] = React.useState('');
     const [category , setCategory] = React.useState("");
@@ -47,10 +61,16 @@ export const CreateRecipe = () => {
         {name : "plus de 1h30", id: "more"},
     ]
 
-    const renderItem =  ({item } : any) =><Text key={item.key} > {item.name} {item.quantity} {item.unit} </Text>;
+    const renderItem =  ({item } : any) =>{
+        return <LinkedIngredientCard 
+            id={item.id} 
+            name={item.name} 
+            quantityForRecipe={item.quantityForRecipe}
+            unit={item.unit}
+        />
+    };
 
     const keyExtractor = (item :any) => item.id;
-
 
     const onSelectedIngredientsChange = (selectedItems : string[]) => {
         setLinkedIngredientIds(selectedItems)
@@ -198,18 +218,18 @@ export const CreateRecipe = () => {
                     confirmText={"Valider"}
                     showChips={false}
                     selectedText={"sélectionnés"}
-                    
                 />
     
-                {linkedIngredientIds.length > 0 &&
-                    <FlatList
-                        data={linkedIngredients}
-                        renderItem={renderItem}
-                        keyExtractor={keyExtractor}
-                        horizontal={true}
-                    />
+                {
+                    linkedIngredientIds.length > 0 &&
+                        <FlatList
+                            data={linkedIngredients}
+                            renderItem={renderItem}
+                            keyExtractor={keyExtractor}
+                            ItemSeparatorComponent = { FlatListItemSeparator }
+                        />
                 }
-
+                
                 <Text style={styles.text}>Description:</Text>
                 <TextInput
                     style={styles.textarea}
@@ -275,12 +295,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: "#000000",
         marginTop: 10,
+        borderColor: "#000000",
     },
     dropdownBtnTxtStyle: {
         color: "#000000", 
-        textAlign: 'left'
+        textAlign: 'left',
+        fontSize: 16
     },
     dropdownDropdownStyle: {
         backgroundColor: 'white'
@@ -319,6 +340,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "500",
         color:  "#000000",
-    }
+    },
+    
      
 });
