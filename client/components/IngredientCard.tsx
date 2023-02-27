@@ -51,6 +51,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
               function (tx, res) {
+                console.log(res);
                 if (res.rows.length == 0) {
                   txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
                   txn.executeSql(
