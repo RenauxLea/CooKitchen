@@ -8,6 +8,7 @@ import { IngredientType } from "../types/ingredient";
 import { EmptyDataIngredient } from "./EmptyDataIngredient";
 import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
+import moment from "moment";
 
 export const ingredientFixtures : IngredientType[]= [ 
   {
@@ -22,7 +23,7 @@ export const ingredientFixtures : IngredientType[]= [
     name: "banane",
     quantity: 6,
     category: "fruit",
-    expiration: new Date(),
+    expiration:  moment(new Date()).format("DD-MM-YYYY"),
   },
   {
     id: "3",
@@ -82,11 +83,11 @@ const getItemLayout = (data : any, index : number) => {
 export const Pantry = () => {
   let [listItem, setListItem] = useState([])
   useEffect(() => {
-    db.transaction((tx) => {
+    db.transaction((tx : any) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
         [],
-        (tx, results) => {
+        (tx : any, results : any) => {
           console.log(results.rows.length);
           var list = results.rows.item;
           var listSQL = []
@@ -100,6 +101,7 @@ export const Pantry = () => {
             }
             listSQL.push(sqlObj)
           }
+          // @ts-expect-error
           setListItem(listSQL)
           
         }
@@ -177,7 +179,7 @@ export const Pantry = () => {
             />
        */}
 
-        {listItem.length === 0 ? <EmptyData/>:
+        {listItem.length === 0 ? <EmptyDataIngredient/>:
           <FlatList
             data={listItem}
             renderItem={renderItem}
@@ -185,7 +187,7 @@ export const Pantry = () => {
             keyExtractor={keyExtractor}
             getItemLayout={getItemLayout}
             maxToRenderPerBatch={5}
-            ListEmptyComponent={<EmptyData/>}
+            ListEmptyComponent={<EmptyDataIngredient/>}
             style= {styles.flatList}
             />
        }
