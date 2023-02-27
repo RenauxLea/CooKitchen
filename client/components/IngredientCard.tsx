@@ -11,7 +11,7 @@ export type IngredientCardprops = {
     ingredient : IngredientType, 
 }
 
-var db = openDatabase({ name: 'ingredientDatabase.db'});
+var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
 
 export const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
