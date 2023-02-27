@@ -14,6 +14,7 @@
     "@react-navigation/native-stack": "^6.9.11",
     "@react-navigation/stack": "^6.3.11",
     "date-fns": "^2.29.3",
+    "moment": "^2.29.4",
     "react": "18.2.0",
     "react-native": "0.71.0",
     "react-native-date-picker": "^4.2.6",

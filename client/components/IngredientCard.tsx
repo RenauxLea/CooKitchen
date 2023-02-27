@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
 import { IngredientType } from "../types/ingredient";
 import { openDatabase } from "react-native-sqlite-storage";
+import moment from "moment";
 
 export type IngredientCardprops = {
     ingredient : IngredientType, 
@@ -13,7 +14,7 @@ export type IngredientCardprops = {
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
 
-const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
+export const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
     let linkIllustration : string;
     switch (category) {
         case "vegetable":
@@ -66,9 +67,9 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     const linkIllustration = getIllustration(ingredient.category);
 
     let expirationDate : string = "";
-    if (ingredient.expiration !== undefined) {
-        expirationDate = ingredient.expiration.getDate() +'/'+(ingredient.expiration.getMonth()+1)+'/'+ingredient.expiration.getFullYear();
-    }
+    if (ingredient.expiration !== undefined) { 
+       expirationDate =  moment(ingredient.expiration).format("DD-MM-YYYY")
+     }
    
     return (
        
@@ -86,7 +87,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
                     <View style={styles.expiration} > 
                         <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image> 
                         <Text style={styles.expirationDate}>
-                             {expirationDate}  
+                             {expirationDate}             
                         </Text> 
                     </View>
                 }     
