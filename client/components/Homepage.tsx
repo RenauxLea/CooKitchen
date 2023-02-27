@@ -36,7 +36,7 @@ export const Homepage = () => {
                 illustration={require("../assets/images/pantry.png")}
                 link={"Garde-manger"}                    
             /> 
-           
+            
         </View>
       </ScrollView> 
      

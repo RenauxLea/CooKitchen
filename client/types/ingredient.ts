@@ -4,6 +4,6 @@ export type IngredientType = {
     quantity : number,
     category?: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct",
     unit? : "g" | "cl" ,
-    expiration ?: Date,
+    expiration ?: string,
 
 }

@@ -48,8 +48,8 @@ export const Ingredient = () => {
     const {ingredient} = route.params;
 
     let expirationDate : string = "";
-    if (ingredient.expiration !== undefined) { 
-       expirationDate =  moment(ingredient.expiration).format("DD-MM-YYYY")
+    if (ingredient.expiration !== undefined) {
+        expirationDate = ingredient.expiration
      }
 
     const linkIllustration = getIllustration(ingredient.category);

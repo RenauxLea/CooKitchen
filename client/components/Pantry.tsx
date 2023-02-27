@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
  
-import React, {  useState } from "react";
+import React, {  useState, useEffect } from "react";
 import { TextInput, FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
 import { EmptyData } from "./EmptyData";
 import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
+import { openDatabase } from "react-native-sqlite-storage";
 
 const ingredientFixtures : IngredientType[]= [ 
   {
@@ -60,6 +61,7 @@ const ingredientFixtures : IngredientType[]= [
 
 
 ]
+var db = openDatabase({ name: 'ingredientDatabase.db'});
 
 // const ingredientFixtures  : IngredientType[]= []
 
@@ -78,6 +80,36 @@ const getItemLayout = (data : any, index : number) => {
 
 
 export const Pantry = () => {
+  let [listItem, setListItem] = useState([])
+  useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM ingredients',
+        [],
+        (tx, results) => {
+          console.log(results.rows.length);
+          var list = results.rows.item;
+          var listSQL = []
+          for (let i = 0; i < results.rows.length; ++i){
+            var sqlObj =   {
+              id: list(i)['id'],
+              name: list(i)['name'],
+              quantity: list(i)['quantity'],
+              category: list(i)['category'],
+              expiration: list(i)['expiration'],
+            }
+            listSQL.push(sqlObj)
+          }
+          setListItem(listSQL)
+          
+        }
+        
+        );
+      }
+      ); 
+    })
+  console.log(listItem);
+  
   const navigation = useNavigation();
   // const [searchValue, setSearchValue] = useState(""); // POUR LA RECHERCHE
   //  const [ingredients, setIngredients] = useState(ingredientFixtures)
@@ -116,8 +148,11 @@ export const Pantry = () => {
             // value={searchValue} // POUR LA RECHERCHE
             // onChangeText={searchFunction}
             
-          > */}
-          {/* </TextInput>     */}
+          > */
+          }
+          {
+          /* </TextInput>     */
+          }
           
         {/* {ingredients.length === 0 ? <EmptyData/>: // POUR LA RECHERCHE
           <FlatList
@@ -131,10 +166,23 @@ export const Pantry = () => {
             style= {styles.flatList}
             />
        } */}
-
-{ingredientFixtures.length === 0 ? <EmptyData/>:
+        
+        {/*ingredientFixtures.length === 0 ? <EmptyData/>:
           <FlatList
             data={ingredientFixtures}
+            renderItem={renderItem}
+            initialNumToRender={4}
+            keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
+            maxToRenderPerBatch={5}
+            ListEmptyComponent={<EmptyData/>}
+            style= {styles.flatList}
+            />
+       */}
+
+        {listItem.length === 0 ? <EmptyData/>:
+          <FlatList
+            data={listItem}
             renderItem={renderItem}
             initialNumToRender={4}
             keyExtractor={keyExtractor}

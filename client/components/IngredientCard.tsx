@@ -46,7 +46,7 @@ export const getIllustration = (category  : string | undefined) : ImageSourcePro
 }
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     useEffect(()=>{
-        db.transaction(function (txn) {
+        /*db.transaction(function (txn) {
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
@@ -60,7 +60,23 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
                 }
               }
             );
-          })
+          }
+        )*/
+        //JE SUIS LE SELECT
+        /*db.transaction((tx) => {
+            tx.executeSql(
+              'SELECT * FROM ingredients',
+              [],
+              (tx, results) => {
+                console.log('iui');
+                console.log(results);
+                for (let i = 0; i < results.rows.length; ++i)
+                  console.log(results.rows.item(i));
+              }
+              
+            );
+          }
+        );*/
     })
 
     const navigation = useNavigation();
@@ -68,7 +84,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
 
     let expirationDate : string = "";
     if (ingredient.expiration !== undefined) { 
-       expirationDate =  moment(ingredient.expiration).format("DD-MM-YYYY")
+       expirationDate =  ingredient.expiration
      }
    
     return (

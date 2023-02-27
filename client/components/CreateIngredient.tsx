@@ -17,6 +17,8 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
   
+var db = openDatabase({ name: 'ingredientDatabase.db'});
+
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
     const [quantity, setQuantity] = React.useState('');
@@ -28,7 +30,7 @@ export const CreateIngredient = () => {
 
     const navigation = useNavigation();
    
-    let expirationDate =""
+    let expirationDate = ""
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }
@@ -45,7 +47,27 @@ export const CreateIngredient = () => {
     ]
 
     const units = [ "g", "cl", "aucune"];
-       
+    
+    let register_ingredients = () => {
+        console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
+        if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
+            expirationDate = ''
+        }
+        db.transaction(function (tx) {
+          tx.executeSql(
+            'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
+            [name, quantity, category, unit, expirationDate],
+            (tx, results) => {
+              console.log('Results', results.rowsAffected);
+              if (results.rowsAffected > 0) {
+                console.log('register OK');
+
+              } else console.log('Registration Failed');
+            }
+          );
+        });
+      };
+
    return (
     <SafeAreaView>
         <ScrollView  
@@ -157,7 +179,13 @@ export const CreateIngredient = () => {
                 
             </View>
         </ScrollView>
-        <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}>
+        {/* <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}> */}
+        <Pressable onPress={() => 
+            {
+                register_ingredients(),
+                navigation.navigate('Garde-manger' as never)
+            }
+            } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
         </Pressable>
     </SafeAreaView> 
