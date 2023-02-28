@@ -9,7 +9,6 @@ import {
 import { HomepageCard } from "./HomepageCard";
 
 export const Homepage = () => {
-  
   return (
     <SafeAreaView>
        <ScrollView  style={styles.container}
@@ -26,17 +25,14 @@ export const Homepage = () => {
             <HomepageCard 
                 title={"Mes recettes"} 
                 description={"Ajoute une recette"} 
-                illustration={require("../assets/images/recipes.png")} 
                 link={"Mes Recettes"} 
             /> 
 
             <HomepageCard 
                 title={"Garde-manger"} 
                 description={"Ajoute un aliment à ton garde-manger"} 
-                illustration={require("../assets/images/pantry.png")}
                 link={"Garde-manger"}                    
-            /> 
-            
+            />
         </View>
       </ScrollView> 
      
