@@ -4,18 +4,8 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { IngredientType } from "../types/ingredient";
 import { openDatabase } from "react-native-sqlite-storage";
-
 import PeremptionImage from '../assets/images/peremption.svg';
-import Vegetable from '../assets/images/categories/ingredients/vegetable.svg';
-import Cereal from '../assets/images/categories/ingredients/cereal.svg';
-import Fish from '../assets/images/categories/ingredients/fish.svg';
-import Fruit from '../assets/images/categories/ingredients/fruit.svg';
-import Meat from '../assets/images/categories/ingredients/meat.svg';
-import MilkProduct from '../assets/images/categories/ingredients/milkProduct.svg';
-import SweetProduct from '../assets/images/categories/ingredients/sweetProduct.svg';
-import Other from '../assets/images/categories/ingredients/other.svg';
-
-
+import { Illustration } from "./utils/Illustration";
 
 export type IngredientCardprops = {
     ingredient : IngredientType, 
@@ -23,35 +13,6 @@ export type IngredientCardprops = {
 
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
-
-export const Illustration = (category  : string | undefined, width : number,height : number)  => {
-    switch (category) {
-        case "vegetable":
-            return <Vegetable style={styles.image} width={width} height={height} />
-            break;
-        case "fruit":
-            return <Fruit style={styles.image} width={width} height={height} />
-            break;
-        case "fish":
-            return <Fish style={styles.image} width={width} height={height} />
-            break;
-        case "meat":
-            return <Meat style={styles.image} width={width} height={height} />
-            break;
-        case "cereal":
-            return <Cereal style={styles.image} width={width} height={height} />
-            break;
-        case "milkProduct":
-            return <MilkProduct style={styles.image} width={width} height={height} />
-            break;
-        case "sweetProduct":
-            return <SweetProduct style={styles.image} width={width} height={height} />
-            break;
-        default:
-            return <Other style={styles.image} width={width} height={height} />
-            break;
-    }
-}
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     
 
@@ -103,10 +64,6 @@ const styles = StyleSheet.create({
         width: "70%",
         flexDirection: "column",
         marginLeft: 10,
-        justifyContent: "center"
-    },
-    image: {
-        borderRadius: 10
     },
     quantity: {
         fontSize: 12,

@@ -16,6 +16,7 @@ import { Pantry } from './client/components/Pantry';
 import { Ingredient } from './client/components/Ingredient';
 import { CreateIngredient } from './client/components/CreateIngredient';
 import { CreateRecipe } from './client/components/CreateRecipe';
+import { Recipe } from './client/components/Recipe';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +36,7 @@ const App = () => {
         <Stack.Screen name="Ingredient" component={Ingredient} />
         <Stack.Screen name="Nouvel Ingrédient" component={CreateIngredient} />
         <Stack.Screen name="Nouvelle Recette" component={CreateRecipe} />
+        <Stack.Screen name="Recette" component={Recipe} />
 
       </Stack.Navigator>
     </NavigationContainer> 

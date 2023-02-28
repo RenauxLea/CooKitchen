@@ -1,7 +1,6 @@
 import React from "react";
 import { RouteProp, useRoute } from '@react-navigation/native';
 import {
-    Image,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -9,10 +8,10 @@ import {
     View,
   } from 'react-native';
 import { IngredientType } from "../types/ingredient";
-import { Illustration } from "./IngredientCard";
 import { firstLetterInUppercase } from "./utils/FirstLetterInUppercase";
 import Supprimer from "../assets/images/supprimer.svg";
 import PeremptionImage from '../assets/images/peremption.svg';
+import { Illustration } from "./utils/Illustration";
   
 const getCategoryName = (category : string | undefined) => {
     switch (category) {
