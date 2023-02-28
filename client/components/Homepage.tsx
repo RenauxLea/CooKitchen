@@ -36,6 +36,13 @@ export const Homepage = () => {
                 illustration={require("../assets/images/pantry.png")}
                 link={"Garde-manger"}                    
             /> 
+
+            <HomepageCard 
+                title={"Admin button sqlite"} 
+                description={"update la bdd"} 
+                illustration={require("../assets/images/pantry.png")}
+                link={"Admin button"}                    
+            /> 
             
         </View>
       </ScrollView> 

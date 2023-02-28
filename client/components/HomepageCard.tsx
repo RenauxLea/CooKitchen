@@ -22,7 +22,7 @@ export const HomepageCard = (  {title, description, illustration, link} : Homepa
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
-              function (tx, res) {+
+              function (tx, res) {
                 if (res.rows.length == 0) {
                   txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
                   txn.executeSql(
