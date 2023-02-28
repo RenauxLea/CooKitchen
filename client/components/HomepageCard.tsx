@@ -38,6 +38,7 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
             );
           }
         )
+        
     })
     const navigation = useNavigation();
 
@@ -92,4 +93,8 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
     },
   
   });
+
+function typeOf(test: jest.It): any {
+  throw new Error("Function not implemented.");
+}
   

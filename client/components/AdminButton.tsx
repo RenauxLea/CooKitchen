@@ -17,16 +17,16 @@ export const AdminButton = () => {
         db.transaction(function (tx) {
             tx.executeSql(
                 // mettre la requete SQL pour la bdd
-                'ALTER TABLE ingredients RENAME COLUMN test_rename TO test',
+                'ALTER TABLE recipes ADD COLUMN listIngredients BLOB',
                 [],
                 (tx, results) => {
-                    console.log("j'ai update");
+                    console.log("La base virale VPS a été mise à jour !!!");
             }
           );
         });
       };
       let delete_bdd= () => {
-        console.log('Ça va être tout noir !!!');
+        console.log('EXTERMINATE ! EXTERMINATE ! EXTERMINATE !');
 
         db.transaction(function (tx) {
             tx.executeSql(
@@ -34,13 +34,14 @@ export const AdminButton = () => {
                 'DROP TABLE test',
                 [],
                 (tx, results) => {
-                    console.log("C'est bon ! on la descendu ta table !");
+                    console.log("C'est bon ! on l'a descendu la table !");
             }
           );
         });
       }
 
       let this_bdd = () => {
+        return;
         console.log('Je suis ta requette perso ^^');
         db.transaction(function (txn) {
 
