@@ -1,4 +1,4 @@
-import React from "react";
+import React, { toString } from "react";
 import {
     FlatList,
     Pressable,
@@ -17,6 +17,9 @@ import { IngredientsByCategory } from "./utils/IngredientsByCategory";
 import { ingredientFixtures } from "./Pantry";
 import { IngredientLinkedType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
+import { openDatabase } from "react-native-sqlite-storage";
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
  
 const ingredientsByCategories = IngredientsByCategory(ingredientFixtures)
 
@@ -98,6 +101,25 @@ export const CreateRecipe = () => {
     React.useEffect(() => {
         getLinkedIngredientsInformation()
     }, [linkedIngredientIds])
+
+    const get_data = () => {
+        let objDescription = JSON.stringify(linkedIngredients)
+
+        db.transaction(function (tx) {
+            
+            tx.executeSql(
+              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description) VALUES (?,?,?,?,?,?,?)',
+              [name, quantity, category, preparationTime, cookingTime, objDescription, description],
+              (tx, results) => {
+                if (results.rowsAffected > 0) {
+                  console.log('Recette create');
+  
+                } else console.log('Recette reject');
+              }
+            );
+          });
+        
+    }
 
    return (
     <SafeAreaView>  
@@ -242,7 +264,13 @@ export const CreateRecipe = () => {
                 
         </View>
         </ScrollView>
-        <Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>
+        {/*<Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>*/}
+        <Pressable onPress={() => 
+            {
+                get_data(),
+                navigation.navigate('Mes Recettes' as never)
+            }
+            } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
         </Pressable>  
     </SafeAreaView> 

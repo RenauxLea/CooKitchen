@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   FlatList,
@@ -11,6 +11,7 @@ import {
 import { EmptyDataRecipe } from "./EmptyDataRecipe";
 import { RecipeCard } from "./RecipeCard";
 import { RecipeType } from "../types/recipe";
+import { openDatabase } from "react-native-sqlite-storage";
 
 const recipesFixtures  : RecipeType[]= [
   {
@@ -60,7 +61,64 @@ const renderItem =  ({item } : any) =><RecipeCard key={item.key} recipe={item} /
 
 
 export const MyRecipes = () => {
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
+  
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    db.transaction(function (txn) {
+      txn.executeSql(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
+          [],
+          function (tx, res) {
+            if (res.rows.length == 0) {
+              txn.executeSql('DROP TABLE IF EXISTS recipes', []);
+              txn.executeSql(
+                'CREATE TABLE IF NOT EXISTS recipes( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, quantity INTERGER, category TEXT, preparationTime TEXT, cookingTime TEXT, linkedIngredients BLOB, description TEXT)',
+                []
+              );
+              
+            }
+          }
+        );
+      }
+    )
+    db.transaction(function (txn) {
+      txn.executeSql(
+        'SELECT * FROM recipes',
+        [],
+        (tx : any, results : any) => {
+          var list = results.rows.item;
+          //var listSQL = []
+          
+          for (let i = 0; i < results.rows.length; ++i){
+            let type = JSON.parse(list(i)['linkedIngredients'])
+            for (let j = 0; j < type.length; j++) {
+              const element = type[j];
+              console.log(element['name']);
+            }
+            
+            /*
+            var sqlObj = {
+                id: list(i)['id'],
+                name: list(i)['name'],
+                quantity: list(i)['quantity'],
+                category: list(i)['category'],
+                expiration: list(i)['expiration'],
+              }
+              listSQL.push(sqlObj)
+              */
+            }
+            // @ts-expect-error
+            //setListItem(listSQL)
+          }
+        
+        );
+      }
+  )
+  })
   
   return (
     <SafeAreaView>
