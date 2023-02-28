@@ -1,11 +1,21 @@
 
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect } from "react";
-import { format } from "date-fns";
-import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { IngredientType } from "../types/ingredient";
 import { openDatabase } from "react-native-sqlite-storage";
-import moment from "moment";
+
+import PeremptionImage from '../assets/images/peremption.svg';
+import Vegetable from '../assets/images/categories/ingredients/vegetable.svg';
+import Cereal from '../assets/images/categories/ingredients/cereal.svg';
+import Fish from '../assets/images/categories/ingredients/fish.svg';
+import Fruit from '../assets/images/categories/ingredients/fruit.svg';
+import Meat from '../assets/images/categories/ingredients/meat.svg';
+import MilkProduct from '../assets/images/categories/ingredients/milkProduct.svg';
+import SweetProduct from '../assets/images/categories/ingredients/sweetProduct.svg';
+import Other from '../assets/images/categories/ingredients/other.svg';
+
+
 
 export type IngredientCardprops = {
     ingredient : IngredientType, 
@@ -14,42 +24,38 @@ export type IngredientCardprops = {
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
 
-export const getIllustration = (category  : string | undefined) : ImageSourcePropType => {
-    let linkIllustration : string;
+export const Illustration = (category  : string | undefined, width : number,height : number)  => {
     switch (category) {
         case "vegetable":
-            linkIllustration =  require("../assets/images/categories/ingredients/vegetable.png");
+            return <Vegetable style={styles.image} width={width} height={height} />
             break;
         case "fruit":
-            linkIllustration =  require("../assets/images/categories/ingredients/fruit.png");
+            return <Fruit style={styles.image} width={width} height={height} />
             break;
         case "fish":
-            linkIllustration =  require("../assets/images/categories/ingredients/fish.png");
+            return <Fish style={styles.image} width={width} height={height} />
             break;
         case "meat":
-            linkIllustration =  require("../assets/images/categories/ingredients/meat.png");
+            return <Meat style={styles.image} width={width} height={height} />
             break;
         case "cereal":
-            linkIllustration =  require("../assets/images/categories/ingredients/cereal.png");
+            return <Cereal style={styles.image} width={width} height={height} />
             break;
         case "milkProduct":
-            linkIllustration =  require("../assets/images/categories/ingredients/milkProduct.png");
+            return <MilkProduct style={styles.image} width={width} height={height} />
             break;
         case "sweetProduct":
-            linkIllustration = require("../assets/images/categories/ingredients/sweetProduct.png");
+            return <SweetProduct style={styles.image} width={width} height={height} />
             break;
         default:
-            linkIllustration =  require("../assets/images/categories/ingredients/other.png");
+            return <Other style={styles.image} width={width} height={height} />
             break;
     }
-    return linkIllustration as ImageSourcePropType
 }
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     
 
     const navigation = useNavigation();
-    const linkIllustration = getIllustration(ingredient.category);
-
     let expirationDate : string = "";
     if (ingredient.expiration !== undefined) { 
        expirationDate =  ingredient.expiration
@@ -61,15 +67,14 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
             style= {styles.item}
             onPress={() => navigation.navigate('Ingredient' as never, {ingredient: ingredient} as never )}
         >
-            
-            <Image style={styles.image} source={linkIllustration}></Image>
+            {Illustration(ingredient.category, 60, 60)}
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
                 <Text style={styles.quantity}>Quantité: {ingredient.quantity} {ingredient.unit && ingredient.unit}</Text> 
                 
                 { ingredient.expiration && 
                     <View style={styles.expiration} > 
-                        <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image> 
+                        <PeremptionImage style={styles.icon} width={20} height= {20}/>
                         <Text style={styles.expirationDate}>
                              {expirationDate}             
                         </Text> 
@@ -101,8 +106,6 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     image: {
-        width: 60,
-        height: 60,
         borderRadius: 10
     },
     quantity: {
@@ -117,9 +120,7 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",   
     },
 
-    icon: {
-        width: 15,
-        height: 15,
+    icon: {     
         marginRight: 3
     },
 
