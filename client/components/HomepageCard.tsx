@@ -34,6 +34,7 @@ export const HomepageCard = (  {title, description, illustration, link} : Homepa
             );
           }
         )
+        
     })
     const navigation = useNavigation();
 
@@ -84,4 +85,8 @@ export const HomepageCard = (  {title, description, illustration, link} : Homepa
     },
   
   });
+
+function typeOf(test: jest.It): any {
+  throw new Error("Function not implemented.");
+}
   
