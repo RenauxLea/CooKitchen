@@ -3,7 +3,7 @@ export type IngredientType = {
     name : string,
     quantity : number,
     category?: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct",
-    unit? : "g" | "cl" ,
+    unit? : "g" | "cl" | "aucune" ,
     expiration ?: string,
 
 }
@@ -13,5 +13,5 @@ export type IngredientLinkedType = {
     name : string,
     quantityForRecipe: number,
     category? :  "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct" | "other",
-    unit? : "g" | "cl" , 
+    unit? : "g" | "cl" | "aucune" , 
 }

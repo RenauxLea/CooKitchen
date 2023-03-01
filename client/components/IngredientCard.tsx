@@ -31,7 +31,7 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
             {Illustration(ingredient.category, 60, 60)}
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
-                <Text style={styles.quantity}>Quantité: {ingredient.quantity} {ingredient.unit && ingredient.unit}</Text> 
+                <Text style={styles.quantity}>Quantité: {ingredient.quantity} {(ingredient.unit !== undefined && ingredient.unit !== "aucune" ) ?? ingredient.unit}</Text> 
                 
                 { ingredient.expiration && 
                     <View style={styles.expiration} > 
