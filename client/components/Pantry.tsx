@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
  
 import React, {  useState, useEffect } from "react";
-import { TextInput, FlatList } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
@@ -85,6 +85,7 @@ const getItemLayout = (data : any, index : number) => {
 export const Pantry = () => {
   let [listItem, setListItem] = useState([])
   useEffect(() => {
+    //@ts-expect-error
     db.transaction((tx : any) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
@@ -98,6 +99,7 @@ export const Pantry = () => {
               name: list(i)['name'],
               quantity: list(i)['quantity'],
               category: list(i)['category'],
+              unit: list(i)['unit'],
               expiration: list(i)['expiration'],
             }
             listSQL.push(sqlObj)

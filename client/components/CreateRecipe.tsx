@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     FlatList,
     Pressable,
@@ -17,8 +17,9 @@ import { IngredientsByCategory } from "./utils/IngredientsByCategory";
 import { ingredientFixtures } from "./Pantry";
 import { IngredientLinkedType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
- 
-const ingredientsByCategories = IngredientsByCategory(ingredientFixtures)
+import { openDatabase } from "react-native-sqlite-storage";
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
 
 const FlatListItemSeparator = () => {
     return (
@@ -43,6 +44,40 @@ export const CreateRecipe = () => {
     const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<string[]>([]);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
+
+    let [listIngredientBdd, setListIngredientBdd] = useState([])
+    useEffect(() => {
+    //@ts-expect-error
+    db.transaction((tx : any) => {
+      tx.executeSql(
+        'SELECT * FROM ingredients',
+        [],
+        (tx : any, results : any) => {
+          var list = results.rows.item;
+          var listSQL = []
+          for (let i = 0; i < results.rows.length; ++i){
+            var sqlObj =   {
+              id: list(i)['id'],
+              name: list(i)['name'],
+              quantity: list(i)['quantity'],
+              category: list(i)['category'],
+              unit: list(i)['unit'],
+              expiration: list(i)['expiration'],
+            }
+            listSQL.push(sqlObj)
+          }
+          // @ts-expect-error
+          setListIngredientBdd(listSQL)
+          
+        }
+        
+        );
+      }
+      ); 
+    })
+    
+    const ingredientsByCategories = IngredientsByCategory(listIngredientBdd)
+
     
     const navigation = useNavigation();
    
@@ -78,15 +113,15 @@ export const CreateRecipe = () => {
 
     const getLinkedIngredientsInformation = () => {
         let ingredients : IngredientLinkedType[] = [];
-        ingredientFixtures.forEach((element) => {
-            const isSelected = linkedIngredientIds.find( id => id === element.id)
+        listIngredientBdd.forEach((element) => {
+            const isSelected = linkedIngredientIds.find( id => id === element['id'])
                 if(isSelected) {
                     ingredients.push( {
-                            id : element.id,
-                            name : element.name,
-                            quantityForRecipe : element.quantity,
-                            category : element.category,
-                            unit : element.unit
+                            id : element['id'],
+                            name : element['name'],
+                            quantityForRecipe : element['quantity'],
+                            category : element['category'],
+                            unit : element['unit']
                         }
                     );
                }
@@ -98,6 +133,25 @@ export const CreateRecipe = () => {
     React.useEffect(() => {
         getLinkedIngredientsInformation()
     }, [linkedIngredientIds])
+
+    const get_data = () => {
+        let objDescription = JSON.stringify(linkedIngredients)
+
+        db.transaction(function (tx) {
+            
+            tx.executeSql(
+              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
+              [name, quantity, category, preparationTime, cookingTime, objDescription, description],
+              (tx, results) => {
+                if (results.rowsAffected > 0) {
+                  console.log('Recette create');
+  
+                } else console.log('Recette reject');
+              }
+            );
+          });
+        
+    }
 
    return (
     <SafeAreaView>  
@@ -204,7 +258,7 @@ export const CreateRecipe = () => {
                             borderRadius: 5,
                             paddingVertical: 10,
                             marginTop: 10,
-                            paddingHorizontal: 10    
+                            paddingHorizontal: 10, 
                         },
                         confirmText: {
                             color: '#000000'
@@ -227,6 +281,7 @@ export const CreateRecipe = () => {
                             renderItem={renderItem}
                             keyExtractor={keyExtractor}
                             ItemSeparatorComponent = { FlatListItemSeparator }
+                            scrollEnabled={false}
                         />
                 }
                 
@@ -242,7 +297,13 @@ export const CreateRecipe = () => {
                 
         </View>
         </ScrollView>
-        <Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>
+        {/*<Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>*/}
+        <Pressable onPress={() => 
+            {
+                get_data(),
+                navigation.navigate('Mes Recettes' as never)
+            }
+            } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
         </Pressable>  
     </SafeAreaView> 
@@ -301,7 +362,7 @@ const styles = StyleSheet.create({
     dropdownBtnTxtStyle: {
         color: "#000000", 
         textAlign: 'left',
-        fontSize: 16
+        fontSize: 14
     },
     dropdownDropdownStyle: {
         backgroundColor: 'white'
@@ -321,10 +382,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
         borderRadius: 10,
         borderWidth: 1,
-    },
-    buttonText : {
-        fontSize: 16,
-        color: "#000000"
     },
     buttonPrimary: {
         elevation: 8,

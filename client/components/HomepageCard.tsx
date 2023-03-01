@@ -1,28 +1,28 @@
 
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect } from "react";
-import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { openDatabase } from "react-native-sqlite-storage";
-
+import Pantry from '../assets/images/pantry.svg'
 
 export type HomepageCardprops = {
     title: string,
     description : string,
-    illustration : ImageSourcePropType,
     link: string,
 }
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
-export const HomepageCard = (  {title, description, illustration, link} : HomepageCardprops )  => {
+export const HomepageCard = (  {title, description, link} : HomepageCardprops )  => {
 
     
-    useEffect(()=>{
+    useEffect( ()=>{
+      // @ts-expect-error
         db.transaction(function (txn) {
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
-              function (tx, res) {+
+              function (tx : any, res :any) {
                 if (res.rows.length == 0) {
                   txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
                   txn.executeSql(
@@ -44,7 +44,11 @@ export const HomepageCard = (  {title, description, illustration, link} : Homepa
             onPress={() => navigation.navigate( link as never )}
         >
       
-            <Image style={styles.image} source={illustration}></Image>
+          {title === "Mes recettes" ?  
+            <Image style={styles.image}  source={require("../assets/images/recipes.png")}/> :  
+            <Pantry width={100} height={100} style={styles.image} />
+          }
+           
             <View style={styles.information}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.description}>{description}</Text>         
@@ -73,10 +77,10 @@ export const HomepageCard = (  {title, description, illustration, link} : Homepa
         justifyContent: "center"
     },
     image: {
-        width: 100,
-        height: 100,
         marginRight:10,
-        borderRadius: 50
+        borderRadius: 50,
+        width: 100,
+        height: 100
     },
     description: {
         fontSize: 12,

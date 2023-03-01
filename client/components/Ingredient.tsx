@@ -1,7 +1,7 @@
 import React from "react";
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import {
-    Image,
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -9,10 +9,14 @@ import {
     View,
   } from 'react-native';
 import { IngredientType } from "../types/ingredient";
-import { getIllustration } from "./IngredientCard";
-import moment from "moment";
 import { firstLetterInUppercase } from "./utils/FirstLetterInUppercase";
-  
+import Supprimer from "../assets/images/supprimer.svg";
+import PeremptionImage from '../assets/images/peremption.svg';
+import { Illustration } from "./utils/Illustration";
+import { openDatabase } from "react-native-sqlite-storage";
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
+
 const getCategoryName = (category : string | undefined) => {
     switch (category) {
         case "vegetable":
@@ -51,9 +55,23 @@ export const Ingredient = () => {
     let expirationDate : string = "";
     if (ingredient.expiration !== undefined) {
         expirationDate = ingredient.expiration
-     }
+    }
 
-    const linkIllustration = getIllustration(ingredient.category);
+    const deleteIngredient = async() => {
+        console.log("Long vie au roi !");
+            await (await db).transaction(function (txn) {
+                txn.executeSql(
+                    // Supprimer entièrement la table
+                    'DELETE FROM ingredients WHERE id = '+ingredient.id+'',
+                    [],
+                    (txn, results) => {
+                        console.log("Adieux");
+                }
+              );
+            });
+    }
+
+    const navigation = useNavigation();
 
    return (
     <SafeAreaView>
@@ -61,10 +79,15 @@ export const Ingredient = () => {
      contentInsetAdjustmentBehavior="automatic"
      >
         <View style={styles.container} >
-        <Image style={styles.iconDelete} source={require("../assets/images/supprimer.png")}></Image> 
-                       
+            <Pressable onPress={async() => {
+                    await deleteIngredient(),
+                    navigation.goBack()
+                }
+                }>
+                <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
+            </Pressable>
             <View style={styles.header}>
-                <Image style={styles.image} source={linkIllustration}></Image>
+                {Illustration(ingredient.category, 40, 40) }
                 <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
             </View>
             <Text style={styles.titleInformation}>Catégorie:</Text>
@@ -74,14 +97,14 @@ export const Ingredient = () => {
             <Text style={styles.titleInformation}>Date de péremption:</Text>
             { ingredient.expiration ?
                     <View style={styles.expiration} > 
-                        <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image> 
+                        <PeremptionImage style={styles.icon} width={20} height= {20}/>
                         <Text style={styles.expirationDate}>
                              {expirationDate}  
                              
                         </Text>  
                         
                     </View> : <View style={styles.expiration} > 
-                        <Image style={styles.icon} source={require("../assets/images/peremption.png")}></Image> 
+                        <PeremptionImage style={styles.icon} width={20} height= {20}/>
                         <Text style={styles.expirationDate}>Aucune date </Text>  
                     </View>
                 }   
@@ -139,8 +162,6 @@ const styles = StyleSheet.create({
     iconDelete: {
         marginTop: 30,
         marginHorizontal: 10,
-        width: 20,
-        height: 20, 
         display:"flex",
         alignSelf:"flex-end"
     },

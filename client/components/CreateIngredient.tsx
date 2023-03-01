@@ -6,9 +6,7 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View,
-    
-  } from 'react-native';
+    View } from 'react-native';
 import DatePicker from "react-native-date-picker";
 import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
@@ -53,11 +51,12 @@ export const CreateIngredient = () => {
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
+        //@ts-expect-error
         db.transaction(function (tx) {
           tx.executeSql(
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
             [name, quantity, category, unit, expirationDate],
-            (tx, results) => {
+            (tx : any, results: any) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('register OK');
@@ -240,7 +239,8 @@ const styles = StyleSheet.create({
 
     dropdownBtnTxtStyle: {
         color: "#000000", 
-        textAlign: 'left'
+        textAlign: 'left',
+        fontSize: 14
     },
     
     dropdownDropdownStyle: {
