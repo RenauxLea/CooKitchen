@@ -1,5 +1,6 @@
 import React from "react";
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Root, Popup } from 'react-native-popup-confirm-toast'
 import {
     ScrollView,
     StyleSheet,
@@ -32,11 +33,25 @@ export const Preparation = () => {
                 }
             </View>
         </ScrollView>
+        <Root>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
           <TouchableOpacity 
-                onPress={() => navigation.navigate('Mes Recettes' as never)} 
+                onPress={() => 
+                    Popup.show({
+                        type: 'success',
+                        title: '',
+                        textBody:  "Les ingrédients ont été retiré du garde-manger avec succès",
+                        okButtonStyle: {backgroundColor: '#FFCC29'},
+                        buttonText: 'Ok',
+                        callback: () => {
+                            Popup.hide();
+                             navigation.navigate('Mes Recettes' as never)
+                        },
+                        
+                      })
+                } 
                 style={styles.prepareButton}>
-                <Text style={styles.buttonText}>J'ai préparé cette recette</Text>
+                <Text style={styles.buttonText}>Retirer du garde-manger</Text>
             </TouchableOpacity>
             <TouchableOpacity 
                 onPress={() => navigation.navigate('Garde-manger' as never)} 
@@ -44,6 +59,7 @@ export const Preparation = () => {
                 <Text style={styles.buttonText}>Aller au garde-manger</Text>
             </TouchableOpacity> 
         </View>
+        </Root>
     </View>
     );
 }
