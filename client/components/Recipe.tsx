@@ -102,7 +102,7 @@ export const Recipe = () => {
             <Text style={styles.description}>{recipe.description} </Text>
 
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Nouvelle Recette' as never)} 
+                onPress={() => navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)} 
                 style={styles.prepareButton}
             >
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         textAlign: "center",
-        fontWeight: "400",
+        fontWeight: "500",
         fontSize: 16,
         color:"#000000",
     },
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     },
     deleteButtonText: {
         textAlign: "center",
-        fontWeight: "400",
+        fontWeight: "500",
         fontSize: 16,
         color:"#F21616",
     },
