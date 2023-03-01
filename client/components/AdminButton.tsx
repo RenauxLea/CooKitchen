@@ -41,6 +41,8 @@ export const AdminButton = () => {
       }
 
       let this_bdd = () => {
+        console.log('il y a un return la');
+        
         return;
         console.log('Je suis ta requette perso ^^');
         db.transaction(function (txn) {
