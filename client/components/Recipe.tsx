@@ -2,6 +2,7 @@ import React from "react";
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import {
     FlatList,
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -26,29 +27,41 @@ const renderItem =  ({item } : any) => {
     </View>
 } ;
 
+const getFavoriteIcon = (isFavorite: boolean) => {
+    return (
+        isFavorite === true ? 
+            <IsFavorite style={styles.icon } width={30}  height={30}/> 
+        : 
+            <IsNotFavorite style={styles.icon } width={30}  height={30}/> 
+    )
+}
+
 export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params;
     
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
-
-
+    const [isFavorite, setIsFavorite] = React.useState(recipe.isFavorite)
+    
+    React.useEffect(() => {
+        getFavoriteIcon(isFavorite)
+    }, [isFavorite])
+    
    return (
     <SafeAreaView>
     <ScrollView  
      contentInsetAdjustmentBehavior="automatic"
      >
         <View style={styles.container} >
-            <View style={styles.header}>
+            <View style={styles.titleContainer}>
                 <Text style={styles.title}>{firstLetterInUppercase(recipe.name)}</Text>
-                {recipe.isFavorite ? 
-                    <IsFavorite width={20}  height={20}/> 
-                    : 
-                    <IsNotFavorite style={styles.image } width={20}  height={20}/> 
-                }
-                <Text style={styles.title}>{getCategoryName(recipe.category)}</Text>
-
+                <Pressable onPress={() => setIsFavorite(!isFavorite)}>
+                    {getFavoriteIcon(isFavorite)}
+                </Pressable>
+            </View>
+            <Text style={styles.category}>{getCategoryName(recipe.category)}</Text>
+            <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
                         <Text style={styles.time}>{recipe.preparationTime}min</Text>
@@ -57,35 +70,44 @@ export const Recipe = () => {
                     <FourImage style={styles.image } width={20}  height={20}/>
                     <Text style={styles.time}>{recipe.cookingTime}min</Text>
                 </View>
-                <Text style={styles.time}>Pour combien de personnes ?</Text>
-                <TextInput
-                    style={styles.input}
-                    keyboardType='numeric'
-                    onChangeText={number  => setQuantity(number)}
-                    value={quantity}
-                    placeholder='2'
-                    maxLength={10}
-                />
-                <Text style={styles.time}>Ingrédients: </Text>
-
-                <FlatList
-                    data={recipe.listIngredients}
-                    renderItem={renderItem}
-                    keyExtractor={(item :any) => item.id}  
-                />
-                <Text style={styles.time}>Description: </Text>
-                <Text style={styles.time}>{recipe.description} </Text>
-
-                <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
-                    <Text >J'ai préparé cette recette</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
-                    <Text >Modifier cette recette</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
-                    <Text >Supprimer cette recette</Text>
-                </TouchableOpacity>
             </View>
+            <Text style={styles.quantityText}>Pour combien de personnes ?</Text>
+            <TextInput
+                style={styles.input}
+                keyboardType='numeric'
+                onChangeText={number  => setQuantity(number)}
+                value={quantity}
+                placeholder='2'
+                maxLength={10}
+            />
+            
+            <Text style={styles.subtitle}>Ingrédients: </Text>
+            {/* <FlatList
+                data={recipe.listIngredients}
+                renderItem={renderItem}
+                keyExtractor={(item :any) => item.id}  
+            /> */}
+                
+            <Text style={styles.subtitle}>Description: </Text>
+            <Text style={styles.description}>{recipe.description} </Text>
+
+            <TouchableOpacity 
+                onPress={() => navigation.navigate('Nouvelle Recette' as never)} 
+                style={styles.prepareButton}
+            >
+                <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                onPress={() => navigation.navigate('Nouvelle Recette' as never)} 
+                style={styles.editButton}>
+                <Text style={styles.buttonText}>Modifier cette recette</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                onPress={() => navigation.navigate('Mes Recettes' as never)} 
+                style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>Supprimer cette recette</Text>
+            </TouchableOpacity> 
+           
           
 
         </View>
@@ -101,40 +123,54 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
         paddingHorizontal: 24,
     }, 
-    header: {
+    titleContainer: {
+        marginTop: 20,
         display: "flex",
         flexDirection: "row",
-        alignItems: "flex-end",
+        alignItems: "flex-start",
+        justifyContent: "space-between"
     },
-
+    icon: {
+        marginTop: 10
+    },
     title: {
         fontSize: 32,
         fontWeight: '800',
         color: '#FFCC29',
-        paddingLeft: 10,
+        width: "90%"
     },
-    titleInformation: {
-        fontSize: 20,
-        fontWeight: '500',
-        paddingTop: 20,
-        color: "#000000",   
-    },
-    information: {
+    category : {
         fontSize: 16,
-        paddingBottom: 10,
         color: "#000000",
+        fontStyle: "italic",
+        fontWeight: "400"
+    },
+    CookingAndPreparation: {
+        marginVertical: 20,
+        display: "flex",
+        flexDirection: "row",
+        alignSelf: "center"
     },
     timeContainer: {
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "column",
+        alignItems: "center",
+        marginLeft: 30,
+        marginRight: 30,
+        marginVertical: 20
     },
     image: {
-        marginRight: 3
+        marginBottom: 5
     },
     time: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#000000',
-        paddingRight: 20
+    },
+    quantityText: {
+        textAlign: "center",
+        fontSize: 16,
+        color:"#000000",
+        fontWeight: "400",
     },
     input: {
         backgroundColor: 'white',
@@ -142,14 +178,63 @@ const styles = StyleSheet.create({
         color:"#000000",
         borderWidth: 1,
         borderRadius: 5,
-        paddingHorizontal: 10   
+        marginHorizontal: 100,
+        textAlign:"center",
+        fontSize: 16
     },
-    button: {
+    subtitle: {
+        fontSize: 16,
+        fontWeight: "600",
+        color:"#000000",
+        paddingTop: 20,
+    },
+    prepareButton: {
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 12
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 20,  
+    },
+    buttonText: {
+        textAlign: "center",
+        fontWeight: "400",
+        fontSize: 16,
+        color:"#000000",
+    },
+    editButton: {
+        elevation: 8,
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "#000000",
+    },
+    deleteButton: {
+        elevation: 8,
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "#F21616",
+    },
+    deleteButtonText: {
+        textAlign: "center",
+        fontWeight: "400",
+        fontSize: 16,
+        color:"#F21616",
+    },
+    description: {
+        fontWeight: "400",
+        fontSize: 16,
+        fontStyle: "italic",
+        paddingTop: 10,
+        color:"#000000",
+        paddingBottom: 30
     },
 
 });

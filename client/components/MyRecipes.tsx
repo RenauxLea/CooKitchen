@@ -28,12 +28,13 @@ const recipesFixtures  : RecipeType[]= [
   {
     id : "2",
     name: "Tiramisu",
-    isFavorite: true,
+    isFavorite: false,
     category:  "dessert" ,
     preparationTime : "10",
     cookingTime : "25",
     quantity: "1",
-    listIngredients: []
+    listIngredients: [],
+    description: "C'est trop bon les tiramisu !!"
   },
   {
     id : "3",
@@ -68,11 +69,12 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
   const navigation = useNavigation();
 
   useEffect(() => {
+    //@ts-expect-error
     db.transaction(function (txn) {
       txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
           [],
-          function (tx, res) {
+          function (tx :any, res: any) {
             if (res.rows.length == 0) {
               txn.executeSql('DROP TABLE IF EXISTS recipes', []);
               txn.executeSql(
@@ -111,7 +113,7 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
               listSQL.push(sqlObj)
               */
             }
-            // @ts-expect-error
+           
             //setListItem(listSQL)
           }
         
