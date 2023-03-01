@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: 'white',
         width: 100,
-        height: "100%",
+        height: 40,
         marginHorizontal: 10,
         color:"#000000",
         borderWidth: 1,
-        borderRadius: 5
+        borderRadius: 5,   
     },
     quantity: {
         fontSize: 16,

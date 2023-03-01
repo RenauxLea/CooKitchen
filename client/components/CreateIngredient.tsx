@@ -239,7 +239,8 @@ const styles = StyleSheet.create({
 
     dropdownBtnTxtStyle: {
         color: "#000000", 
-        textAlign: 'left'
+        textAlign: 'left',
+        fontSize: 14
     },
     
     dropdownDropdownStyle: {
