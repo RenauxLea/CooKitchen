@@ -1,4 +1,4 @@
-import React, { toString } from "react";
+import React from "react";
 import {
     FlatList,
     Pressable,
@@ -226,7 +226,7 @@ export const CreateRecipe = () => {
                             borderRadius: 5,
                             paddingVertical: 10,
                             marginTop: 10,
-                            paddingHorizontal: 10    
+                            paddingHorizontal: 10, 
                         },
                         confirmText: {
                             color: '#000000'
@@ -249,6 +249,7 @@ export const CreateRecipe = () => {
                             renderItem={renderItem}
                             keyExtractor={keyExtractor}
                             ItemSeparatorComponent = { FlatListItemSeparator }
+                            scrollEnabled={false}
                         />
                 }
                 
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
     dropdownBtnTxtStyle: {
         color: "#000000", 
         textAlign: 'left',
-        fontSize: 16
+        fontSize: 14
     },
     dropdownDropdownStyle: {
         backgroundColor: 'white'
@@ -349,10 +350,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
         borderRadius: 10,
         borderWidth: 1,
-    },
-    buttonText : {
-        fontSize: 16,
-        color: "#000000"
     },
     buttonPrimary: {
         elevation: 8,
