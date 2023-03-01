@@ -1,4 +1,4 @@
-import React, { toString } from "react";
+import React, { toString, useEffect, useState } from "react";
 import {
     FlatList,
     Pressable,
@@ -20,8 +20,6 @@ import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
- 
-const ingredientsByCategories = IngredientsByCategory(ingredientFixtures)
 
 const FlatListItemSeparator = () => {
     return (
@@ -46,6 +44,40 @@ export const CreateRecipe = () => {
     const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<string[]>([]);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
+
+    let [listIngredientBdd, setListIngredientBdd] = useState([])
+    useEffect(() => {
+    //@ts-expect-error
+    db.transaction((tx : any) => {
+      tx.executeSql(
+        'SELECT * FROM ingredients',
+        [],
+        (tx : any, results : any) => {
+          var list = results.rows.item;
+          var listSQL = []
+          for (let i = 0; i < results.rows.length; ++i){
+            var sqlObj =   {
+              id: list(i)['id'],
+              name: list(i)['name'],
+              quantity: list(i)['quantity'],
+              category: list(i)['category'],
+              unit: list(i)['unit'],
+              expiration: list(i)['expiration'],
+            }
+            listSQL.push(sqlObj)
+          }
+          // @ts-expect-error
+          setListIngredientBdd(listSQL)
+          
+        }
+        
+        );
+      }
+      ); 
+    })
+    
+    const ingredientsByCategories = IngredientsByCategory(listIngredientBdd)
+
     
     const navigation = useNavigation();
    
@@ -108,7 +140,7 @@ export const CreateRecipe = () => {
         db.transaction(function (tx) {
             
             tx.executeSql(
-              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description) VALUES (?,?,?,?,?,?,?)',
+              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category, preparationTime, cookingTime, objDescription, description],
               (tx, results) => {
                 if (results.rowsAffected > 0) {

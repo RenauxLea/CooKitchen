@@ -17,7 +17,7 @@ export const AdminButton = () => {
         db.transaction(function (tx) {
             tx.executeSql(
                 // mettre la requete SQL pour la bdd
-                'ALTER TABLE recipes ADD COLUMN listIngredients BLOB',
+                'ALTER TABLE recipes ADD COLUMN favorite INTERGER',
                 [],
                 (tx, results) => {
                     console.log("La base virale VPS a été mise à jour !!!");
@@ -31,7 +31,7 @@ export const AdminButton = () => {
         db.transaction(function (tx) {
             tx.executeSql(
                 // Supprimer entièrement la table
-                'DROP TABLE test',
+                'DROP TABLE recipes',
                 [],
                 (tx, results) => {
                     console.log("C'est bon ! on l'a descendu la table !");

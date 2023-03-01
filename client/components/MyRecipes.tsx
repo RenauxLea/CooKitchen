@@ -76,7 +76,7 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
             if (res.rows.length == 0) {
               txn.executeSql('DROP TABLE IF EXISTS recipes', []);
               txn.executeSql(
-                'CREATE TABLE IF NOT EXISTS recipes( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, quantity INTERGER, category TEXT, preparationTime TEXT, cookingTime TEXT, linkedIngredients BLOB, description TEXT)',
+                'CREATE TABLE IF NOT EXISTS recipes( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, quantity INTERGER, category TEXT, preparationTime TEXT, cookingTime TEXT, linkedIngredients BLOB, description TEXT, favorite)',
                 []
               );
               

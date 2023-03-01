@@ -1,6 +1,7 @@
 import React from "react";
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import {
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -12,7 +13,10 @@ import { firstLetterInUppercase } from "./utils/FirstLetterInUppercase";
 import Supprimer from "../assets/images/supprimer.svg";
 import PeremptionImage from '../assets/images/peremption.svg';
 import { Illustration } from "./utils/Illustration";
-  
+import { openDatabase } from "react-native-sqlite-storage";
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
+
 const getCategoryName = (category : string | undefined) => {
     switch (category) {
         case "vegetable":
@@ -51,8 +55,23 @@ export const Ingredient = () => {
     let expirationDate : string = "";
     if (ingredient.expiration !== undefined) {
         expirationDate = ingredient.expiration
-     }
+    }
 
+    const deleteIngredient = async() => {
+        console.log("Long vie au roi !");
+            await (await db).transaction(function (txn) {
+                txn.executeSql(
+                    // Supprimer entièrement la table
+                    'DELETE FROM ingredients WHERE id = '+ingredient.id+'',
+                    [],
+                    (txn, results) => {
+                        console.log("Adieux");
+                }
+              );
+            });
+    }
+
+    const navigation = useNavigation();
 
    return (
     <SafeAreaView>
@@ -60,7 +79,13 @@ export const Ingredient = () => {
      contentInsetAdjustmentBehavior="automatic"
      >
         <View style={styles.container} >
-            <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
+            <Pressable onPress={async() => {
+                    await deleteIngredient(),
+                    navigation.goBack()
+                }
+                }>
+                <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
+            </Pressable>
             <View style={styles.header}>
                 {Illustration(ingredient.category, 40, 40) }
                 <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
