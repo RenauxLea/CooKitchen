@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   FlatList,
@@ -93,13 +93,15 @@ const renderItem =  ({item } : any) =><RecipeCard key={item.key} recipe={item} /
 
 export const MyRecipes = () => {
 
-var db = openDatabase({ name: 'ingredientDatabase.db'});
+  var db = openDatabase({ name: 'ingredientDatabase.db'});
   
+  let [listRecipe, setListRecipe] = useState([])
 
   const navigation = useNavigation();
 
   useEffect(() => {
     //@ts-expect-error
+    // Création si empty
     db.transaction(function (txn) {
       txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
@@ -117,34 +119,41 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
         );
       }
     )
+
+    //read liste
     db.transaction(function (txn) {
+      
       txn.executeSql(
         'SELECT * FROM recipes',
         [],
         (tx : any, results : any) => {
           var list = results.rows.item;
-          //var listSQL = []
+          var listSQL = []
           
           for (let i = 0; i < results.rows.length; ++i){
-            let type = JSON.parse(list(i)['linkedIngredients'])
-            for (let j = 0; j < type.length; j++) {
-              const element = type[j];
-              console.log(element['name']);
+            let listIngredientsBdd = JSON.parse(list(i)['linkedIngredients'])
+            let getDataIngredients = []
+            for (let j = 0; j < listIngredientsBdd.length; j++) {
+              const ingredientBdd = listIngredientsBdd[j];
+              getDataIngredients.push(ingredientBdd)
             }
             
-            /*
+            
             var sqlObj = {
                 id: list(i)['id'],
                 name: list(i)['name'],
+                isFavorite : list(i)['favorite'],
+                preparationTime : list(i)['preparationTime'],
+                cookingTime: list(i)['cookingTime'],
                 quantity: list(i)['quantity'],
-                category: list(i)['category'],
-                expiration: list(i)['expiration'],
+                listIngredients: getDataIngredients,
+                description : list(i)['description']
               }
               listSQL.push(sqlObj)
-              */
+              
             }
            
-            //setListItem(listSQL)
+            setListRecipe(listSQL)
           }
         
         );
@@ -160,11 +169,11 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
           Quelle recette te ferait envie aujourd'hui ?
         </Text> 
       
-        {recipesFixtures.length === 0 ? 
+        {listRecipe.length === 0 ? 
         <EmptyDataRecipe/>
         :
         <FlatList
-        data={recipesFixtures}
+        data={listRecipe}
         renderItem={renderItem}
         initialNumToRender={4}
         keyExtractor={(item :any) => item.id}

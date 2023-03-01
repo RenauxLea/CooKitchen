@@ -3,15 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { IngredientType } from "../types/ingredient";
-import { openDatabase } from "react-native-sqlite-storage";
 import PeremptionImage from '../assets/images/peremption.svg';
 import { Illustration } from "./utils/Illustration";
 
 export type IngredientCardprops = {
     ingredient : IngredientType, 
 }
-
-var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
     

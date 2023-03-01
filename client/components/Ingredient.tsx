@@ -17,7 +17,7 @@ import { openDatabase } from "react-native-sqlite-storage";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
-const getCategoryName = (category : string | undefined) => {
+export const getCategoryIngredientByName = (category : string | undefined) => {
     switch (category) {
         case "vegetable":
             return "Légume"
@@ -80,18 +80,25 @@ export const Ingredient = () => {
      >
         <View style={styles.container} >
             <Pressable onPress={async() => {
+                    navigation.navigate('Edit Ingrédient' as never, {ingredient} as never)
+                }
+                }>
+                <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
+            </Pressable>
+            <Pressable onPress={async() => {
                     await deleteIngredient(),
                     navigation.goBack()
                 }
                 }>
                 <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
             </Pressable>
+
             <View style={styles.header}>
                 {Illustration(ingredient.category, 40, 40) }
                 <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
             </View>
             <Text style={styles.titleInformation}>Catégorie:</Text>
-            <Text style={styles.information}>{getCategoryName(ingredient.category)}</Text>
+            <Text style={styles.information}>{getCategoryIngredientByName(ingredient.category)}</Text>
             <Text style={styles.titleInformation}>Quantité:</Text>
             <Text style={styles.information}>{ingredient.quantity} {ingredient.unit}</Text>
             <Text style={styles.titleInformation}>Date de péremption:</Text>
@@ -107,8 +114,7 @@ export const Ingredient = () => {
                         <PeremptionImage style={styles.icon} width={20} height= {20}/>
                         <Text style={styles.expirationDate}>Aucune date </Text>  
                     </View>
-                }   
-
+                }
         </View>
     </ScrollView>
     </SafeAreaView>
