@@ -92,6 +92,7 @@ export const Recipe = () => {
                         data={recipe.listIngredients}
                         renderItem={renderItem}
                         keyExtractor={(item :any) => item.id}  
+                        scrollEnabled={false}
                     />
                 :
                     <Text style={styles.description}>Aucun ingrédient lié </Text>
