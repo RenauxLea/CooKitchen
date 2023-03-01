@@ -22,8 +22,12 @@ import ClockImage  from "../assets/images/clock.svg";
   
 
 const renderItem =  ({item } : any) => {
-    return <View>
-        <Text>item.name</Text>
+    return <View style={styles.ingredient}>
+        <Text style={styles.quantity}>
+            {item.quantityForRecipe} 
+            { (item.unit !== undefined && item.unit !== "aucune") && item.unit}
+        </Text>
+        <Text style={styles.ingredientName}>{firstLetterInUppercase(item.name)}</Text>
     </View>
 } ;
 
@@ -82,11 +86,16 @@ export const Recipe = () => {
             />
             
             <Text style={styles.subtitle}>Ingrédients: </Text>
-            {/* <FlatList
-                data={recipe.listIngredients}
-                renderItem={renderItem}
-                keyExtractor={(item :any) => item.id}  
-            /> */}
+            {
+                recipe.listIngredients.length > 0 ?
+                    <FlatList
+                        data={recipe.listIngredients}
+                        renderItem={renderItem}
+                        keyExtractor={(item :any) => item.id}  
+                    />
+                :
+                    <Text style={styles.description}>Aucun ingrédient lié </Text>
+            }
                 
             <Text style={styles.subtitle}>Description: </Text>
             <Text style={styles.description}>{recipe.description} </Text>
@@ -194,7 +203,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingVertical: 20,
         paddingHorizontal: 12,
-        marginBottom: 20,  
+        marginBottom: 20,
+        marginTop: 30  
     },
     buttonText: {
         textAlign: "center",
@@ -234,7 +244,26 @@ const styles = StyleSheet.create({
         fontStyle: "italic",
         paddingTop: 10,
         color:"#000000",
-        paddingBottom: 30
+        paddingBottom: 10
     },
+    ingredient: {
+        display: "flex",
+        flexDirection: "row",
+        width: "70%",
+        justifyContent: "space-between",
+        marginVertical: 10,
+    },
+    quantity: {
+        fontWeight: "300",
+        fontSize: 16,
+        fontStyle: "italic",
+        color:"#000000",
+    },
+    ingredientName: {
+        width: "70%",
+        fontWeight: "400",
+        fontSize: 16,
+        color:"#000000",
+    }
 
 });

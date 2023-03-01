@@ -33,7 +33,20 @@ const recipesFixtures  : RecipeType[]= [
     preparationTime : "10",
     cookingTime : "25",
     quantity: "1",
-    listIngredients: [],
+    listIngredients: [
+      {
+        id : "1",
+        name : "café",
+        quantityForRecipe: "150",
+        unit : "g"
+      },
+      {
+        id : "2",
+        name : "beurre",
+        quantityForRecipe: "30",
+        
+      }
+    ],
     description: "C'est trop bon les tiramisu !!"
   },
   {

@@ -11,7 +11,7 @@ export type RecipeType = {
         id : string,
         name : string,
         quantityForRecipe: string,
-        category: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct" | "other",
-        unit? : "g" | "cl" 
+        category?: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct" | "other",
+        unit? : "g" | "cl" | "aucune" 
     }[]
 }
