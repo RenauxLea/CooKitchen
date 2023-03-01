@@ -22,11 +22,7 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
-<<<<<<< HEAD
               function (tx : any, res :any) {
-=======
-              function (tx, res) {
->>>>>>> 4f612e9 (fix)
                 if (res.rows.length == 0) {
                   txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
                   txn.executeSql(
@@ -38,7 +34,6 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
             );
           }
         )
-        
     })
     const navigation = useNavigation();
 
@@ -93,8 +88,4 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
     },
   
   });
-
-function typeOf(test: jest.It): any {
-  throw new Error("Function not implemented.");
-}
   
