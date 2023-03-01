@@ -113,15 +113,15 @@ export const CreateRecipe = () => {
 
     const getLinkedIngredientsInformation = () => {
         let ingredients : IngredientLinkedType[] = [];
-        ingredientFixtures.forEach((element) => {
-            const isSelected = linkedIngredientIds.find( id => id === element.id)
+        listIngredientBdd.forEach((element) => {
+            const isSelected = linkedIngredientIds.find( id => id === element['id'])
                 if(isSelected) {
                     ingredients.push( {
-                            id : element.id,
-                            name : element.name,
-                            quantityForRecipe : element.quantity,
-                            category : element.category,
-                            unit : element.unit
+                            id : element['id'],
+                            name : element['name'],
+                            quantityForRecipe : element['quantity'],
+                            category : element['category'],
+                            unit : element['unit']
                         }
                     );
                }
