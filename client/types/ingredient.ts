@@ -1,8 +1,8 @@
 export type IngredientType = {
     id : string,
     name : string,
-    quantity : number,
-    category?: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct",
+    quantity : string,
+    category?: "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct" | "other",
     unit? : "g" | "cl" | "aucune" ,
     expiration ?: string,
 
@@ -11,7 +11,7 @@ export type IngredientType = {
 export type IngredientLinkedType = {
     id: string,
     name : string,
-    quantityForRecipe: number,
+    quantityForRecipe: string,
     category? :  "vegetable" | "fruit" | "fish" | "meat" | "cereal" | "milkProduct" | "sweetProduct" | "other",
     unit? : "g" | "cl" | "aucune" , 
 }

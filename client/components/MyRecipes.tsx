@@ -42,10 +42,27 @@ const recipesFixtures  : RecipeType[]= [
       },
       {
         id : "2",
+        name : "beurre salé et noix de coco",
+        quantityForRecipe: "30",
+        
+      },  {
+        id : "3",
+        name : "café",
+        quantityForRecipe: "150",
+        unit : "g"
+      },
+      {
+        id : "4",
         name : "beurre",
         quantityForRecipe: "30",
         
-      }
+      },  {
+        id : "5",
+        name : "café",
+        quantityForRecipe: "150",
+        unit : "g"
+      },
+      
     ],
     description: "C'est trop bon les tiramisu !!"
   },
@@ -185,7 +202,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#000000",
     fontWeight: "500",
     alignSelf: "center",
