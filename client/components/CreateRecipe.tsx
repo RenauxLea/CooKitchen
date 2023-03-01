@@ -297,7 +297,6 @@ export const CreateRecipe = () => {
                 
         </View>
         </ScrollView>
-        {/*<Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>*/}
         <Pressable onPress={() => 
             {
                 get_data(),
@@ -394,7 +393,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonPrimaryText: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
     },

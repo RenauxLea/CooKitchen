@@ -6,8 +6,6 @@ import { firstLetterInUppercase } from "./utils/FirstLetterInUppercase";
 export const LinkedIngredientCard = (  ingredient : IngredientLinkedType )  => {
     const [quantity, setQuantity] = React.useState("")
 
-    // TODO: faire l'update de la recette pour ajouter la quantité à l'ingrédient de la recette correspondant
-   
     return (
         <View style={styles.item}>
             <View style={styles.information}>
@@ -21,7 +19,7 @@ export const LinkedIngredientCard = (  ingredient : IngredientLinkedType )  => {
                         placeholder='10'
                         maxLength={10}
                     />
-                    <Text style={styles.quantity}>  { ingredient.unit}</Text>       
+                    <Text style={styles.quantity}>  { (ingredient.unit !== undefined && ingredient.unit !== "aucune") && ingredient.unit  }</Text>       
                 </View>
             </View>
         </View>
