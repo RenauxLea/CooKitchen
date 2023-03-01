@@ -11,7 +11,7 @@ export type RecipeCardProps = {
     recipe : RecipeType, 
 }
 
-const getCategoryName = (category : string | undefined) => {
+export const getCategoryName = (category : string | undefined) => {
     switch (category) {
         case "main":
             return "Plat de résistance"
