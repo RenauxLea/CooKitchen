@@ -14,10 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { IngredientsByCategory } from "./utils/IngredientsByCategory";
-import { ingredientFixtures } from "./Pantry";
 import { IngredientLinkedType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
+import { DropdownRecipe } from "./DropdownRecipe";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -225,54 +225,20 @@ export const CreateRecipe = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <SelectDropdown
-                    data={categories}
-                    onSelect={(selectedItem) => {
-                        setCategory(selectedItem.id)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item.name
-                    }}
-                    renderDropdownIcon={ () => 
-                          <Icon name="keyboard-arrow-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-                    defaultButtonText={'Sélectionne une catégorie'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                /> 
+
+                <DropdownRecipe 
+                    label={"Sélectionne une catégorie"} 
+                    data={categories} 
+                    onSelect={setCategory}
+                />
    
                 <Text style={styles.text}>Temps de préparation:</Text>
-                <SelectDropdown
-                    data={preparationTimeData}
-                    onSelect={(selectedItem) => {
-                        setPreparationTime(selectedItem.id)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item.name
-                    }}
-                    renderDropdownIcon={ () => 
-                          <Icon name="keyboard-arrow-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-                    defaultButtonText={'Temps de préparation'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                /> 
+                <DropdownRecipe 
+                    label={"Temps de préparation"} 
+                    data={preparationTimeData} 
+                    onSelect={setPreparationTime}
+                />
+                
 
                 <Text style={styles.text}>Temps de cuisson(en minutes):</Text>
                 <TextInput
