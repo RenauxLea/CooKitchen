@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
+import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -25,6 +26,7 @@ export const CreateIngredient = () => {
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState("");
     const [unit, setUnit] = React.useState("");
+    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
 
     const navigation = useNavigation();
    
@@ -55,7 +57,7 @@ export const CreateIngredient = () => {
         db.transaction(function (tx) {
           tx.executeSql(
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
-            [name, quantity, category, unit, expirationDate],
+            [name, quantity, selectedCategory?.id, unit, expirationDate],
             (tx : any, results: any) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
@@ -85,31 +87,10 @@ export const CreateIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <SelectDropdown
-                    data={categories}
-
-                    onSelect={(selectedItem) => {
-                        setCategory(selectedItem.id)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item.name
-                    }}
-                    renderDropdownIcon={ () => 
-                          <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-
-                    defaultButtonText={'Sélectionne une catégorie'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                /> 
+                <DropdownIngredientCategories
+                    label="Sélectionne une catégorie"  
+                    onSelect={setSelectedCategory} data={categories}
+                />
 
                 <Text style={styles.text}>Quantité:</Text>
                 <TextInput
