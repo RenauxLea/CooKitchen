@@ -26,7 +26,7 @@ export const EditIngredient = () => {
 
     console.log(ingredient);
     
-
+    const id = ingredient.id; 
     const [name, setName] = React.useState(ingredient.name);
     const [quantity, setQuantity] = React.useState(ingredient.quantity);
     const [date, setDate] = React.useState(new Date());
@@ -58,28 +58,30 @@ export const EditIngredient = () => {
 
     const units = [ "g", "cl", "aucune"];
     
-    /*
-    let register_ingredients = () => {
+    
+    let update_ingredients = () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
         //@ts-expect-error
         db.transaction(function (tx) {
+          console.log('MISE A JOUR WINDOW : ');
+            
           tx.executeSql(
-            'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
+            'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
             [name, quantity, category, unit, expirationDate],
             (tx : any, results: any) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
-                console.log('register OK');
+                console.log('Votre appareil apple à bien été mise à jour');
 
-              } else console.log('Registration Failed');
+              } else console.log('BLUE SCREEN');
             }
           );
         });
       };
-    */
+    
 
    return (
     <SafeAreaView>
@@ -196,7 +198,7 @@ export const EditIngredient = () => {
         {/* <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}> */}
         <Pressable onPress={() => 
             {
-                //register_ingredients(),
+                update_ingredients(),
                 navigation.navigate('Garde-manger' as never)
             }
             } style={styles.buttonPrimary}>
