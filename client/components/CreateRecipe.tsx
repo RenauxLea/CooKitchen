@@ -137,12 +137,13 @@ export const CreateRecipe = () => {
     const get_data = () => {
         let objDescription = JSON.stringify(linkedIngredients)
 
+        //@ts-expect-error
         db.transaction(function (tx) {
             
             tx.executeSql(
               'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category, preparationTime, cookingTime, objDescription, description],
-              (tx, results) => {
+              (tx:any, results:any) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette create');
   
@@ -297,7 +298,6 @@ export const CreateRecipe = () => {
                 
         </View>
         </ScrollView>
-        {/*<Pressable onPress={() => navigation.navigate('Mes Recettes' as never)} style={styles.buttonPrimary}>*/}
         <Pressable onPress={() => 
             {
                 get_data(),
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonPrimaryText: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
     },

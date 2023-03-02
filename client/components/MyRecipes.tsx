@@ -95,7 +95,7 @@ export const MyRecipes = () => {
 
   var db = openDatabase({ name: 'ingredientDatabase.db'});
   
-  let [listRecipe, setListRecipe] = useState([])
+  let [listRecipe, setListRecipe] = useState<RecipeType[]>([])
 
   const navigation = useNavigation();
 
@@ -121,6 +121,7 @@ export const MyRecipes = () => {
     )
 
     //read liste
+    //@ts-expect-error
     db.transaction(function (txn) {
       
       txn.executeSql(
@@ -128,7 +129,7 @@ export const MyRecipes = () => {
         [],
         (tx : any, results : any) => {
           var list = results.rows.item;
-          var listSQL = []
+          var listSQL : RecipeType[] = []
           
           for (let i = 0; i < results.rows.length; ++i){
             let listIngredientsBdd = JSON.parse(list(i)['linkedIngredients'])

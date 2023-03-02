@@ -14,14 +14,14 @@ export const ingredientFixtures : IngredientType[]= [
   {
     id: "1",
     name: "maïs",
-    quantity: 4,
+    quantity: "4",
     category: "cereal",
     // expiration: new Date(),
   },
   {
     id: "2",
     name: "banane",
-    quantity: 6,
+    quantity: "6",
     category: "fruit",
     expiration:  moment(new Date()).format("DD-MM-YYYY"),
   },
