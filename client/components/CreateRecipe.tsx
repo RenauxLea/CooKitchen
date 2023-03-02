@@ -35,13 +35,14 @@ const FlatListItemSeparator = () => {
     );
   }
 
-export const CreateRecipe = () => { 
+export const CreateRecipe = () => {
+
     const [name, setName] = React.useState('');
     const [category , setCategory] = React.useState("");
     const [preparationTime  , setPreparationTime ] = React.useState("");
     const [cookingTime   , setCookingTime  ] = React.useState("");
     const [quantity, setQuantity] = React.useState('');
-    const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<string[]>([]);
+    //const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<{id : string; quantityRecipe : string}[]>([]);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
 
@@ -75,6 +76,10 @@ export const CreateRecipe = () => {
       }
       ); 
     },[])
+
+    const linkedIngredientIds = linkedIngredients.map((item) => {
+        return item.id
+    })
     
     const ingredientsByCategories = IngredientsByCategory(listIngredientBdd)
 
@@ -108,10 +113,31 @@ export const CreateRecipe = () => {
     const keyExtractor = (item :any) => item.id;
 
     const onSelectedIngredientsChange = (selectedItems : string[]) => {
-        setLinkedIngredientIds(selectedItems)
-      };
+        //const quantityRecipe = '0'
+        //setLinkedIngredientIds([{id : selectedItems[0], quantityRecipe :quantityRecipe}])
+        //getLinkedIngredientsInformation()
+        let ingredients : IngredientLinkedType[] = [];
+        listIngredientBdd.forEach((element) => {
 
-    const getLinkedIngredientsInformation = () => {
+            // selectedItems => tableau d'ID recupéré depuis le formulaire dropdown
+            const isSelected = selectedItems.find( id => id === element['id'])
+                if(isSelected) {
+                    ingredients.push( {
+                            id : element['id'],
+                            name : element['name'],
+                            quantityForRecipe : '0',
+                            category : element['category'],
+                            unit : element['unit']
+                        }
+                    );
+               }
+            }   
+        )
+        setLinkedIngredients(ingredients);
+      };
+    console.log('dada',linkedIngredients);
+    
+    /*const getLinkedIngredientsInformation = () => {
         let ingredients : IngredientLinkedType[] = [];
         listIngredientBdd.forEach((element) => {
             const isSelected = linkedIngredientIds.find( id => id === element['id'])
@@ -128,13 +154,18 @@ export const CreateRecipe = () => {
             }   
         )
         setLinkedIngredients(ingredients);
-    }
-
+    }*/
+    
+    /*
     React.useEffect(() => {
         getLinkedIngredientsInformation()
     }, [linkedIngredientIds])
+    */
 
     const get_data = () => {
+        
+        console.log(linkedIngredients);
+        
         let objDescription = JSON.stringify(linkedIngredients)
 
         //@ts-expect-error

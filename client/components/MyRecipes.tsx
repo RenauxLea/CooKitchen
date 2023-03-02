@@ -160,7 +160,7 @@ export const MyRecipes = () => {
         );
       }
   )
-  },[])
+  },[listRecipe])
   
   return (
     <SafeAreaView>
