@@ -1,11 +1,11 @@
 import React from "react";
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import {
-    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
   } from 'react-native';
 import { IngredientType } from "../types/ingredient";
@@ -79,20 +79,6 @@ export const Ingredient = () => {
      contentInsetAdjustmentBehavior="automatic"
      >
         <View style={styles.container} >
-            <Pressable onPress={async() => {
-                    navigation.navigate('Edit Ingrédient' as never, {ingredient} as never)
-                }
-                }>
-                <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
-            </Pressable>
-            <Pressable onPress={async() => {
-                    await deleteIngredient(),
-                    navigation.goBack()
-                }
-                }>
-                <Supprimer style={styles.iconDelete}  width= {20} height= {20} />                
-            </Pressable>
-
             <View style={styles.header}>
                 {Illustration(ingredient.category, 40, 40) }
                 <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
@@ -100,7 +86,14 @@ export const Ingredient = () => {
             <Text style={styles.titleInformation}>Catégorie:</Text>
             <Text style={styles.information}>{getCategoryIngredientByName(ingredient.category)}</Text>
             <Text style={styles.titleInformation}>Quantité:</Text>
-            <Text style={styles.information}>{ingredient.quantity} {ingredient.unit}</Text>
+            <Text style={styles.information}>
+                {
+                    ingredient.quantity === undefined || ingredient.quantity=== "" ? "0" : ingredient.quantity
+                } 
+                {
+                    (ingredient.unit === undefined || ingredient.unit === "aucune" ) ? "" : ingredient.unit
+                }
+            </Text>
             <Text style={styles.titleInformation}>Date de péremption:</Text>
             { ingredient.expiration ?
                     <View style={styles.expiration} > 
@@ -114,7 +107,20 @@ export const Ingredient = () => {
                         <PeremptionImage style={styles.icon} width={20} height= {20}/>
                         <Text style={styles.expirationDate}>Aucune date </Text>  
                     </View>
-                }
+            }
+            <TouchableOpacity 
+                onPress={() => navigation.navigate('Modifier Ingrédient' as never, {ingredient} as never)} 
+                style={styles.editButton}>
+                <Text style={styles.buttonText}>Modifier cet ingrédient</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                onPress={async() => {
+                    await deleteIngredient(),
+                    navigation.goBack()
+                }}
+                style={styles.deleteButton}>
+            <Text style={styles.deleteButtonText}>Supprimer</Text>
+            </TouchableOpacity> 
         </View>
     </ScrollView>
     </SafeAreaView>
@@ -132,8 +138,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "flex-end",
+        marginTop: 30
     },
-
     title: {
         fontSize: 32,
         fontWeight: '800',
@@ -176,5 +182,38 @@ const styles = StyleSheet.create({
         fontWeight: "400",
         fontStyle: "italic",
         color: "black",
-    }
+    },
+    buttonText: {
+        textAlign: "center",
+        fontWeight: "500",
+        fontSize: 16,
+        color:"#000000",
+    },
+    editButton: {
+        elevation: 8,
+        backgroundColor: "white",
+        borderRadius: 10,
+        marginTop:40,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "#000000",
+    },
+    deleteButton: {
+        elevation: 8,
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "#F21616",
+    },
+    deleteButtonText: {
+        textAlign: "center",
+        fontWeight: "500",
+        fontSize: 16,
+        color:"#F21616",
+    },
 });

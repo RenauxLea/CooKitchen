@@ -112,7 +112,7 @@ export const Pantry = () => {
         );
       }
       ); 
-    },[listItem])
+    },[])
   
   const navigation = useNavigation();
   // const [searchValue, setSearchValue] = useState(""); // POUR LA RECHERCHE
