@@ -14,6 +14,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
+import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
+import { DropdownUnit } from "./DropdownUnit";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -25,6 +27,7 @@ export const CreateIngredient = () => {
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState("");
     const [unit, setUnit] = React.useState("");
+    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
 
     const navigation = useNavigation();
    
@@ -55,7 +58,7 @@ export const CreateIngredient = () => {
         db.transaction(function (tx) {
           tx.executeSql(
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
-            [name, quantity, category, unit, expirationDate],
+            [name, quantity, selectedCategory?.id, unit, expirationDate],
             (tx : any, results: any) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
@@ -85,31 +88,10 @@ export const CreateIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <SelectDropdown
-                    data={categories}
-
-                    onSelect={(selectedItem) => {
-                        setCategory(selectedItem.id)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item.name
-                    }}
-                    renderDropdownIcon={ () => 
-                          <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-
-                    defaultButtonText={'Sélectionne une catégorie'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                /> 
+                <DropdownIngredientCategories
+                    label="Sélectionne une catégorie"  
+                    onSelect={setSelectedCategory} data={categories}
+                />
 
                 <Text style={styles.text}>Quantité:</Text>
                 <TextInput
@@ -121,29 +103,11 @@ export const CreateIngredient = () => {
                     maxLength={10}
                 />
                 <Text style={styles.text}>Unité:</Text>
-                <SelectDropdown
-                    data={units}
-                    defaultButtonText={'Sélectionne une unité'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                    renderDropdownIcon={ () => 
-                        <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-                    onSelect={(selectedItem) => {
-                        setUnit(selectedItem)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item
-                    }}
-                /> 
+                <DropdownUnit
+                    label="Sélectionne une unité"  
+                    onSelect={setUnit} data={units}
+                />
+              
 
                 <Text style={styles.text}>Date de péremption:</Text>
                 <Text style={styles.textDate} >
@@ -204,21 +168,18 @@ const styles = StyleSheet.create({
         color: '#FFCC29',
         paddingTop: 20,
     },
-
     subtitle: {
         fontSize: 20,
         fontWeight: '400',
         color: "#000000",
        
     },
-    
     text: {
         fontSize: 16,
         fontWeight: '400',
         color: "#000000",
         paddingTop: 20,
     },
-
     input: {
         backgroundColor: 'white',
         marginTop: 10,
@@ -226,37 +187,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5
     },
-    
-    dropdownBtnStyle: {
-        width: '100%',
-        height: 50,
-        backgroundColor: 'white',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#000000",
-        marginTop: 10,
-    },
-
-    dropdownBtnTxtStyle: {
-        color: "#000000", 
-        textAlign: 'left',
-        fontSize: 14
-    },
-    
-    dropdownDropdownStyle: {
-        backgroundColor: 'white'
-    },
-    
-    dropdownRowStyle: {
-        backgroundColor: 'white', 
-        borderBottomColor: '#C5C5C5'
-    },
-    
-    dropdownRowTxtStyle: {
-        color: '#000000', 
-        textAlign: 'left'
-    },
-
     button: {
         alignItems: 'center',
         justifyContent: 'center',
