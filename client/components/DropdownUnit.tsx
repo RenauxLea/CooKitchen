@@ -4,13 +4,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
     label: string;
-    data: Array<{ name: string; id: string }>;
+    data: Array<string>;
     onSelect: (item: any) => void;
 }
 
-export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data}) => {
+export const DropdownUnit: FC<Props> = ({ label , onSelect, data}) => {
     const [visible, setVisible] = useState(false);
-    const [selected, setSelected] = useState<{id: string , name: string}>();
+    const [selected, setSelected] = useState<string>();
 
     const toggleDropdown = (): void => {
         visible ? setVisible(false) : openDropdown();
@@ -27,24 +27,23 @@ export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data
     };
 
     const renderItem = ({ item  }:any): ReactElement<any, any> => (
-        <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
-        <Text style={{color: "#000000"}}>{item.name}</Text>
+      <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
+        <Text style={{color: "#000000"}}>{item}</Text>
         </TouchableOpacity>
     );
-
   const renderDropdown = () => {
     return (
       <Modal visible={visible} transparent={false} animationType="none">
         <TouchableOpacity
           onPress={() => setVisible(false)}
         >
-          <Text style={styles.dropdownTitle}>Sélectionne une catégorie</Text>
+          <Text style={styles.dropdownTitle}>Sélectionne une unité</Text>
           <View style={styles.dropdown}>
             <FlatList
               data={data}
               renderItem={renderItem}
               keyExtractor={(item, index) => index.toString()}
-            />
+              />
           </View>
         </TouchableOpacity>
       </Modal>
@@ -58,7 +57,7 @@ export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data
     >
         {renderDropdown()}
         <Text style={styles.buttonText}>
-            {(selected && selected.name) || label}
+            {(selected && selected) || label}
         </Text>
         <Icon name="chevron-down"  size={20} color="#000000" />
     </TouchableOpacity>
@@ -88,14 +87,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    color: "#EEEDED"
+    color: "#EEEDED",
   },
   buttonText: {
     flex: 1,
     color: "#000000"
   },
   dropdown: {
-    marginVertical: 150,
+    marginVertical:200,
     position: 'absolute',
     backgroundColor: '#fff',
     width: '90%',
