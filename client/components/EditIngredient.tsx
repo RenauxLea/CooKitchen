@@ -194,8 +194,8 @@ export const EditIngredient = () => {
         <Pressable onPress={() => 
             {
                 update_ingredients(),
-                navigation.navigate('Garde-manger' as never)
-            }
+                navigation.navigate('Ingredient' as never, {ingredient} as never)} 
+            
             } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Modifier l'ingrédient</Text>
         </Pressable>

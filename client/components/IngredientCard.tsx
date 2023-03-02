@@ -11,14 +11,12 @@ export type IngredientCardprops = {
 }
 
 const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
-    
-
     const navigation = useNavigation();
     let expirationDate : string = "";
     if (ingredient.expiration !== undefined) { 
        expirationDate =  ingredient.expiration
      }
-   
+     
     return (
        
         <Pressable 
@@ -28,7 +26,13 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
             {Illustration(ingredient.category, 60, 60)}
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
-                <Text style={styles.quantity}>Quantité: {ingredient.quantity} {(ingredient.unit !== undefined && ingredient.unit !== "aucune" ) ?? ingredient.unit}</Text> 
+                <Text style={styles.quantity}>Quantité: 
+                    {
+                     ingredient.quantity === undefined || ingredient.quantity=== "" ? "0" 
+                        : ingredient.quantity
+                    } 
+                    {(ingredient.unit === undefined || ingredient.unit === "aucune" ) ? "" : ingredient.unit}
+                </Text> 
                 
                 { ingredient.expiration && 
                     <View style={styles.expiration} > 

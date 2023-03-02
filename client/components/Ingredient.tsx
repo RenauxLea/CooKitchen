@@ -86,7 +86,14 @@ export const Ingredient = () => {
             <Text style={styles.titleInformation}>Catégorie:</Text>
             <Text style={styles.information}>{getCategoryIngredientByName(ingredient.category)}</Text>
             <Text style={styles.titleInformation}>Quantité:</Text>
-            <Text style={styles.information}>{ingredient.quantity} {ingredient.unit}</Text>
+            <Text style={styles.information}>
+                {
+                    ingredient.quantity === undefined || ingredient.quantity=== "" ? "0" : ingredient.quantity
+                } 
+                {
+                    (ingredient.unit === undefined || ingredient.unit === "aucune" ) ? "" : ingredient.unit
+                }
+            </Text>
             <Text style={styles.titleInformation}>Date de péremption:</Text>
             { ingredient.expiration ?
                     <View style={styles.expiration} > 
@@ -133,7 +140,6 @@ const styles = StyleSheet.create({
         alignItems: "flex-end",
         marginTop: 30
     },
-
     title: {
         fontSize: 32,
         fontWeight: '800',
