@@ -137,12 +137,13 @@ export const CreateRecipe = () => {
     const get_data = () => {
         let objDescription = JSON.stringify(linkedIngredients)
 
+        //@ts-expect-error
         db.transaction(function (tx) {
             
             tx.executeSql(
               'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category, preparationTime, cookingTime, objDescription, description],
-              (tx, results) => {
+              (tx:any, results:any) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette create');
   
