@@ -103,24 +103,18 @@ export const CreateRecipe = () => {
 
     // Modifié la qte d'un ingredient dans le tableau d'ingredient
     const onChangeQuantityRecipe = (qte : string, id : string) => {
-        let getLinkedIngredients = linkedIngredients.find(element => id === element['id'])
-        console.log('getLink : ', getLinkedIngredients);
         
-        /*
-        Une newListIngredient de type IngredientLinkedType[] = [] 
-        Faire une boucle de linkedIngredients as element
-            newQteIngredient =  {...element}
-            SI id === element['id'])
-                element doit remplacer ca qte actuel par celui qui lui fournit par l'utilisateur 'qte'
+        let newListIngredient : IngredientLinkedType[] = []
+        linkedIngredients.forEach((element) => {
+            let newQteIngredient =  {...element}
+            if (id === element['id']) {
                 newQteIngredient.quantityForRecipe = qte
+            }
             newListIngredient.push(newQteIngredient)
 
-        setLinkedIngredient(newListIngredient)
-
-        */
-        let this_array : IngredientLinkedType[] = linkedIngredients 
-        console.log(this_array);
-        setLinkedIngredients(this_array)
+        })
+        
+        setLinkedIngredients(newListIngredient)
         
     }
 
@@ -138,29 +132,34 @@ export const CreateRecipe = () => {
     const keyExtractor = (item :any) => item.id;
 
     const onSelectedIngredientsChange = (selectedItems : string[]) => {
-        //const quantityRecipe = '0'
-        //setLinkedIngredientIds([{id : selectedItems[0], quantityRecipe :quantityRecipe}])
-        //getLinkedIngredientsInformation()
         let ingredients : IngredientLinkedType[] = [];
+        let listOnRecipe = linkedIngredients;
+        
         listIngredientBdd.forEach((element) => {
-
-            // selectedItems => tableau d'ID recupéré depuis le formulaire dropdown
             const isSelected = selectedItems.find( id => id === element['id'])
                 if(isSelected) {
+                    let getQuantityForRecipe = '0'
+                    listOnRecipe.forEach(thisElementList => {
+                        if (thisElementList['id'] == element['id'] && getQuantityForRecipe == '0') {
+                            getQuantityForRecipe = thisElementList['quantityForRecipe']  
+                        }
+                    });
+                    
+                    const test = selectedItems.find( id => id === isSelected)
+                    
                     ingredients.push( {
                             id : element['id'],
                             name : element['name'],
-                            quantityForRecipe : '0',
+                            quantityForRecipe : getQuantityForRecipe,
                             category : element['category'],
                             unit : element['unit']
                         }
                     );
                }
-            }   
+            }    
         )
         setLinkedIngredients(ingredients);
       };
-    console.log('dada',linkedIngredients);
     
     /*const getLinkedIngredientsInformation = () => {
         let ingredients : IngredientLinkedType[] = [];
@@ -188,8 +187,6 @@ export const CreateRecipe = () => {
     */
 
     const get_data = () => {
-        
-        console.log(linkedIngredients);
         
         let objDescription = JSON.stringify(linkedIngredients)
 
