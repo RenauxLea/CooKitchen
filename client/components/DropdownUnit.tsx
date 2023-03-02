@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     color: "#EEEDED",
+    borderColor: "#EEEDED",
   },
   buttonText: {
     flex: 1,
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
     marginVertical:200,
     position: 'absolute',
     backgroundColor: '#fff',
+    borderColor: "#EEEDED",
     width: '90%',
     shadowColor: '#000000',
     shadowRadius: 4,

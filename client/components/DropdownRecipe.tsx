@@ -8,7 +8,7 @@ interface Props {
     onSelect: (item: any) => void;
 }
 
-export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data}) => {
+export const DropdownRecipe: FC<Props> = ({ label , onSelect, data}) => {
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState<{id: string , name: string}>();
 
@@ -38,7 +38,7 @@ export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data
         <TouchableOpacity
           onPress={() => setVisible(false)}
         >
-          <Text style={styles.dropdownTitle}>Sélectionne une catégorie</Text>
+          <Text style={styles.dropdownTitle}>{label}</Text>
           <View style={styles.dropdown}>
             <FlatList
               data={data}
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     color: "#EEEDED",
     borderColor: "#EEEDED",
+    
   },
   buttonText: {
     flex: 1,
@@ -99,13 +100,13 @@ const styles = StyleSheet.create({
     marginVertical: 150,
     position: 'absolute',
     backgroundColor: '#fff',
-    borderColor: "#EEEDED",
     width: '90%',
     shadowColor: '#000000',
     shadowRadius: 4,
     shadowOffset: { height: 4, width: 0 },
     shadowOpacity: 0.5,
     borderWidth: 1,
+    borderColor: "#EEEDED",
     borderRadius: 5,
     alignSelf: "center",
     elevation: 20
