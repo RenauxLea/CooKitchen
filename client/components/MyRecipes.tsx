@@ -159,7 +159,7 @@ export const MyRecipes = () => {
         );
       }
   )
-  })
+  },[])
   
   return (
     <SafeAreaView>

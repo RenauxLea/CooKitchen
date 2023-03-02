@@ -34,7 +34,7 @@ export const CreateIngredient = () => {
     }
    
     const categories = [ 
-        {name : "légume", id: "vegetable"} ,
+        {name: "légume", id: "vegetable"} ,
         {name: "fruit", id:"fruit"},
         {name: "poisson", id:"fish"},
         {name: "viande", id: "meat"},
@@ -66,7 +66,7 @@ export const CreateIngredient = () => {
           );
         });
       };
-
+      console.log('data')
    return (
     <SafeAreaView>
         <ScrollView  

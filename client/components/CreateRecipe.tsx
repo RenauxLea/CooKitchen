@@ -74,7 +74,7 @@ export const CreateRecipe = () => {
         );
       }
       ); 
-    })
+    },[])
     
     const ingredientsByCategories = IngredientsByCategory(listIngredientBdd)
 
