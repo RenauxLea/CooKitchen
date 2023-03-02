@@ -9,28 +9,34 @@ import {
     View } from 'react-native';
 import DatePicker from "react-native-date-picker";
 import SelectDropdown from "react-native-select-dropdown";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
-import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
-import { DropdownUnit } from "./DropdownUnit";
+import { IngredientType } from "../types/ingredient";
+import { getCategoryIngredientByName } from "./Ingredient";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
-export const CreateIngredient = () => { 
-    const [name, setName] = React.useState('');
-    const [quantity, setQuantity] = React.useState('');
+export const EditIngredient = () => { 
+    const route : RouteProp<{ params: { ingredient : IngredientType } }, 'params'> = useRoute();
+    const {ingredient} = route.params;
+
+    const id = ingredient.id; 
+    const [name, setName] = React.useState(ingredient.name);
+    const [quantity, setQuantity] = React.useState(ingredient.quantity);
     const [date, setDate] = React.useState(new Date());
     const [visibleDate, setVisibleDate] = React.useState(false); 
     const [open, setOpen] = React.useState(false);
-    const [category , setCategory] = React.useState("");
-    const [unit, setUnit] = React.useState("");
-    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
+    const [category , setCategory] = React.useState(ingredient.category);
+    const [unit, setUnit] = React.useState(ingredient.unit);
+
+    const categoryName = getCategoryIngredientByName(category);
+    console.log('id = '+category+" / Name = "+categoryName);
 
     const navigation = useNavigation();
-   
+
     let expirationDate = ""
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
@@ -49,27 +55,31 @@ export const CreateIngredient = () => {
 
     const units = [ "g", "cl", "aucune"];
     
-    let register_ingredients = () => {
+    
+    let update_ingredients = () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
         //@ts-expect-error
         db.transaction(function (tx) {
+          console.log('MISE A JOUR WINDOW : ');
+            
           tx.executeSql(
-            'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
-            [name, quantity, selectedCategory?.id, unit, expirationDate],
+            'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
+            [name, quantity, category, unit, expirationDate],
             (tx : any, results: any) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
-                console.log('register OK');
+                console.log('Votre appareil apple à bien été mise à jour');
 
-              } else console.log('Registration Failed');
+              } else console.log('BLUE SCREEN');
             }
           );
         });
       };
-      console.log('data')
+    
+
    return (
     <SafeAreaView>
         <ScrollView  
@@ -77,8 +87,7 @@ export const CreateIngredient = () => {
         style={styles.container}
         > 
             <View  >
-                <Text style={styles.title}>Nouvel ingrédient</Text>
-                <Text style={styles.subtitle}>Créé un ingrédient pour l'ajouter dans ton garde-manger</Text>
+                <Text style={styles.title}>Modification ingrédient</Text>
                 <Text style={styles.text}>Nom:</Text>
                 <TextInput
                     placeholder="navet"
@@ -88,26 +97,66 @@ export const CreateIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <DropdownIngredientCategories
-                    label="Sélectionne une catégorie"  
-                    onSelect={setSelectedCategory} data={categories}
-                />
+                <SelectDropdown
+                    data={categories}
+                    defaultValue= {categories.find((e)=> e.id === category)}
+                    onSelect={(selectedItem) => {
+                        setCategory(selectedItem.id)
+                    }}
+                    onChangeSearchInputText={() => {}}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem.name
+                    }}
+                    rowTextForSelection={(item) => {
+                        return item.name
+                    }}
+                    renderDropdownIcon={ () => 
+                          <Icon name="chevron-down"  size={25} color="#000000" />
+                    }
+                    dropdownIconPosition={'right'}
+
+                    defaultButtonText={'Sélectionne une catégorie'}
+                    buttonStyle={styles.dropdownBtnStyle}
+                    buttonTextStyle={styles.dropdownBtnTxtStyle}
+                    dropdownStyle={styles.dropdownDropdownStyle}
+                    rowStyle={styles.dropdownRowStyle}
+                    rowTextStyle={styles.dropdownRowTxtStyle}
+                /> 
 
                 <Text style={styles.text}>Quantité:</Text>
                 <TextInput
                     style={styles.input}
                     keyboardType='numeric'
                     onChangeText={number => setQuantity(number)}
-                    value={quantity}
+                    value={String(quantity)}
                     placeholder='10'
                     maxLength={10}
                 />
                 <Text style={styles.text}>Unité:</Text>
-                <DropdownUnit
-                    label="Sélectionne une unité"  
-                    onSelect={setUnit} data={units}
-                />
-              
+                <SelectDropdown
+                    data={units}
+                    defaultValue={unit}
+                    defaultButtonText={'Sélectionne une unité'}
+                    buttonStyle={styles.dropdownBtnStyle}
+                    buttonTextStyle={styles.dropdownBtnTxtStyle}
+                    dropdownStyle={styles.dropdownDropdownStyle}
+                    rowStyle={styles.dropdownRowStyle}
+                    rowTextStyle={styles.dropdownRowTxtStyle}
+                    renderDropdownIcon={ () => 
+                        <Icon name="chevron-down"  size={25} color="#000000" />
+                    }
+                    dropdownIconPosition={'right'}
+                    onSelect={(selectedItem) => {
+                        setUnit(selectedItem)
+                    }}
+                    onChangeSearchInputText={() => {}}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem
+                    }}
+                    rowTextForSelection={(item) => {
+                        return item
+                    }}
+                /> 
 
                 <Text style={styles.text}>Date de péremption:</Text>
                 <Text style={styles.textDate} >
@@ -142,14 +191,13 @@ export const CreateIngredient = () => {
                 
             </View>
         </ScrollView>
-        {/* <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}> */}
         <Pressable onPress={() => 
             {
-                register_ingredients(),
-                navigation.navigate('Garde-manger' as never)
-            }
+                update_ingredients(),
+                navigation.navigate('Ingredient' as never, {ingredient} as never)} 
+            
             } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
+          <Text style={styles.buttonPrimaryText}>Modifier l'ingrédient</Text>
         </Pressable>
     </SafeAreaView> 
    );
@@ -168,18 +216,21 @@ const styles = StyleSheet.create({
         color: '#FFCC29',
         paddingTop: 20,
     },
+
     subtitle: {
         fontSize: 20,
         fontWeight: '400',
         color: "#000000",
        
     },
+    
     text: {
         fontSize: 16,
         fontWeight: '400',
         color: "#000000",
         paddingTop: 20,
     },
+
     input: {
         backgroundColor: 'white',
         marginTop: 10,
@@ -187,6 +238,37 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5
     },
+    
+    dropdownBtnStyle: {
+        width: '100%',
+        height: 50,
+        backgroundColor: 'white',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#000000",
+        marginTop: 10,
+    },
+
+    dropdownBtnTxtStyle: {
+        color: "#000000", 
+        textAlign: 'left',
+        fontSize: 14
+    },
+    
+    dropdownDropdownStyle: {
+        backgroundColor: 'white'
+    },
+    
+    dropdownRowStyle: {
+        backgroundColor: 'white', 
+        borderBottomColor: '#C5C5C5'
+    },
+    
+    dropdownRowTxtStyle: {
+        color: '#000000', 
+        textAlign: 'left'
+    },
+
     button: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -213,7 +295,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonPrimaryText: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: "500",
         color:  "#000000",
     }

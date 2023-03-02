@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   FlatList,
@@ -42,10 +42,27 @@ const recipesFixtures  : RecipeType[]= [
       },
       {
         id : "2",
+        name : "beurre salé et noix de coco",
+        quantityForRecipe: "30",
+        
+      },  {
+        id : "3",
+        name : "café",
+        quantityForRecipe: "150",
+        unit : "g"
+      },
+      {
+        id : "4",
         name : "beurre",
         quantityForRecipe: "30",
         
-      }
+      },  {
+        id : "5",
+        name : "café",
+        quantityForRecipe: "150",
+        unit : "g"
+      },
+      
     ],
     description: "C'est trop bon les tiramisu !!"
   },
@@ -76,13 +93,15 @@ const renderItem =  ({item } : any) =><RecipeCard key={item.key} recipe={item} /
 
 export const MyRecipes = () => {
 
-var db = openDatabase({ name: 'ingredientDatabase.db'});
+  var db = openDatabase({ name: 'ingredientDatabase.db'});
   
+  let [listRecipe, setListRecipe] = useState<RecipeType[]>([])
 
   const navigation = useNavigation();
 
   useEffect(() => {
     //@ts-expect-error
+    // Création si empty
     db.transaction(function (txn) {
       txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
@@ -100,40 +119,48 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
         );
       }
     )
+
+    //read liste
+    //@ts-expect-error
     db.transaction(function (txn) {
+      
       txn.executeSql(
         'SELECT * FROM recipes',
         [],
         (tx : any, results : any) => {
           var list = results.rows.item;
-          //var listSQL = []
+          var listSQL : RecipeType[] = []
           
           for (let i = 0; i < results.rows.length; ++i){
-            let type = JSON.parse(list(i)['linkedIngredients'])
-            for (let j = 0; j < type.length; j++) {
-              const element = type[j];
-              console.log(element['name']);
+            let listIngredientsBdd = JSON.parse(list(i)['linkedIngredients'])
+            let getDataIngredients = []
+            for (let j = 0; j < listIngredientsBdd.length; j++) {
+              const ingredientBdd = listIngredientsBdd[j];
+              getDataIngredients.push(ingredientBdd)
             }
             
-            /*
+            
             var sqlObj = {
                 id: list(i)['id'],
                 name: list(i)['name'],
+                isFavorite : list(i)['favorite'],
+                preparationTime : list(i)['preparationTime'],
+                cookingTime: list(i)['cookingTime'],
                 quantity: list(i)['quantity'],
-                category: list(i)['category'],
-                expiration: list(i)['expiration'],
+                listIngredients: getDataIngredients,
+                description : list(i)['description']
               }
               listSQL.push(sqlObj)
-              */
+              
             }
            
-            //setListItem(listSQL)
+            setListRecipe(listSQL)
           }
         
         );
       }
   )
-  })
+  },[])
   
   return (
     <SafeAreaView>
@@ -143,11 +170,11 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
           Quelle recette te ferait envie aujourd'hui ?
         </Text> 
       
-        {recipesFixtures.length === 0 ? 
+        {listRecipe.length === 0 ? 
         <EmptyDataRecipe/>
         :
         <FlatList
-        data={recipesFixtures}
+        data={listRecipe}
         renderItem={renderItem}
         initialNumToRender={4}
         keyExtractor={(item :any) => item.id}
@@ -185,7 +212,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#000000",
     fontWeight: "500",
     alignSelf: "center",

@@ -13,13 +13,13 @@ export const AdminButton = () => {
 
     let update_bdd = () => {
         console.log('AIE !');
-        
+        //@ts-expect-error
         db.transaction(function (tx) {
             tx.executeSql(
                 // mettre la requete SQL pour la bdd
                 'ALTER TABLE recipes ADD COLUMN favorite INTERGER',
                 [],
-                (tx, results) => {
+                (tx :any, results:any) => {
                     console.log("La base virale VPS a été mise à jour !!!");
             }
           );
@@ -28,12 +28,13 @@ export const AdminButton = () => {
       let delete_bdd= () => {
         console.log('EXTERMINATE ! EXTERMINATE ! EXTERMINATE !');
 
+        //@ts-expect-error
         db.transaction(function (tx) {
             tx.executeSql(
                 // Supprimer entièrement la table
                 'DROP TABLE recipes',
                 [],
-                (tx, results) => {
+                (tx:any, results:any) => {
                     console.log("C'est bon ! on l'a descendu la table !");
             }
           );
@@ -45,12 +46,13 @@ export const AdminButton = () => {
         
         return;
         console.log('Je suis ta requette perso ^^');
+        //@ts-expect-error
         db.transaction(function (txn) {
 
             txn.executeSql(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='test'",
                 [],
-                function (tx, res) {
+                function (tx :any, res:any) {
                     console.log(res);
 
                   if (res.rows.length == 0) {

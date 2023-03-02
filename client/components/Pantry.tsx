@@ -14,48 +14,48 @@ export const ingredientFixtures : IngredientType[]= [
   {
     id: "1",
     name: "maïs",
-    quantity: 4,
+    quantity: "4",
     category: "cereal",
     // expiration: new Date(),
   },
   {
     id: "2",
     name: "banane",
-    quantity: 6,
+    quantity: "6",
     category: "fruit",
     expiration:  moment(new Date()).format("DD-MM-YYYY"),
   },
   {
     id: "3",
     name: "poivrons",
-    quantity: 200,
+    quantity: "200",
     unit: "g",
     category: "vegetable",
   },
   {
     id: "4",
     name: "beurre",
-    quantity: 200,
+    quantity: "200",
     unit: "g",
     category: "milkProduct",
   },
   {
     id: "5",
     name: "steak",
-    quantity: 500,
+    quantity: "500",
     unit: "g",
     category: "meat",
   },
   {
     id: "6",
     name: "vin blanc",
-    quantity: 150,
+    quantity: "150",
     unit: "cl",
   },
   {
     id: "7",
     name: "saumon",
-    quantity: 50,
+    quantity: "50",
     unit: "g",
     category: "fish"
   },
@@ -112,7 +112,7 @@ export const Pantry = () => {
         );
       }
       ); 
-    })
+    },[])
   
   const navigation = useNavigation();
   // const [searchValue, setSearchValue] = useState(""); // POUR LA RECHERCHE
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#000000",
     fontWeight: "500",
     alignSelf: "center",

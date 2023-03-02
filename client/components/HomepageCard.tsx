@@ -34,7 +34,7 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
             );
           }
         )
-    })
+    },[])
     const navigation = useNavigation();
 
     return (

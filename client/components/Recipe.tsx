@@ -19,6 +19,10 @@ import IsFavorite from "../assets/images/isFavorite.svg";
 import IsNotFavorite  from "../assets/images/isNotFavorite.svg";
 import FourImage from "../assets/images/four.svg";
 import ClockImage  from "../assets/images/clock.svg";
+
+import { openDatabase } from "react-native-sqlite-storage";
+
+var db = openDatabase({ name: 'ingredientDatabase.db'});
   
 
 const renderItem =  ({item } : any) => {
@@ -51,6 +55,20 @@ export const Recipe = () => {
     React.useEffect(() => {
         getFavoriteIcon(isFavorite)
     }, [isFavorite])
+
+    const deleteRecipe = async() => {
+        console.log(recipe.name);
+            await (await db).transaction(function (txn) {
+                txn.executeSql(
+                    // Supprimer entièrement la table
+                    'DELETE FROM recipes WHERE id = '+recipe.id+'',
+                    [],
+                    (txn, results) => {
+                        console.log("Le conseil a fauté et leurs sentence et irrévocable");
+                }
+              );
+            });
+    }
     
    return (
     <SafeAreaView>
@@ -102,7 +120,7 @@ export const Recipe = () => {
             <Text style={styles.description}>{recipe.description} </Text>
 
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Nouvelle Recette' as never)} 
+                onPress={() => navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)} 
                 style={styles.prepareButton}
             >
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
@@ -113,7 +131,10 @@ export const Recipe = () => {
                 <Text style={styles.buttonText}>Modifier cette recette</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Mes Recettes' as never)} 
+                onPress={async() => {
+                    await deleteRecipe(),
+                    navigation.navigate('Mes Recettes' as never)
+                }} 
                 style={styles.deleteButton}>
                 <Text style={styles.deleteButtonText}>Supprimer cette recette</Text>
             </TouchableOpacity> 
@@ -209,7 +230,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         textAlign: "center",
-        fontWeight: "400",
+        fontWeight: "500",
         fontSize: 16,
         color:"#000000",
     },
@@ -235,7 +256,7 @@ const styles = StyleSheet.create({
     },
     deleteButtonText: {
         textAlign: "center",
-        fontWeight: "400",
+        fontWeight: "500",
         fontSize: 16,
         color:"#F21616",
     },
