@@ -41,7 +41,7 @@ const App = () => {
         <Stack.Screen name="Nouvelle Recette" component={CreateRecipe} />
         <Stack.Screen name="Recette" component={Recipe} />
         <Stack.Screen name="Recette Préparée" component={Preparation} />
-        <Stack.Screen name="Edit Ingrédient" component={EditIngredient} />
+        <Stack.Screen name="Modifier Ingrédient" component={EditIngredient} />
         <Stack.Screen name="Admin button" component={AdminButton} />
 
       </Stack.Navigator>

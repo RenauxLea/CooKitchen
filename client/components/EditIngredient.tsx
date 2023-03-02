@@ -16,7 +16,6 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import moment from "moment";
 import { IngredientType } from "../types/ingredient";
 import { getCategoryIngredientByName } from "./Ingredient";
-import { getCategoryName } from "./RecipeCard";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -24,8 +23,6 @@ export const EditIngredient = () => {
     const route : RouteProp<{ params: { ingredient : IngredientType } }, 'params'> = useRoute();
     const {ingredient} = route.params;
 
-    console.log(ingredient);
-    
     const id = ingredient.id; 
     const [name, setName] = React.useState(ingredient.name);
     const [quantity, setQuantity] = React.useState(ingredient.quantity);
@@ -91,7 +88,6 @@ export const EditIngredient = () => {
         > 
             <View  >
                 <Text style={styles.title}>Modification ingrédient</Text>
-                <Text style={styles.subtitle}>Modifié un ingrédient de votre garde-manger</Text>
                 <Text style={styles.text}>Nom:</Text>
                 <TextInput
                     placeholder="navet"
@@ -195,14 +191,13 @@ export const EditIngredient = () => {
                 
             </View>
         </ScrollView>
-        {/* <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}> */}
         <Pressable onPress={() => 
             {
                 update_ingredients(),
                 navigation.navigate('Garde-manger' as never)
             }
             } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
+          <Text style={styles.buttonPrimaryText}>Modifier l'ingrédient</Text>
         </Pressable>
     </SafeAreaView> 
    );
