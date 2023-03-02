@@ -101,12 +101,37 @@ export const CreateRecipe = () => {
         {name : "plus de 1h30", id: "more"},
     ]
 
+    // Modifié la qte d'un ingredient dans le tableau d'ingredient
+    const onChangeQuantityRecipe = (qte : string, id : string) => {
+        let getLinkedIngredients = linkedIngredients.find(element => id === element['id'])
+        console.log('getLink : ', getLinkedIngredients);
+        
+        /*
+        Une newListIngredient de type IngredientLinkedType[] = [] 
+        Faire une boucle de linkedIngredients as element
+            newQteIngredient =  {...element}
+            SI id === element['id'])
+                element doit remplacer ca qte actuel par celui qui lui fournit par l'utilisateur 'qte'
+                newQteIngredient.quantityForRecipe = qte
+            newListIngredient.push(newQteIngredient)
+
+        setLinkedIngredient(newListIngredient)
+
+        */
+        let this_array : IngredientLinkedType[] = linkedIngredients 
+        console.log(this_array);
+        setLinkedIngredients(this_array)
+        
+    }
+
     const renderItem =  ({item } : any) =>{
+
         return <LinkedIngredientCard 
             id={item.id} 
             name={item.name} 
             quantityForRecipe={item.quantityForRecipe}
             unit={item.unit}
+            onChangeQuantityRecipe={onChangeQuantityRecipe}
         />
     };
 

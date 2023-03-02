@@ -3,9 +3,10 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { IngredientLinkedType } from "../types/ingredient";
 import { firstLetterInUppercase } from "./utils/FirstLetterInUppercase";
 
-export const LinkedIngredientCard = (  ingredient : IngredientLinkedType)  => {
-    const [quantityRecipe, setQuantityRecipe] = React.useState("")
-
+export const LinkedIngredientCard = (ingredient : IngredientLinkedType  & {onChangeQuantityRecipe : (qte : string, id : string) => void})  => {
+    //const [quantityRecipe, setQuantityRecipe] = React.useState("")
+    console.log('ingredient : ',ingredient);
+    
     return (
         <View style={styles.item}>
             <View style={styles.information}>
@@ -14,8 +15,8 @@ export const LinkedIngredientCard = (  ingredient : IngredientLinkedType)  => {
                     <TextInput
                         style={styles.input}
                         keyboardType='numeric'
-                        onChangeText={number  => setQuantityRecipe(number)}
-                        value={quantityRecipe}
+                        onChangeText={number  => ingredient.onChangeQuantityRecipe(number,ingredient.id)}
+                        value={ingredient.quantityForRecipe}
                         placeholder='10'
                         maxLength={10}
                     />
@@ -63,3 +64,14 @@ const styles = StyleSheet.create({
         alignItems: "center"
     }  
 });
+
+
+type Test = {
+    id : string
+}
+
+const maVariable : Test = {id : 'lala'}
+
+type Test2 = Test & {name : number}
+
+const maVariable2 : Test2 = {id : 'test', name : 1}
