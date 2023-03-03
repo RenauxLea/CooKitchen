@@ -1,7 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
- 
 import React, {  useState, useEffect } from "react";
-import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
@@ -9,6 +7,8 @@ import { EmptyDataIngredient } from "./EmptyDataIngredient";
 import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 import moment from "moment";
+import SearchBar from "./SearchBar";
+import List from "./List";
 
 export const ingredientFixtures : IngredientType[]= [ 
   {
@@ -83,7 +83,11 @@ const getItemLayout = (data : any, index : number) => {
 
 
 export const Pantry = () => {
-  let [listItem, setListItem] = useState([])
+  const [listItem, setListItem] = useState<IngredientType[]>([])
+
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [clicked, setClicked] = useState(false);
+
   useEffect(() => {
     //@ts-expect-error
     db.transaction((tx : any) => {
@@ -104,7 +108,6 @@ export const Pantry = () => {
             }
             listSQL.push(sqlObj)
           }
-          // @ts-expect-error
           setListItem(listSQL)
           
         }
@@ -115,84 +118,31 @@ export const Pantry = () => {
     },[])
   
   const navigation = useNavigation();
-  // const [searchValue, setSearchValue] = useState(""); // POUR LA RECHERCHE
-  //  const [ingredients, setIngredients] = useState(ingredientFixtures)
-  // const [arrayholder, setArrayholder] = useState(ingredientFixtures)
- 
-  // const searchFunction = (text :string)  => {
-  //   const updatedData = arrayholder.filter((item) => {
-  //     const item_data = `${item.name.toUpperCase()})`;
-  //     const text_data = text.toUpperCase();
-  //     return item_data.indexOf(text_data) > -1;
-  //   });
-  //   setIngredients(updatedData)
-  //   setSearchValue(text)
-  // };
-
- 
 
   return (
     <SafeAreaView> 
       <View style={styles.container}> 
-           <Text style={styles.title}>
-                Garde-manger
-            </Text>  
-            <Text style={styles.subtitle}>
-                Liste les ingrédients présents dans ta cuisine
-            </Text>
-          {/* <TextInput 
-            style={styles.input}  
-            editable
-            placeholder='Salade, beurre, oeufs ...'
-            maxLength={40}
-            placeholderTextColor="black"
-            // value={searchValue} // POUR LA RECHERCHE
-            // onChangeText={searchFunction}
-            
-          > */
-          }
-          {
-          /* </TextInput>     */
-          }
-          
-        {/* {ingredients.length === 0 ? <EmptyData/>: // POUR LA RECHERCHE
-          <FlatList
-            data={ingredients}
-            renderItem={renderItem}
-            initialNumToRender={4}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
-            maxToRenderPerBatch={5}
-            ListEmptyComponent={<EmptyData/>}
-            style= {styles.flatList}
-            />
-       } */}
+          <Text style={styles.title}>
+              Garde-manger
+          </Text>  
+          <Text style={styles.subtitle}>
+              Liste les ingrédients présents dans ta cuisine
+          </Text>
+         
+          <SearchBar
+            searchPhrase={searchPhrase}
+            setSearchPhrase={setSearchPhrase}
+            clicked={clicked}
+            setClicked={setClicked}
+          />
         
-        {/*ingredientFixtures.length === 0 ? <EmptyData/>:
-          <FlatList
-            data={ingredientFixtures}
-            renderItem={renderItem}
-            initialNumToRender={4}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
-            maxToRenderPerBatch={5}
-            ListEmptyComponent={<EmptyDataIngredient/>}
-            style= {styles.flatList}
-            />
-       */}
-
-        {listItem.length === 0 ? <EmptyDataIngredient/>:
-          <FlatList
+        {listItem.length === 0 ? <EmptyDataIngredient/>: 
+          <List
+            searchPhrase={searchPhrase}
             data={listItem}
-            renderItem={renderItem}
-            initialNumToRender={4}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
-            maxToRenderPerBatch={5}
-            ListEmptyComponent={<EmptyDataIngredient/>}
-            style= {styles.flatList}
-            />
-       }
+            setClicked={setClicked}
+          />
+        }
 
         <TouchableOpacity onPress={() => navigation.navigate('Nouvel Ingrédient' as never)} style={styles.button}>
           <Text style={styles.buttonText}>Ajouter un ingrédient</Text>
@@ -223,14 +173,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     alignSelf: "center",
   },
-
-  flatList: {
-    height: "70%",
-    marginBottom: 20,
-  },
-
-  
-
   title: {
     fontSize: 32,
     fontWeight: '800',
