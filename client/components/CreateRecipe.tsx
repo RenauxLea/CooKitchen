@@ -47,11 +47,12 @@ export const CreateRecipe = () => {
     let [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
     useEffect( () => {
    
-    async () =>(await db).transaction((tx) => {
+    //@ts-expect-error    
+    db.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
         [],
-        (tx , results ) => {
+        (tx : Transaction , results : ResultSet ) => {
           const list = results.rows.item;
           let listSQL : IngredientType[]= []
           for (let i = 0; i < results.rows.length; ++i){
@@ -87,6 +88,7 @@ export const CreateRecipe = () => {
         {name : "entrée", id: "starter"} ,
         {name: "plat de résistance", id:"dish"},
         {name: "dessert", id:"dessert"},
+        {name: "autre", id: "other"}
     ]
 
     const preparationTimeData = [

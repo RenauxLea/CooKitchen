@@ -25,8 +25,9 @@ export const MyRecipes = () => {
 
   useEffect(() => {
     // Création si empty
-    
-    async () => (await db).transaction(function (txn) {
+  
+  //@ts-expect-error
+  db.transaction(function (txn) {
       txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
           [],
@@ -45,8 +46,8 @@ export const MyRecipes = () => {
     )
 
     //read liste
-    
-    async () => (await db).transaction(function (txn) {
+    //@ts-expect-error
+    db.transaction(function (txn) {
       
       txn.executeSql(
         'SELECT * FROM recipes',
@@ -87,6 +88,7 @@ export const MyRecipes = () => {
   )
   },[listRecipe])
   
+  console.log(listRecipe)
   return (
     <SafeAreaView>
       <View style={styles.container}>

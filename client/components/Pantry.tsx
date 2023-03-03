@@ -17,8 +17,8 @@ export const Pantry = () => {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    
-    async () => (await db).transaction((tx : Transaction) => {
+    //@ts-expect-error
+    db.transaction((tx : Transaction) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
         [],

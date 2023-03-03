@@ -61,7 +61,7 @@ export const Recipe = () => {
 
     const deleteRecipe = async() => {
         console.log(recipe.name);
-            await (await db).transaction(function (txn) {
+            (await db).transaction(function (txn) {
                 txn.executeSql(
                     // Supprimer entièrement la table
                     'DELETE FROM recipes WHERE id = '+recipe.id+'',

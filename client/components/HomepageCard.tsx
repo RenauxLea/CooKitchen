@@ -17,8 +17,8 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
 
     
     useEffect( ()=>{
-      
-      async() => (await db).transaction(function (txn) {
+      //@ts-expect-error
+      db.transaction(function (txn) {
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
