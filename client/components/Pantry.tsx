@@ -1,86 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import React, {  useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
 import { EmptyDataIngredient } from "./EmptyDataIngredient";
-import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
-import moment from "moment";
 import SearchBar from "./SearchBar";
 import  { ListIngredients } from "./ListIngredients";
 
-export const ingredientFixtures : IngredientType[]= [ 
-  {
-    id: "1",
-    name: "maïs",
-    quantity: "4",
-    category: "cereal",
-    // expiration: new Date(),
-  },
-  {
-    id: "2",
-    name: "banane",
-    quantity: "6",
-    category: "fruit",
-    expiration:  moment(new Date()).format("DD-MM-YYYY"),
-  },
-  {
-    id: "3",
-    name: "poivrons",
-    quantity: "200",
-    unit: "g",
-    category: "vegetable",
-  },
-  {
-    id: "4",
-    name: "beurre",
-    quantity: "200",
-    unit: "g",
-    category: "milkProduct",
-  },
-  {
-    id: "5",
-    name: "steak",
-    quantity: "500",
-    unit: "g",
-    category: "meat",
-  },
-  {
-    id: "6",
-    name: "vin blanc",
-    quantity: "150",
-    unit: "cl",
-  },
-  {
-    id: "7",
-    name: "saumon",
-    quantity: "50",
-    unit: "g",
-    category: "fish"
-  },
-
-
-]
 
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
-
-
-// const ingredientFixtures  : IngredientType[]= []
-
-const renderItem =  ({item } : any) =><IngredientCard key={item.key} ingredient={item} /> ;
-
-const keyExtractor = (item :any) => item.id;
-
-const ITEM_HEIGHT = 65; // fixed height of item component
-const getItemLayout = (data : any, index : number) => {
-  return {
-    length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * data.length,
-    index,
-  };
-};
-
 
 export const Pantry = () => {
   const [listItem, setListItem] = useState<IngredientType[]>([])
@@ -143,11 +72,11 @@ export const Pantry = () => {
             setClicked={setClicked}
           />
         }
-
+      <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
         <TouchableOpacity onPress={() => navigation.navigate('Nouvel Ingrédient' as never)} style={styles.button}>
           <Text style={styles.buttonText}>Ajouter un ingrédient</Text>
         </TouchableOpacity>
-
+      </View>
       </View> 
             
     </SafeAreaView>
@@ -164,8 +93,11 @@ const styles = StyleSheet.create({
     elevation: 8,
     backgroundColor: "#FFCC29",
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    marginTop: 30,
+    bottom: 0
   },
   buttonText: {
     fontSize: 16,

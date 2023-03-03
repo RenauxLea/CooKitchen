@@ -56,8 +56,9 @@ export const ListRecipes = ({ searchPhrase, setClicked, data }: ListProps) => {
 const styles = StyleSheet.create({
   list__container: {
     marginBottom: 20,
-    height: "55%",
+    height: "65%",
     width: "100%",
+    paddingBottom: 70
   },
   item: {
     margin: 30,

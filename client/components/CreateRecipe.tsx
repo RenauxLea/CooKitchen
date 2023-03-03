@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
     FlatList,
-    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -9,7 +8,6 @@ import {
     TextInput,
     View,
  } from 'react-native';
-import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
@@ -18,7 +16,7 @@ import { IngredientLinkedType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
-import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -189,7 +187,7 @@ export const CreateRecipe = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View  >
+            <View style={styles.containerForm} >
                 <Text style={styles.title}>Nouvelle recette</Text>
                 <Text style={styles.subtitle}>Créé une nouvelle recette pour l’ajouter à la liste de tes recettes</Text>
                 <Text style={styles.text}>Nom:</Text>
@@ -202,7 +200,7 @@ export const CreateRecipe = () => {
 
                 <Text style={styles.text}>Catégorie:</Text>
 
-                <DropdownIngredientCategories 
+                <DropdownRecipe 
                     label={"Sélectionne une catégorie"} 
                     data={categories} 
                     onSelect={setCategory}
@@ -293,14 +291,16 @@ export const CreateRecipe = () => {
                 
         </View>
         </ScrollView>
-        <Pressable onPress={() => 
-            {
-                get_data()
-                //navigation.navigate('Mes Recettes' as never)
-            }
-            } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
-        </Pressable>  
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+            <TouchableOpacity onPress={() => 
+                {
+                    get_data(),
+                    navigation.navigate('Mes Recettes' as never)
+                }
+                } style={styles.buttonPrimary}>
+            <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
+            </TouchableOpacity> 
+        </View> 
     </SafeAreaView> 
    );
 }
@@ -309,8 +309,9 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
-        marginBottom: 20,
-        height: "85%",  
+    },
+    containerForm: {
+        paddingBottom: 100,
     },
     title: {
         fontSize: 32,
@@ -382,16 +383,18 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         paddingHorizontal: 12,
-        marginHorizontal: 10,
-        display: "flex",
-        alignItems: "center",
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0
+       
     },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
+        textAlign: "center"
     },
     
      

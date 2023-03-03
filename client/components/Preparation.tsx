@@ -33,7 +33,6 @@ export const Preparation = () => {
                 }
             </View>
         </ScrollView>
-        <Root>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
           <TouchableOpacity 
                 onPress={() => 
@@ -59,7 +58,6 @@ export const Preparation = () => {
                 <Text style={styles.buttonText}>Aller au garde-manger</Text>
             </TouchableOpacity> 
         </View>
-        </Root>
     </View>
     );
 }

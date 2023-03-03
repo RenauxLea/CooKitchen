@@ -8,86 +8,10 @@ import {
     View,
   } from 'react-native';
 import { EmptyDataRecipe } from "./EmptyDataRecipe";
-import { RecipeCard } from "./RecipeCard";
 import { RecipeType } from "../types/recipe";
 import { openDatabase } from "react-native-sqlite-storage";
 import SearchBar from "./SearchBar";
 import { ListRecipes } from "./ListRecipes";
-
-const recipesFixtures  : RecipeType[]= [
-  {
-    id : "1",
-    name: "Pizza avec du fromage et du bacon",
-    isFavorite: true,
-    category:  "main" ,
-    preparationTime : "30",
-    cookingTime : "45",
-    quantity: "4",
-    description : "Attention à ne pas la bruler !",
-    listIngredients: []
-  },
-  {
-    id : "2",
-    name: "Tiramisu",
-    isFavorite: false,
-    category:  "dessert" ,
-    preparationTime : "10",
-    cookingTime : "25",
-    quantity: "1",
-    listIngredients: [
-      {
-        id : "1",
-        name : "café",
-        quantityForRecipe: "150",
-        unit : "g"
-      },
-      {
-        id : "2",
-        name : "beurre salé et noix de coco",
-        quantityForRecipe: "30",
-        
-      },  {
-        id : "3",
-        name : "café",
-        quantityForRecipe: "150",
-        unit : "g"
-      },
-      {
-        id : "4",
-        name : "beurre",
-        quantityForRecipe: "30",
-        
-      },  {
-        id : "5",
-        name : "café",
-        quantityForRecipe: "150",
-        unit : "g"
-      },
-      
-    ],
-    description: "C'est trop bon les tiramisu !!"
-  },
-  {
-    id : "3",
-    name: "recette",
-    isFavorite: true,
-    preparationTime : "10",
-    cookingTime : "25",
-    quantity: "1",
-    listIngredients: []
-  },
-  {
-    id : "4",
-    name: "entrée",
-    category:"entree",
-    isFavorite: true,
-    preparationTime : "10",
-    cookingTime : "25",
-    quantity: "3",
-    listIngredients: []
-  }
-
-]
 
 export const MyRecipes = () => {
 
@@ -186,9 +110,11 @@ export const MyRecipes = () => {
           />
         }
 
-        <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
-          <Text style={styles.buttonText}>Ajouter une recette</Text>
-        </TouchableOpacity>
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+          <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
+            <Text style={styles.buttonText}>Ajouter une recette</Text>
+          </TouchableOpacity>
+        </View>
 
       </View>  
     
@@ -202,16 +128,15 @@ const styles = StyleSheet.create({
       color: "#FFFFFF",
       paddingHorizontal: 24,
   },
-  flatList: {
-    height: "68%",
-    marginBottom: 20,
-  },
   button: {
     elevation: 8,
     backgroundColor: "#FFCC29",
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    marginTop: 30,
+    bottom: 0
   },
   buttonText: {
     fontSize: 16,
