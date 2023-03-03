@@ -220,8 +220,8 @@ export const EditRecipe = () => {
         style={styles.container}
         > 
             <View  >
-                <Text style={styles.title}>Nouvelle recette</Text>
-                <Text style={styles.subtitle}>Créé une nouvelle recette pour l’ajouter à la liste de tes recettes</Text>
+                <Text style={styles.title}>Modification recette</Text>
+                <Text style={styles.subtitle}>Modifier la recette</Text>
                 <Text style={styles.text}>Nom:</Text>
                 <TextInput
                     placeholder="gratin dauphinois"
@@ -329,7 +329,7 @@ export const EditRecipe = () => {
                 navigation.navigate('Mes Recettes' as never)
             }
             } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
+          <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
         </Pressable>  
     </SafeAreaView> 
    );
