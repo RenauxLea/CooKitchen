@@ -10,7 +10,7 @@ import {
     View,
  } from 'react-native';
 import SelectDropdown from "react-native-select-dropdown";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { IngredientsByCategory } from "./utils/IngredientsByCategory";
@@ -18,7 +18,8 @@ import { IngredientLinkedType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
-import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
+import { RecipeType } from "../types/recipe";
+import { Recipe } from "./Recipe";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -36,16 +37,19 @@ const FlatListItemSeparator = () => {
     );
   }
 
-export const CreateRecipe = () => {
+export const EditRecipe = () => {
+    const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
+    const {recipe} = route.params;
 
-    const [name, setName] = React.useState('');
-    const [category , setCategory] = React.useState("");
-    const [preparationTime  , setPreparationTime ] = React.useState("");
-    const [cookingTime   , setCookingTime  ] = React.useState("");
-    const [quantity, setQuantity] = React.useState('');
+    const id = recipe.id; 
+    const [name, setName] = React.useState(recipe.name);
+    const [category , setCategory] = React.useState(recipe.category);
+    const [preparationTime  , setPreparationTime ] = React.useState(recipe.preparationTime);
+    const [cookingTime   , setCookingTime  ] = React.useState(recipe.cookingTime);
+    const [quantity, setQuantity] = React.useState(recipe.quantity);
     //const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<{id : string; quantityRecipe : string}[]>([]);
-    const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
-    const [description, setDesciption]= React.useState("");
+    const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>(recipe.listIngredients);
+    const [description, setDesciption]= React.useState(recipe.description);
 
     let [listIngredientBdd, setListIngredientBdd] = useState([])
     useEffect(() => {
@@ -146,6 +150,8 @@ export const CreateRecipe = () => {
                         }
                     });
                     
+                    const test = selectedItems.find( id => id === isSelected)
+                    
                     ingredients.push( {
                             id : element['id'],
                             name : element['name'],
@@ -159,27 +165,51 @@ export const CreateRecipe = () => {
         )
         setLinkedIngredients(ingredients);
       };
+    
+    /*const getLinkedIngredientsInformation = () => {
+        let ingredients : IngredientLinkedType[] = [];
+        listIngredientBdd.forEach((element) => {
+            const isSelected = linkedIngredientIds.find( id => id === element['id'])
+                if(isSelected) {
+                    ingredients.push( {
+                            id : element['id'],
+                            name : element['name'],
+                            quantityForRecipe : element['quantity'],
+                            category : element['category'],
+                            unit : element['unit']
+                        }
+                    );
+               }
+            }   
+        )
+        setLinkedIngredients(ingredients);
+    }*/
+    
+    /*
+    React.useEffect(() => {
+        getLinkedIngredientsInformation()
+    }, [linkedIngredientIds])
+    */
 
     const get_data = () => {
-        let objDescription = JSON.stringify(linkedIngredients)
-
-        console.log('category : ',category,'\npreparationTime : ', preparationTime);
         
+        let objDescription = JSON.stringify(linkedIngredients)
+ 
         
         //@ts-expect-error
         db.transaction(function (tx) {
-            
             tx.executeSql(
-              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
+              'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
               [name, quantity, category, preparationTime, cookingTime, objDescription, description],
               (tx:any, results:any) => {
                 if (results.rowsAffected > 0) {
-                  console.log('Recette create');
+                  console.log('Recette Update');
   
                 } else console.log('Recette reject');
               }
             );
           });
+        
         
     }
 
@@ -202,7 +232,7 @@ export const CreateRecipe = () => {
 
                 <Text style={styles.text}>Catégorie:</Text>
 
-                <DropdownIngredientCategories 
+                <DropdownRecipe 
                     label={"Sélectionne une catégorie"} 
                     data={categories} 
                     onSelect={setCategory}
@@ -295,8 +325,8 @@ export const CreateRecipe = () => {
         </ScrollView>
         <Pressable onPress={() => 
             {
-                get_data()
-                //navigation.navigate('Mes Recettes' as never)
+                get_data(),
+                navigation.navigate('Mes Recettes' as never)
             }
             } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Créer la recette</Text>

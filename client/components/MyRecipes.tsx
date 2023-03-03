@@ -143,6 +143,7 @@ export const MyRecipes = () => {
             var sqlObj = {
                 id: list(i)['id'],
                 name: list(i)['name'],
+                category: list(i)['category'],
                 isFavorite : list(i)['favorite'],
                 preparationTime : list(i)['preparationTime'],
                 cookingTime: list(i)['cookingTime'],

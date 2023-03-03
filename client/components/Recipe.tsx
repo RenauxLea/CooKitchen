@@ -46,8 +46,10 @@ const getFavoriteIcon = (isFavorite: boolean) => {
 
 export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
-    const {recipe} = route.params;
+    const {recipe} = route.params; 
     
+    console.log(recipe);
+
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
     const [isFavorite, setIsFavorite] = React.useState(recipe.isFavorite)
@@ -126,7 +128,7 @@ export const Recipe = () => {
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Nouvelle Recette' as never)} 
+                onPress={() => navigation.navigate('Modifier Recette' as never, {recipe} as never)} 
                 style={styles.editButton}>
                 <Text style={styles.buttonText}>Modifier cette recette</Text>
             </TouchableOpacity>
