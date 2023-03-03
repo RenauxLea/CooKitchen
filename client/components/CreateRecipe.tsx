@@ -24,15 +24,22 @@ const FlatListItemSeparator = () => {
     return (
       <View
         style={{
-          height: 1,
-          width: "70%",
-          alignSelf: "center",
-          margin: 15,
+            height: 1,
+            width: "70%",
+            alignSelf: "center",
+            margin: 15,
           backgroundColor: "#FFCC29",
         }}
       />
-    );
+      );
   }
+  
+export const categories = [ 
+      {name: "entrée", id: "starter"} ,
+      {name: "plat de résistance", id:"dish"},
+      {name: "dessert", id:"dessert"},
+      {name: "autre", id: "other"}
+]
 
 export const CreateRecipe = () => {
 
@@ -84,12 +91,6 @@ export const CreateRecipe = () => {
     
     const navigation = useNavigation();
    
-    const categories = [ 
-        {name : "entrée", id: "starter"} ,
-        {name: "plat de résistance", id:"dish"},
-        {name: "dessert", id:"dessert"},
-        {name: "autre", id: "other"}
-    ]
 
     const preparationTimeData = [
         {name : "15min", id: "15"},
