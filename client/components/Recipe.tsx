@@ -26,7 +26,7 @@ import { IngredientLinkedType } from "../types/ingredient";
 var db = openDatabase({ name: 'ingredientDatabase.db'});
   
 
-const renderItem =  (item  : IngredientLinkedType) => {
+const renderItem =  (item  :any) => {
     return <View style={styles.ingredient}>
         <Text style={styles.quantity}>
             {item.quantityForRecipe} 
