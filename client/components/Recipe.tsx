@@ -64,7 +64,7 @@ export const Recipe = () => {
                     'DELETE FROM recipes WHERE id = '+recipe.id+'',
                     [],
                     (txn, results) => {
-                        console.log("Le conseil a fauté et leurs sentence et irrévocable");
+                        console.log("Le conseil a voté et leurs sentence et irrévocable");
                 }
               );
             });
