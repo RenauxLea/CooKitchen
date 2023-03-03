@@ -1,11 +1,11 @@
-import React, { FC, ReactElement, useRef, useState } from 'react';
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { FC, ReactElement, useState } from 'react';
+import { FlatList,  Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
     label: string;
     data: Array<{ name: string; id: string }>;
-    onSelect: (item: any) => void;
+    onSelect: (item: unknown) => void;
 }
 
 export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data}) => {
@@ -20,13 +20,13 @@ export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data
         setVisible(true);
     };
 
-    const onItemPress = (item : any): void => {
+    const onItemPress = (item :{ id: string; name: string; } | undefined): void => {
         setSelected(item);
         onSelect(item);
         setVisible(false);
     };
 
-    const renderItem = ({ item  }:any): ReactElement<any, any> => (
+    const renderItem = ( item  :any): ReactElement<any, any> => (
         <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
         <Text style={{color: "#000000"}}>{item.name}</Text>
         </TouchableOpacity>

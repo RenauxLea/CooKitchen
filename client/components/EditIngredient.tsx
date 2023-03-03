@@ -16,6 +16,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import moment from "moment";
 import { IngredientType } from "../types/ingredient";
 import { getCategoryIngredientByName } from "./Ingredient";
+import { TouchableOpacity } from "react-native-gesture-handler";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -56,19 +57,19 @@ export const EditIngredient = () => {
     const units = [ "g", "cl", "aucune"];
     
     
-    let update_ingredients = () => {
+    let update_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
-        //@ts-expect-error
-        db.transaction(function (tx) {
+       
+        (await db).transaction(function (tx) {
           console.log('MISE A JOUR WINDOW : ');
             
           tx.executeSql(
             'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
             [name, quantity, category, unit, expirationDate],
-            (tx : any, results: any) => {
+            (tx , results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('Votre appareil apple à bien été mise à jour');
@@ -86,7 +87,7 @@ export const EditIngredient = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View  >
+            <View  style={styles.containerForm}>
                 <Text style={styles.title}>Modification ingrédient</Text>
                 <Text style={styles.text}>Nom:</Text>
                 <TextInput
@@ -191,14 +192,16 @@ export const EditIngredient = () => {
                 
             </View>
         </ScrollView>
-        <Pressable onPress={() => 
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+        <TouchableOpacity onPress={() => 
             {
                 update_ingredients(),
                 navigation.navigate('Ingredient' as never, {ingredient} as never)} 
             
             } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Modifier l'ingrédient</Text>
-        </Pressable>
+        </TouchableOpacity>
+        </View>
     </SafeAreaView> 
    );
 }
@@ -207,8 +210,6 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
-        marginBottom: 20,
-        height: "85%",  
     },
     title: {
         fontSize: 32,
@@ -216,21 +217,20 @@ const styles = StyleSheet.create({
         color: '#FFCC29',
         paddingTop: 20,
     },
-
     subtitle: {
         fontSize: 20,
         fontWeight: '400',
-        color: "#000000",
-       
+        color: "#000000",   
     },
-    
+    containerForm: {
+        paddingBottom: 100
+    },
     text: {
         fontSize: 16,
         fontWeight: '400',
         color: "#000000",
         paddingTop: 20,
     },
-
     input: {
         backgroundColor: 'white',
         marginTop: 10,
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5
     },
-    
     dropdownBtnStyle: {
         width: '100%',
         height: 50,
@@ -288,16 +287,17 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         paddingHorizontal: 12,
-        marginHorizontal: 10,
-        display: "flex",
-        alignItems: "center",
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
     },
     buttonPrimaryText: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
+        textAlign: "center"
     }
      
 });
