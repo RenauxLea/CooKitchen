@@ -33,8 +33,6 @@ export const EditIngredient = () => {
     const [category , setCategory] = React.useState(ingredient.category);
     const [unit, setUnit] = React.useState(ingredient.unit);
 
-    const categoryName = getCategoryIngredientByName(category);
-    console.log('id = '+category+" / Name = "+categoryName);
 
     const navigation = useNavigation();
 
