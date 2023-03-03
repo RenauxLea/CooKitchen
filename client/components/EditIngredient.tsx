@@ -15,8 +15,9 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
 import { IngredientType } from "../types/ingredient";
-import { getCategoryIngredientByName } from "./Ingredient";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { DropdownUnit } from "./DropdownUnit";
+import { DropdownRecipe } from "./DropdownRecipe";
+import { categories, units } from "./CreateIngredient";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -32,6 +33,7 @@ export const EditIngredient = () => {
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState(ingredient.category);
     const [unit, setUnit] = React.useState(ingredient.unit);
+    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
 
 
     const navigation = useNavigation();
@@ -39,23 +41,9 @@ export const EditIngredient = () => {
     let expirationDate = ""
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
-    }
-   
-    const categories = [ 
-        {name: "légume", id: "vegetable"} ,
-        {name: "fruit", id:"fruit"},
-        {name: "poisson", id:"fish"},
-        {name: "viande", id: "meat"},
-        {name: "céréales", id: "cereal"},
-        {name: "produit laitier", id: "milkProduct"},
-        {name: "aliment sucré", id: "sweetProduct"},
-        {name: "autre", id: "other"},
-    ]
-
-    const units = [ "g", "cl", "aucune"];
-    
-    
-    let update_ingredients = async () => {
+    }   
+  
+    const update_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
@@ -66,7 +54,7 @@ export const EditIngredient = () => {
             
           tx.executeSql(
             'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
-            [name, quantity, category, unit, expirationDate],
+            [name, quantity, selectedCategory?.id, unit, expirationDate],
             (tx , results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
@@ -96,31 +84,10 @@ export const EditIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <SelectDropdown
-                    data={categories}
-                    defaultValue= {categories.find((e)=> e.id === category)}
-                    onSelect={(selectedItem) => {
-                        setCategory(selectedItem.id)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item.name
-                    }}
-                    renderDropdownIcon={ () => 
-                          <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-
-                    defaultButtonText={'Sélectionne une catégorie'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                /> 
+                <DropdownRecipe
+                    label="Sélectionne une catégorie"  
+                    onSelect={setSelectedCategory} data={categories}
+                />
 
                 <Text style={styles.text}>Quantité:</Text>
                 <TextInput
@@ -132,31 +99,11 @@ export const EditIngredient = () => {
                     maxLength={10}
                 />
                 <Text style={styles.text}>Unité:</Text>
-                <SelectDropdown
-                    data={units}
-                    defaultValue={unit}
-                    defaultButtonText={'Sélectionne une unité'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                    renderDropdownIcon={ () => 
-                        <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-                    onSelect={(selectedItem) => {
-                        setUnit(selectedItem)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item
-                    }}
-                /> 
-
+                <DropdownUnit
+                    label="Sélectionne une unité"  
+                    onSelect={setUnit} data={units}
+                />
+                
                 <Text style={styles.text}>Date de péremption:</Text>
                 <Text style={styles.textDate} >
                     {visibleDate ? expirationDate : "Aucune date sélectionnée"} 
