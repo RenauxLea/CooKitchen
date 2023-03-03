@@ -9,7 +9,7 @@ import {
   } from 'react-native';
 import { EmptyDataRecipe } from "./EmptyDataRecipe";
 import { RecipeType } from "../types/recipe";
-import { openDatabase } from "react-native-sqlite-storage";
+import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import SearchBar from "./SearchBar";
 import { ListRecipes } from "./ListRecipes";
 
@@ -24,13 +24,13 @@ export const MyRecipes = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    //@ts-expect-error
     // Création si empty
-    db.transaction(function (txn) {
+    
+    async () => (await db).transaction(function (txn) {
       txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
           [],
-          function (tx :any, res: any) {
+          function (tx : Transaction, res: ResultSet) {
             if (res.rows.length == 0) {
               txn.executeSql('DROP TABLE IF EXISTS recipes', []);
               txn.executeSql(
@@ -45,13 +45,13 @@ export const MyRecipes = () => {
     )
 
     //read liste
-    //@ts-expect-error
-    db.transaction(function (txn) {
+    
+    async () => (await db).transaction(function (txn) {
       
       txn.executeSql(
         'SELECT * FROM recipes',
         [],
-        (tx : any, results : any) => {
+        (tx : Transaction, results : ResultSet) => {
           var list = results.rows.item;
           var listSQL : RecipeType[] = []
           

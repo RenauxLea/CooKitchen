@@ -48,17 +48,17 @@ export const CreateIngredient = () => {
 
     const units = [ "g", "cl", "aucune"];
     
-    let register_ingredients = () => {
+    let register_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
-        //@ts-expect-error
-        db.transaction(function (tx) {
+
+        (await db).transaction(function (tx) {
           tx.executeSql(
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
             [name, quantity, selectedCategory?.id, unit, expirationDate],
-            (tx : any, results: any) => {
+            (tx, results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('register OK');

@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 interface Props {
     label: string;
     data: Array<string>;
-    onSelect: (item: any) => void;
+    onSelect: (item: string) => void;
 }
 
 export const DropdownUnit: FC<Props> = ({ label , onSelect, data}) => {
@@ -20,7 +20,7 @@ export const DropdownUnit: FC<Props> = ({ label , onSelect, data}) => {
         setVisible(true);
     };
 
-    const onItemPress = (item : any): void => {
+    const onItemPress = (item : string): void => {
         setSelected(item);
         onSelect(item);
         setVisible(false);

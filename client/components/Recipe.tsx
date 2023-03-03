@@ -21,11 +21,12 @@ import FourImage from "../assets/images/four.svg";
 import ClockImage  from "../assets/images/clock.svg";
 
 import { openDatabase } from "react-native-sqlite-storage";
+import { IngredientLinkedType } from "../types/ingredient";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
   
 
-const renderItem =  ({item } : any) => {
+const renderItem =  (item  : IngredientLinkedType) => {
     return <View style={styles.ingredient}>
         <Text style={styles.quantity}>
             {item.quantityForRecipe} 

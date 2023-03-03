@@ -57,19 +57,19 @@ export const EditIngredient = () => {
     const units = [ "g", "cl", "aucune"];
     
     
-    let update_ingredients = () => {
+    let update_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
-        //@ts-expect-error
-        db.transaction(function (tx) {
+       
+        (await db).transaction(function (tx) {
           console.log('MISE A JOUR WINDOW : ');
             
           tx.executeSql(
             'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
             [name, quantity, category, unit, expirationDate],
-            (tx : any, results: any) => {
+            (tx , results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('Votre appareil apple à bien été mise à jour');

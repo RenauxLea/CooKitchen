@@ -1,11 +1,11 @@
-import React, { FC, ReactElement, useRef, useState } from 'react';
+import React, { Dispatch, FC, ReactElement, SetStateAction, useRef, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
     label: string;
     data: Array<{ name: string; id: string }>;
-    onSelect: (item: any) => void;
+    onSelect: Dispatch<SetStateAction<string>>;
 }
 
 export const DropdownRecipe: FC<Props> = ({ label , onSelect, data}) => {

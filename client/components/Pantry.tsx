@@ -4,10 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { IngredientType } from "../types/ingredient";
 import { EmptyDataIngredient } from "./EmptyDataIngredient";
-import { openDatabase } from "react-native-sqlite-storage";
+import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import SearchBar from "./SearchBar";
 import  { ListIngredients } from "./ListIngredients";
-
 
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
@@ -18,12 +17,12 @@ export const Pantry = () => {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    //@ts-expect-error
-    db.transaction((tx : any) => {
+    
+    async () => (await db).transaction((tx : Transaction) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
         [],
-        (tx : any, results : any) => {
+        (tx : Transaction, results : ResultSet) => {
           var list = results.rows.item;
           var listSQL = []
           for (let i = 0; i < results.rows.length; ++i){

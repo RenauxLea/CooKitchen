@@ -12,9 +12,9 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { IngredientsByCategory } from "./utils/IngredientsByCategory";
-import { IngredientLinkedType,  } from "../types/ingredient";
+import { IngredientLinkedType, IngredientType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
-import { openDatabase } from "react-native-sqlite-storage";
+import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -41,20 +41,19 @@ export const CreateRecipe = () => {
     const [preparationTime  , setPreparationTime ] = React.useState("");
     const [cookingTime   , setCookingTime  ] = React.useState("");
     const [quantity, setQuantity] = React.useState('');
-    //const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<{id : string; quantityRecipe : string}[]>([]);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
 
-    let [listIngredientBdd, setListIngredientBdd] = useState([])
-    useEffect(() => {
-    //@ts-expect-error
-    db.transaction((tx : any) => {
+    let [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
+    useEffect( () => {
+   
+    async () =>(await db).transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
         [],
-        (tx : any, results : any) => {
-          var list = results.rows.item;
-          var listSQL = []
+        (tx , results ) => {
+          const list = results.rows.item;
+          let listSQL : IngredientType[]= []
           for (let i = 0; i < results.rows.length; ++i){
             var sqlObj =   {
               id: list(i)['id'],
@@ -66,7 +65,6 @@ export const CreateRecipe = () => {
             }
             listSQL.push(sqlObj)
           }
-          // @ts-expect-error
           setListIngredientBdd(listSQL)
           
         }
@@ -117,8 +115,7 @@ export const CreateRecipe = () => {
         
     }
 
-    const renderItem =  ({item } : any) =>{
-
+    const renderItem =  (item : any ) =>{
         return <LinkedIngredientCard 
             id={item.id} 
             name={item.name} 
@@ -158,19 +155,15 @@ export const CreateRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
-    const get_data = () => {
-        let objDescription = JSON.stringify(linkedIngredients)
-
-        console.log('category : ',category,'\npreparationTime : ', preparationTime);
-        
-        
+    const get_data = async () => {
         //@ts-expect-error
-        db.transaction(function (tx) {
+        const objDescription = JSON.stringify(linkedIngredients)
+        (await db).transaction(function (tx: Transaction) {
             
             tx.executeSql(
               'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category, preparationTime, cookingTime, objDescription, description],
-              (tx:any, results:any) => {
+              (tx: Transaction, results: ResultSet) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette create');
   

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect } from "react";
-import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import {  Pressable, StyleSheet, Text, View } from "react-native";
 import { openDatabase } from "react-native-sqlite-storage";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
@@ -11,48 +11,45 @@ export const AdminButton = () => {
 
     // /!\ SI CONTRAINTE DE CLE ETRANGER desactiver les foreign_key /!\
 
-    let update_bdd = () => {
-        console.log('AIE !');
-        //@ts-expect-error
-        db.transaction(function (tx) {
+    let update_bdd = async () => {
+        
+        (await db).transaction(function (tx) {
             tx.executeSql(
                 // mettre la requete SQL pour la bdd
                 'ALTER TABLE recipes ADD COLUMN favorite INTERGER',
                 [],
-                (tx :any, results:any) => {
+                (tx, results) => {
                     console.log("La base virale VPS a été mise à jour !!!");
             }
           );
         });
       };
-      let delete_bdd= () => {
+      let delete_bdd= async () => {
         console.log('EXTERMINATE ! EXTERMINATE ! EXTERMINATE !');
 
-        //@ts-expect-error
-        db.transaction(function (tx) {
+        (await db).transaction(function (tx) {
             tx.executeSql(
                 // Supprimer entièrement la table
                 'DROP TABLE recipes',
                 [],
-                (tx:any, results:any) => {
+                (tx, results) => {
                     console.log("C'est bon ! on l'a descendu la table !");
             }
           );
         });
       }
 
-      let this_bdd = () => {
+      let this_bdd = async () => {
         console.log('il y a un return la');
         
         return;
         console.log('Je suis ta requette perso ^^');
-        //@ts-expect-error
-        db.transaction(function (txn) {
+        (await db).transaction(function (txn) {
 
             txn.executeSql(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='test'",
                 [],
-                function (tx :any, res:any) {
+                function (tx , res) {
                     console.log(res);
 
                   if (res.rows.length == 0) {
