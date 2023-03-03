@@ -14,8 +14,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import moment from "moment";
 import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
 import { DropdownUnit } from "./DropdownUnit";
-import { TouchableOpacity } from "react-native-gesture-handler";
-  
+ 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
 export const CreateIngredient = () => { 
@@ -142,14 +141,14 @@ export const CreateIngredient = () => {
             </View>
         </ScrollView>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
-            <TouchableOpacity onPress={() => 
+            <Pressable onPress={() => 
                     {
                         register_ingredients(),
                         navigation.navigate('Garde-manger' as never)
                     }
                     } style={styles.buttonPrimary}>
                 <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     </SafeAreaView> 
    );

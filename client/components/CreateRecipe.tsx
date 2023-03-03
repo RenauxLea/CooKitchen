@@ -16,7 +16,7 @@ import { IngredientLinkedType, IngredientType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Pressable } from "react-native";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -157,10 +157,10 @@ export const CreateRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
-    const get_data = async () => {
-        //@ts-expect-error
+    const get_data =  () => {
         const objDescription = JSON.stringify(linkedIngredients)
-        (await db).transaction(function (tx: Transaction) {
+        //@ts-expect-error
+        db.transaction(function (tx: Transaction) {
             
             tx.executeSql(
               'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
@@ -287,14 +287,14 @@ export const CreateRecipe = () => {
         </View>
         </ScrollView>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
-            <TouchableOpacity onPress={() => 
-                {
+            <Pressable onPress={() => 
+                (
                     get_data(),
                     navigation.navigate('Mes Recettes' as never)
-                }
+                )
                 } style={styles.buttonPrimary}>
-            <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
-            </TouchableOpacity> 
+                <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
+            </Pressable> 
         </View> 
     </SafeAreaView> 
    );
