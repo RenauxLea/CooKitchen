@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 interface Props {
     label: string;
     data: Array<string>;
-    onSelect: (item: string) => void;
+    onSelect: (item: any) => void;
 }
 
 export const DropdownUnit: FC<Props> = ({ label , onSelect, data}) => {

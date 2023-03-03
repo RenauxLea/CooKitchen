@@ -88,7 +88,6 @@ export const MyRecipes = () => {
   )
   },[listRecipe])
   
-  console.log(listRecipe)
   return (
     <SafeAreaView>
       <View style={styles.container}>

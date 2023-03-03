@@ -19,7 +19,7 @@ import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { RecipeType } from "../types/recipe";
-import { Recipe } from "./Recipe";
+import { categories } from "./CreateRecipe";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -91,11 +91,6 @@ export const EditRecipe = () => {
     
     const navigation = useNavigation();
    
-    const categories = [ 
-        {name : "entrée", id: "starter"} ,
-        {name: "plat de résistance", id:"dish"},
-        {name: "dessert", id:"dessert"},
-    ]
 
     const preparationTimeData = [
         {name : "15min", id: "15"},
@@ -165,31 +160,6 @@ export const EditRecipe = () => {
         )
         setLinkedIngredients(ingredients);
       };
-    
-    /*const getLinkedIngredientsInformation = () => {
-        let ingredients : IngredientLinkedType[] = [];
-        listIngredientBdd.forEach((element) => {
-            const isSelected = linkedIngredientIds.find( id => id === element['id'])
-                if(isSelected) {
-                    ingredients.push( {
-                            id : element['id'],
-                            name : element['name'],
-                            quantityForRecipe : element['quantity'],
-                            category : element['category'],
-                            unit : element['unit']
-                        }
-                    );
-               }
-            }   
-        )
-        setLinkedIngredients(ingredients);
-    }*/
-    
-    /*
-    React.useEffect(() => {
-        getLinkedIngredientsInformation()
-    }, [linkedIngredientIds])
-    */
 
     const get_data = () => {
         

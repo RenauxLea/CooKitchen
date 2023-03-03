@@ -12,10 +12,22 @@ import { useNavigation } from "@react-navigation/native";
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
-import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
 import { DropdownUnit } from "./DropdownUnit";
+import { DropdownRecipe } from "./DropdownRecipe";
  
 var db = openDatabase({ name: 'ingredientDatabase.db'});
+export const categories = [ 
+    {name: "légume", id: "vegetable"} ,
+    {name: "fruit", id:"fruit"},
+    {name: "poisson", id:"fish"},
+    {name: "viande", id: "meat"},
+    {name: "céréales", id: "cereal"},
+    {name: "produit laitier", id: "milkProduct"},
+    {name: "aliment sucré", id: "sweetProduct"},
+    {name: "autre", id: "other"},
+]
+
+export const units = [ "g", "cl", "aucune"];
 
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
@@ -34,18 +46,8 @@ export const CreateIngredient = () => {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }
    
-    const categories = [ 
-        {name: "légume", id: "vegetable"} ,
-        {name: "fruit", id:"fruit"},
-        {name: "poisson", id:"fish"},
-        {name: "viande", id: "meat"},
-        {name: "céréales", id: "cereal"},
-        {name: "produit laitier", id: "milkProduct"},
-        {name: "aliment sucré", id: "sweetProduct"},
-        {name: "autre", id: "other"},
-    ]
 
-    const units = [ "g", "cl", "aucune"];
+
     
     let register_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
@@ -86,7 +88,7 @@ export const CreateIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <DropdownIngredientCategories
+                <DropdownRecipe
                     label="Sélectionne une catégorie"  
                     onSelect={setSelectedCategory} data={categories}
                 />

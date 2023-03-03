@@ -45,7 +45,7 @@ export const RecipeCard = (  {recipe} : RecipeCardProps )  => {
                 <View style={styles.containerInformation}>
                     <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime}min</Text>
+                        <Text style={styles.time}>{recipe.preparationTime.name}</Text>
                     </View>
                     <View  style={styles.timeContainer}>
                         <FourImage style={styles.image } width={20}  height={20}/>
