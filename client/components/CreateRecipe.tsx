@@ -35,8 +35,8 @@ const FlatListItemSeparator = () => {
   }
   
 export const categories = [ 
-      {name: "entrée", id: "starter"} ,
-      {name: "plat de résistance", id:"dish"},
+      {name: "entrée", id: "entree"} ,
+      {name: "plat de résistance", id:"main"},
       {name: "dessert", id:"dessert"},
       {name: "autre", id: "other"}
 ]
@@ -44,8 +44,8 @@ export const categories = [
 export const CreateRecipe = () => {
 
     const [name, setName] = React.useState('');
-    const [category , setCategory] = React.useState("");
-    const [preparationTime  , setPreparationTime ] = React.useState("");
+    const [category , setCategory] = React.useState<{name: string, id: string}>();
+    const [preparationTime  , setPreparationTime ] = React.useState<{id: string, name : string}>();
     const [cookingTime   , setCookingTime  ] = React.useState("");
     const [quantity, setQuantity] = React.useState('');
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
@@ -165,7 +165,7 @@ export const CreateRecipe = () => {
             
             tx.executeSql(
               'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
-              [name, quantity, category, preparationTime, cookingTime, objDescription, description],
+              [name, quantity, category?.id, preparationTime?.id, cookingTime, objDescription, description],
               (tx: Transaction, results: ResultSet) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette create');
