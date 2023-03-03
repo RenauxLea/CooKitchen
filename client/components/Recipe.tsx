@@ -72,6 +72,14 @@ export const Recipe = () => {
               );
             });
     }
+
+    const recipeRemoveIngredients = async() =>{
+        (await db).transaction(function (txn) {
+            txn.executeSql(
+                'SELECT link'
+            )
+        })
+    }
     
    return (
     <SafeAreaView>
@@ -123,7 +131,10 @@ export const Recipe = () => {
             <Text style={styles.description}>{recipe.description} </Text>
 
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)} 
+                onPress={() => {
+                    navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
+                }
+            } 
                 style={styles.prepareButton}
             >
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
