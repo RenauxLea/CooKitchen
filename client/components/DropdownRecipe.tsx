@@ -1,14 +1,14 @@
-import React, { FC, ReactElement, useRef, useState } from 'react';
+import React, { Dispatch, FC, ReactElement, SetStateAction, useRef, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
     label: string;
     data: Array<{ name: string; id: string }>;
-    onSelect: (item: any) => void;
+    onSelect: Dispatch<SetStateAction<any>>;
 }
 
-export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data}) => {
+export const DropdownRecipe: FC<Props> = ({ label , onSelect, data}) => {
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState<{id: string , name: string}>();
 
@@ -38,7 +38,7 @@ export const DropdownIngredientCategories: FC<Props> = ({ label , onSelect, data
         <TouchableOpacity
           onPress={() => setVisible(false)}
         >
-          <Text style={styles.dropdownTitle}>Sélectionne une catégorie</Text>
+          <Text style={styles.dropdownTitle}>{label}</Text>
           <View style={styles.dropdown}>
             <FlatList
               data={data}
@@ -88,7 +88,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    color: "#EEEDED"
+    color: "#EEEDED",
+    borderColor: "#EEEDED",
+    
   },
   buttonText: {
     flex: 1,
@@ -104,6 +106,7 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 4, width: 0 },
     shadowOpacity: 0.5,
     borderWidth: 1,
+    borderColor: "#EEEDED",
     borderRadius: 5,
     alignSelf: "center",
     elevation: 20

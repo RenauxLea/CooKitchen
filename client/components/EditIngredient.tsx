@@ -15,7 +15,9 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
 import { IngredientType } from "../types/ingredient";
-import { getCategoryIngredientByName } from "./Ingredient";
+import { DropdownUnit } from "./DropdownUnit";
+import { DropdownRecipe } from "./DropdownRecipe";
+import { categories, units } from "./CreateIngredient";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -31,44 +33,29 @@ export const EditIngredient = () => {
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState(ingredient.category);
     const [unit, setUnit] = React.useState(ingredient.unit);
+    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
 
-    const categoryName = getCategoryIngredientByName(category);
-    console.log('id = '+category+" / Name = "+categoryName);
 
     const navigation = useNavigation();
 
     let expirationDate = ""
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
-    }
-   
-    const categories = [ 
-        {name: "légume", id: "vegetable"} ,
-        {name: "fruit", id:"fruit"},
-        {name: "poisson", id:"fish"},
-        {name: "viande", id: "meat"},
-        {name: "céréales", id: "cereal"},
-        {name: "produit laitier", id: "milkProduct"},
-        {name: "aliment sucré", id: "sweetProduct"},
-        {name: "autre", id: "other"},
-    ]
-
-    const units = [ "g", "cl", "aucune"];
-    
-    
-    let update_ingredients = () => {
+    }   
+  
+    const update_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
-        //@ts-expect-error
-        db.transaction(function (tx) {
+       
+        (await db).transaction(function (tx) {
           console.log('MISE A JOUR WINDOW : ');
             
           tx.executeSql(
             'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
-            [name, quantity, category, unit, expirationDate],
-            (tx : any, results: any) => {
+            [name, quantity, selectedCategory?.id, unit, expirationDate],
+            (tx , results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('Votre appareil apple à bien été mise à jour');
@@ -86,7 +73,7 @@ export const EditIngredient = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View  >
+            <View  style={styles.containerForm}>
                 <Text style={styles.title}>Modification ingrédient</Text>
                 <Text style={styles.text}>Nom:</Text>
                 <TextInput
@@ -97,31 +84,10 @@ export const EditIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <SelectDropdown
-                    data={categories}
-                    defaultValue= {categories.find((e)=> e.id === category)}
-                    onSelect={(selectedItem) => {
-                        setCategory(selectedItem.id)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.name
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item.name
-                    }}
-                    renderDropdownIcon={ () => 
-                          <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-
-                    defaultButtonText={'Sélectionne une catégorie'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                /> 
+                <DropdownRecipe
+                    label="Sélectionne une catégorie"  
+                    onSelect={setSelectedCategory} data={categories}
+                />
 
                 <Text style={styles.text}>Quantité:</Text>
                 <TextInput
@@ -133,31 +99,11 @@ export const EditIngredient = () => {
                     maxLength={10}
                 />
                 <Text style={styles.text}>Unité:</Text>
-                <SelectDropdown
-                    data={units}
-                    defaultValue={unit}
-                    defaultButtonText={'Sélectionne une unité'}
-                    buttonStyle={styles.dropdownBtnStyle}
-                    buttonTextStyle={styles.dropdownBtnTxtStyle}
-                    dropdownStyle={styles.dropdownDropdownStyle}
-                    rowStyle={styles.dropdownRowStyle}
-                    rowTextStyle={styles.dropdownRowTxtStyle}
-                    renderDropdownIcon={ () => 
-                        <Icon name="chevron-down"  size={25} color="#000000" />
-                    }
-                    dropdownIconPosition={'right'}
-                    onSelect={(selectedItem) => {
-                        setUnit(selectedItem)
-                    }}
-                    onChangeSearchInputText={() => {}}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem
-                    }}
-                    rowTextForSelection={(item) => {
-                        return item
-                    }}
-                /> 
-
+                <DropdownUnit
+                    label="Sélectionne une unité"  
+                    onSelect={setUnit} data={units}
+                />
+                
                 <Text style={styles.text}>Date de péremption:</Text>
                 <Text style={styles.textDate} >
                     {visibleDate ? expirationDate : "Aucune date sélectionnée"} 
@@ -191,6 +137,7 @@ export const EditIngredient = () => {
                 
             </View>
         </ScrollView>
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
         <Pressable onPress={() => 
             {
                 update_ingredients(),
@@ -199,6 +146,7 @@ export const EditIngredient = () => {
             } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Modifier l'ingrédient</Text>
         </Pressable>
+        </View>
     </SafeAreaView> 
    );
 }
@@ -207,8 +155,6 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
-        marginBottom: 20,
-        height: "85%",  
     },
     title: {
         fontSize: 32,
@@ -216,21 +162,20 @@ const styles = StyleSheet.create({
         color: '#FFCC29',
         paddingTop: 20,
     },
-
     subtitle: {
         fontSize: 20,
         fontWeight: '400',
-        color: "#000000",
-       
+        color: "#000000",   
     },
-    
+    containerForm: {
+        paddingBottom: 100
+    },
     text: {
         fontSize: 16,
         fontWeight: '400',
         color: "#000000",
         paddingTop: 20,
     },
-
     input: {
         backgroundColor: 'white',
         marginTop: 10,
@@ -238,7 +183,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5
     },
-    
     dropdownBtnStyle: {
         width: '100%',
         height: 50,
@@ -288,16 +232,17 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         paddingHorizontal: 12,
-        marginHorizontal: 10,
-        display: "flex",
-        alignItems: "center",
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
     },
     buttonPrimaryText: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
+        textAlign: "center"
     }
      
 });

@@ -2,7 +2,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { openDatabase } from "react-native-sqlite-storage";
+import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import Pantry from '../assets/images/pantry.svg'
 
 export type HomepageCardprops = {
@@ -17,12 +17,12 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
 
     
     useEffect( ()=>{
-      // @ts-expect-error
-        db.transaction(function (txn) {
+      //@ts-expect-error
+      db.transaction(function (txn) {
             txn.executeSql(
               "SELECT name FROM sqlite_master WHERE type='table' AND name='ingredients'",
               [],
-              function (tx : any, res :any) {
+              function (tx : Transaction, res :ResultSet) {
                 if (res.rows.length == 0) {
                   txn.executeSql('DROP TABLE IF EXISTS ingredients', []);
                   txn.executeSql(

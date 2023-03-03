@@ -8,16 +8,26 @@ import {
     TextInput,
     View } from 'react-native';
 import DatePicker from "react-native-date-picker";
-import SelectDropdown from "react-native-select-dropdown";
 import { useNavigation } from "@react-navigation/native";
-import Icon from 'react-native-vector-icons/Ionicons';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
-import { DropdownIngredientCategories } from "./DropdownIngredientCategories";
 import { DropdownUnit } from "./DropdownUnit";
-  
+import { DropdownRecipe } from "./DropdownRecipe";
+ 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
+export const categories = [ 
+    {name: "légume", id: "vegetable"} ,
+    {name: "fruit", id:"fruit"},
+    {name: "poisson", id:"fish"},
+    {name: "viande", id: "meat"},
+    {name: "céréales", id: "cereal"},
+    {name: "produit laitier", id: "milkProduct"},
+    {name: "aliment sucré", id: "sweetProduct"},
+    {name: "autre", id: "other"},
+]
+
+export const units = [ "g", "cl", "aucune"];
 
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
@@ -36,30 +46,20 @@ export const CreateIngredient = () => {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }
    
-    const categories = [ 
-        {name: "légume", id: "vegetable"} ,
-        {name: "fruit", id:"fruit"},
-        {name: "poisson", id:"fish"},
-        {name: "viande", id: "meat"},
-        {name: "céréales", id: "cereal"},
-        {name: "produit laitier", id: "milkProduct"},
-        {name: "aliment sucré", id: "sweetProduct"},
-        {name: "autre", id: "other"},
-    ]
 
-    const units = [ "g", "cl", "aucune"];
+
     
-    let register_ingredients = () => {
+    let register_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
-        //@ts-expect-error
-        db.transaction(function (tx) {
+
+        (await db).transaction(function (tx) {
           tx.executeSql(
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
             [name, quantity, selectedCategory?.id, unit, expirationDate],
-            (tx : any, results: any) => {
+            (tx, results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('register OK');
@@ -76,7 +76,7 @@ export const CreateIngredient = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View  >
+            <View style={styles.containerForm}  >
                 <Text style={styles.title}>Nouvel ingrédient</Text>
                 <Text style={styles.subtitle}>Créé un ingrédient pour l'ajouter dans ton garde-manger</Text>
                 <Text style={styles.text}>Nom:</Text>
@@ -88,7 +88,7 @@ export const CreateIngredient = () => {
                 />
 
                 <Text style={styles.text}>Catégorie:</Text>
-                <DropdownIngredientCategories
+                <DropdownRecipe
                     label="Sélectionne une catégorie"  
                     onSelect={setSelectedCategory} data={categories}
                 />
@@ -142,15 +142,16 @@ export const CreateIngredient = () => {
                 
             </View>
         </ScrollView>
-        {/* <Pressable onPress={() => navigation.navigate('Garde-manger' as never)} style={styles.buttonPrimary}> */}
-        <Pressable onPress={() => 
-            {
-                register_ingredients(),
-                navigation.navigate('Garde-manger' as never)
-            }
-            } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
-        </Pressable>
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+            <Pressable onPress={() => 
+                    {
+                        register_ingredients(),
+                        navigation.navigate('Garde-manger' as never)
+                    }
+                    } style={styles.buttonPrimary}>
+                <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
+            </Pressable>
+        </View>
     </SafeAreaView> 
    );
 }
@@ -158,9 +159,10 @@ export const CreateIngredient = () => {
 const styles = StyleSheet.create({    
     container: {
         color: "#FFFFFF",
-        paddingHorizontal: 24,
-        marginBottom: 20,
-        height: "85%",  
+        paddingHorizontal: 24,       
+    },
+    containerForm: {
+        paddingBottom: 100,
     },
     title: {
         fontSize: 32,
@@ -171,8 +173,7 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: 20,
         fontWeight: '400',
-        color: "#000000",
-       
+        color: "#000000", 
     },
     text: {
         fontSize: 16,
@@ -206,16 +207,17 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         paddingHorizontal: 12,
-        marginHorizontal: 10,
-        display: "flex",
-        alignItems: "center",
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
     },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
+        textAlign:"center"
     }
      
 });

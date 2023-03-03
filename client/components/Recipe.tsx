@@ -21,11 +21,12 @@ import FourImage from "../assets/images/four.svg";
 import ClockImage  from "../assets/images/clock.svg";
 
 import { openDatabase } from "react-native-sqlite-storage";
+import { IngredientLinkedType } from "../types/ingredient";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
   
 
-const renderItem =  ({item } : any) => {
+const renderItem =  (item  :any) => {
     return <View style={styles.ingredient}>
         <Text style={styles.quantity}>
             {item.quantityForRecipe} 
@@ -46,8 +47,10 @@ const getFavoriteIcon = (isFavorite: boolean) => {
 
 export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
-    const {recipe} = route.params;
+    const {recipe} = route.params; 
     
+    console.log(recipe);
+
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
     const [isFavorite, setIsFavorite] = React.useState(recipe.isFavorite)
@@ -58,13 +61,13 @@ export const Recipe = () => {
 
     const deleteRecipe = async() => {
         console.log(recipe.name);
-            await (await db).transaction(function (txn) {
+            (await db).transaction(function (txn) {
                 txn.executeSql(
                     // Supprimer entièrement la table
                     'DELETE FROM recipes WHERE id = '+recipe.id+'',
                     [],
                     (txn, results) => {
-                        console.log("Le conseil a fauté et leurs sentence et irrévocable");
+                        console.log("Le conseil a voté et leurs sentence et irrévocable");
                 }
               );
             });
@@ -86,7 +89,7 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime}min</Text>
+                        <Text style={styles.time}>{recipe.preparationTime.name}</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
@@ -126,7 +129,7 @@ export const Recipe = () => {
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Nouvelle Recette' as never)} 
+                onPress={() => navigation.navigate('Modifier Recette' as never, {recipe} as never)} 
                 style={styles.editButton}>
                 <Text style={styles.buttonText}>Modifier cette recette</Text>
             </TouchableOpacity>

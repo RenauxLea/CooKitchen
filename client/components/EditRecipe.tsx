@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     FlatList,
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -8,15 +9,17 @@ import {
     TextInput,
     View,
  } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import SelectDropdown from "react-native-select-dropdown";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { IngredientsByCategory } from "./utils/IngredientsByCategory";
-import { IngredientLinkedType, IngredientType,  } from "../types/ingredient";
+import { IngredientLinkedType,  } from "../types/ingredient";
 import { LinkedIngredientCard } from "./LinkedIngredientCard";
-import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
+import { openDatabase } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
-import { Pressable } from "react-native";
+import { RecipeType } from "../types/recipe";
+import { categories } from "./CreateRecipe";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -24,44 +27,40 @@ const FlatListItemSeparator = () => {
     return (
       <View
         style={{
-            height: 1,
-            width: "70%",
-            alignSelf: "center",
-            margin: 15,
+          height: 1,
+          width: "70%",
+          alignSelf: "center",
+          margin: 15,
           backgroundColor: "#FFCC29",
         }}
       />
-      );
+    );
   }
-  
-export const categories = [ 
-      {name: "entrée", id: "entree"} ,
-      {name: "plat de résistance", id:"main"},
-      {name: "dessert", id:"dessert"},
-      {name: "autre", id: "other"}
-]
 
-export const CreateRecipe = () => {
+export const EditRecipe = () => {
+    const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
+    const {recipe} = route.params;
 
-    const [name, setName] = React.useState('');
-    const [category , setCategory] = React.useState<{name: string, id: string}>();
-    const [preparationTime  , setPreparationTime ] = React.useState<{id: string, name : string}>();
-    const [cookingTime   , setCookingTime  ] = React.useState("");
-    const [quantity, setQuantity] = React.useState('');
-    const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
-    const [description, setDesciption]= React.useState("");
+    const id = recipe.id; 
+    const [name, setName] = React.useState(recipe.name);
+    const [category , setCategory] = React.useState(recipe.category);
+    const [preparationTime  , setPreparationTime ] = React.useState(recipe.preparationTime);
+    const [cookingTime   , setCookingTime  ] = React.useState(recipe.cookingTime);
+    const [quantity, setQuantity] = React.useState(recipe.quantity);
+    //const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<{id : string; quantityRecipe : string}[]>([]);
+    const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>(recipe.listIngredients);
+    const [description, setDesciption]= React.useState(recipe.description);
 
-    let [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
-    useEffect( () => {
-   
-    //@ts-expect-error    
-    db.transaction((tx) => {
+    let [listIngredientBdd, setListIngredientBdd] = useState([])
+    useEffect(() => {
+    //@ts-expect-error
+    db.transaction((tx : any) => {
       tx.executeSql(
         'SELECT * FROM ingredients',
         [],
-        (tx : Transaction , results : ResultSet ) => {
-          const list = results.rows.item;
-          let listSQL : IngredientType[]= []
+        (tx : any, results : any) => {
+          var list = results.rows.item;
+          var listSQL = []
           for (let i = 0; i < results.rows.length; ++i){
             var sqlObj =   {
               id: list(i)['id'],
@@ -73,6 +72,7 @@ export const CreateRecipe = () => {
             }
             listSQL.push(sqlObj)
           }
+          // @ts-expect-error
           setListIngredientBdd(listSQL)
           
         }
@@ -118,7 +118,8 @@ export const CreateRecipe = () => {
         
     }
 
-    const renderItem =  (item : any ) =>{
+    const renderItem =  ({item } : any) =>{
+
         return <LinkedIngredientCard 
             id={item.id} 
             name={item.name} 
@@ -144,6 +145,8 @@ export const CreateRecipe = () => {
                         }
                     });
                     
+                    const test = selectedItems.find( id => id === isSelected)
+                    
                     ingredients.push( {
                             id : element['id'],
                             name : element['name'],
@@ -158,22 +161,25 @@ export const CreateRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
-    const get_data =  () => {
-        const objDescription = JSON.stringify(linkedIngredients)
+    const get_data = () => {
+        
+        let objDescription = JSON.stringify(linkedIngredients)
+ 
+        
         //@ts-expect-error
-        db.transaction(function (tx: Transaction) {
-            
+        db.transaction(function (tx) {
             tx.executeSql(
-              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
-              [name, quantity, category?.id, preparationTime?.id, cookingTime, objDescription, description],
-              (tx: Transaction, results: ResultSet) => {
+              'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
+              [name, quantity, category, preparationTime, cookingTime, objDescription, description],
+              (tx:any, results:any) => {
                 if (results.rowsAffected > 0) {
-                  console.log('Recette create');
+                  console.log('Recette Update');
   
                 } else console.log('Recette reject');
               }
             );
           });
+        
         
     }
 
@@ -183,9 +189,9 @@ export const CreateRecipe = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View style={styles.containerForm} >
-                <Text style={styles.title}>Nouvelle recette</Text>
-                <Text style={styles.subtitle}>Créé une nouvelle recette pour l’ajouter à la liste de tes recettes</Text>
+            <View  >
+                <Text style={styles.title}>Modification recette</Text>
+                <Text style={styles.subtitle}>Modifier la recette</Text>
                 <Text style={styles.text}>Nom:</Text>
                 <TextInput
                     placeholder="gratin dauphinois"
@@ -287,16 +293,14 @@ export const CreateRecipe = () => {
                 
         </View>
         </ScrollView>
-        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
-            <Pressable onPress={() => 
-                (
-                    get_data(),
-                    navigation.navigate('Mes Recettes' as never)
-                )
-                } style={styles.buttonPrimary}>
-                <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
-            </Pressable> 
-        </View> 
+        <Pressable onPress={() => 
+            {
+                get_data(),
+                navigation.navigate('Mes Recettes' as never)
+            }
+            } style={styles.buttonPrimary}>
+          <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
+        </Pressable>  
     </SafeAreaView> 
    );
 }
@@ -305,9 +309,8 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
-    },
-    containerForm: {
-        paddingBottom: 100,
+        marginBottom: 20,
+        height: "85%",  
     },
     title: {
         fontSize: 32,
@@ -379,18 +382,16 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 20,
+        paddingVertical: 10,
         paddingHorizontal: 12,
-        marginBottom: 10,
-        marginTop: 30,
-        bottom: 0
-       
+        marginHorizontal: 10,
+        display: "flex",
+        alignItems: "center",
     },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
-        textAlign: "center"
     },
     
      

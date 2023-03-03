@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
-  FlatList,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -9,104 +8,30 @@ import {
     View,
   } from 'react-native';
 import { EmptyDataRecipe } from "./EmptyDataRecipe";
-import { RecipeCard } from "./RecipeCard";
 import { RecipeType } from "../types/recipe";
-import { openDatabase } from "react-native-sqlite-storage";
-
-const recipesFixtures  : RecipeType[]= [
-  {
-    id : "1",
-    name: "Pizza avec du fromage et du bacon",
-    isFavorite: true,
-    category:  "main" ,
-    preparationTime : "30",
-    cookingTime : "45",
-    quantity: "4",
-    description : "Attention à ne pas la bruler !",
-    listIngredients: []
-  },
-  {
-    id : "2",
-    name: "Tiramisu",
-    isFavorite: false,
-    category:  "dessert" ,
-    preparationTime : "10",
-    cookingTime : "25",
-    quantity: "1",
-    listIngredients: [
-      {
-        id : "1",
-        name : "café",
-        quantityForRecipe: "150",
-        unit : "g"
-      },
-      {
-        id : "2",
-        name : "beurre salé et noix de coco",
-        quantityForRecipe: "30",
-        
-      },  {
-        id : "3",
-        name : "café",
-        quantityForRecipe: "150",
-        unit : "g"
-      },
-      {
-        id : "4",
-        name : "beurre",
-        quantityForRecipe: "30",
-        
-      },  {
-        id : "5",
-        name : "café",
-        quantityForRecipe: "150",
-        unit : "g"
-      },
-      
-    ],
-    description: "C'est trop bon les tiramisu !!"
-  },
-  {
-    id : "3",
-    name: "recette",
-    isFavorite: true,
-    preparationTime : "10",
-    cookingTime : "25",
-    quantity: "1",
-    listIngredients: []
-  },
-  {
-    id : "4",
-    name: "entrée",
-    category:"entree",
-    isFavorite: true,
-    preparationTime : "10",
-    cookingTime : "25",
-    quantity: "3",
-    listIngredients: []
-  }
-
-]
-
-const renderItem =  ({item } : any) =><RecipeCard key={item.key} recipe={item} /> ;
-
+import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
+import SearchBar from "./SearchBar";
+import { ListRecipes } from "./ListRecipes";
 
 export const MyRecipes = () => {
 
   var db = openDatabase({ name: 'ingredientDatabase.db'});
   
-  let [listRecipe, setListRecipe] = useState<RecipeType[]>([])
+  const [listRecipe, setListRecipe] = useState<RecipeType[]>([])
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [clicked, setClicked] = useState(false);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    //@ts-expect-error
     // Création si empty
-    db.transaction(function (txn) {
+  
+  //@ts-expect-error
+  db.transaction(function (txn) {
       txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='recipes'",
           [],
-          function (tx :any, res: any) {
+          function (tx : Transaction, res: ResultSet) {
             if (res.rows.length == 0) {
               txn.executeSql('DROP TABLE IF EXISTS recipes', []);
               txn.executeSql(
@@ -127,7 +52,7 @@ export const MyRecipes = () => {
       txn.executeSql(
         'SELECT * FROM recipes',
         [],
-        (tx : any, results : any) => {
+        (tx : Transaction, results : ResultSet) => {
           var list = results.rows.item;
           var listSQL : RecipeType[] = []
           
@@ -143,6 +68,7 @@ export const MyRecipes = () => {
             var sqlObj = {
                 id: list(i)['id'],
                 name: list(i)['name'],
+                category: list(i)['category'],
                 isFavorite : list(i)['favorite'],
                 preparationTime : list(i)['preparationTime'],
                 cookingTime: list(i)['cookingTime'],
@@ -160,7 +86,7 @@ export const MyRecipes = () => {
         );
       }
   )
-  },[])
+  },[listRecipe])
   
   return (
     <SafeAreaView>
@@ -169,24 +95,27 @@ export const MyRecipes = () => {
         <Text style={styles.subtitle}>
           Quelle recette te ferait envie aujourd'hui ?
         </Text> 
-      
-        {listRecipe.length === 0 ? 
-        <EmptyDataRecipe/>
-        :
-        <FlatList
-        data={listRecipe}
-        renderItem={renderItem}
-        initialNumToRender={4}
-        keyExtractor={(item :any) => item.id}
-        maxToRenderPerBatch={4}
-        ListEmptyComponent={<EmptyDataRecipe/>}
-        style= {styles.flatList}
-        />
-       }
 
-        <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
-          <Text style={styles.buttonText}>Ajouter une recette</Text>
-        </TouchableOpacity>
+        <SearchBar
+            searchPhrase={searchPhrase}
+            setSearchPhrase={setSearchPhrase}
+            clicked={clicked}
+            setClicked={setClicked}
+          />
+        
+        {listRecipe.length === 0 ? <EmptyDataRecipe/>: 
+          <ListRecipes
+            searchPhrase={searchPhrase}
+            data={listRecipe}
+            setClicked={setClicked}
+          />
+        }
+
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+          <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
+            <Text style={styles.buttonText}>Ajouter une recette</Text>
+          </TouchableOpacity>
+        </View>
 
       </View>  
     
@@ -200,16 +129,15 @@ const styles = StyleSheet.create({
       color: "#FFFFFF",
       paddingHorizontal: 24,
   },
-  flatList: {
-    height: "68%",
-    marginBottom: 20,
-  },
   button: {
     elevation: 8,
     backgroundColor: "#FFCC29",
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    marginTop: 30,
+    bottom: 0
   },
   buttonText: {
     fontSize: 16,
