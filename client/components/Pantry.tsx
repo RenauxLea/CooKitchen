@@ -8,7 +8,7 @@ import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientC
 import { openDatabase } from "react-native-sqlite-storage";
 import moment from "moment";
 import SearchBar from "./SearchBar";
-import List from "./List";
+import  { ListIngredients } from "./ListIngredients";
 
 export const ingredientFixtures : IngredientType[]= [ 
   {
@@ -137,7 +137,7 @@ export const Pantry = () => {
           />
         
         {listItem.length === 0 ? <EmptyDataIngredient/>: 
-          <List
+          <ListIngredients
             searchPhrase={searchPhrase}
             data={listItem}
             setClicked={setClicked}

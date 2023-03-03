@@ -22,7 +22,7 @@ const SearchBar = ({clicked , searchPhrase, setSearchPhrase, setClicked} : Searc
         <Icon name="search"  size={20} color="#000000" />
         <TextInput
           style={styles.input}
-          placeholder="Search"
+          placeholder="Recherche un élément..."
           value={searchPhrase}
           onChangeText={setSearchPhrase}
           onFocus={() => {

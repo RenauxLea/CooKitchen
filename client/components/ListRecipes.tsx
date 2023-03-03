@@ -5,26 +5,25 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { IngredientType } from "../types/ingredient";
+import { RecipeType } from "../types/recipe";
 import { EmptyDataIngredient } from "./EmptyDataIngredient";
-import { Ingredient as IngredientCard, IngredientCardprops } from "./IngredientCard";
+import { RecipeCard } from "./RecipeCard";
 
 type ListProps = {
     searchPhrase : string,
     setClicked: Dispatch<SetStateAction<boolean>>,
-    data : IngredientType[],
+    data : RecipeType[] ,
 }
 
-const List = ({ searchPhrase, setClicked, data }: ListProps) => {
+export const ListRecipes = ({ searchPhrase, setClicked, data }: ListProps) => {
   const renderItem = ({ item  }:any): ReactElement<any, string | JSXElementConstructor<any>> | null=> {
     // when no input, show all
     if (searchPhrase === "") {
-      return <IngredientCard key={item.id} ingredient={item} />
-;
+       return <RecipeCard key={item.id} recipe={item} />
     }
     // filter of the name
     if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
-      return <IngredientCard key={item.id} ingredient={item} />
+      return <RecipeCard key={item.id} recipe={item} />
 
     }
     return null
@@ -53,8 +52,6 @@ const List = ({ searchPhrase, setClicked, data }: ListProps) => {
     </SafeAreaView>
   );
 };
-
-export default List;
 
 const styles = StyleSheet.create({
   list__container: {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
-  FlatList,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -12,6 +11,8 @@ import { EmptyDataRecipe } from "./EmptyDataRecipe";
 import { RecipeCard } from "./RecipeCard";
 import { RecipeType } from "../types/recipe";
 import { openDatabase } from "react-native-sqlite-storage";
+import SearchBar from "./SearchBar";
+import { ListRecipes } from "./ListRecipes";
 
 const recipesFixtures  : RecipeType[]= [
   {
@@ -88,14 +89,13 @@ const recipesFixtures  : RecipeType[]= [
 
 ]
 
-const renderItem =  ({item } : any) =><RecipeCard key={item.key} recipe={item} /> ;
-
-
 export const MyRecipes = () => {
 
   var db = openDatabase({ name: 'ingredientDatabase.db'});
   
-  let [listRecipe, setListRecipe] = useState<RecipeType[]>([])
+  const [listRecipe, setListRecipe] = useState<RecipeType[]>([])
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [clicked, setClicked] = useState(false);
 
   const navigation = useNavigation();
 
@@ -170,20 +170,21 @@ export const MyRecipes = () => {
         <Text style={styles.subtitle}>
           Quelle recette te ferait envie aujourd'hui ?
         </Text> 
-      
-        {listRecipe.length === 0 ? 
-        <EmptyDataRecipe/>
-        :
-        <FlatList
-        data={listRecipe}
-        renderItem={renderItem}
-        initialNumToRender={4}
-        keyExtractor={(item :any) => item.id}
-        maxToRenderPerBatch={4}
-        ListEmptyComponent={<EmptyDataRecipe/>}
-        style= {styles.flatList}
-        />
-       }
+
+        <SearchBar
+            searchPhrase={searchPhrase}
+            setSearchPhrase={setSearchPhrase}
+            clicked={clicked}
+            setClicked={setClicked}
+          />
+        
+        {listRecipe.length === 0 ? <EmptyDataRecipe/>: 
+          <ListRecipes
+            searchPhrase={searchPhrase}
+            data={listRecipe}
+            setClicked={setClicked}
+          />
+        }
 
         <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
           <Text style={styles.buttonText}>Ajouter une recette</Text>
