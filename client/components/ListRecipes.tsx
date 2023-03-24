@@ -13,9 +13,10 @@ type ListProps = {
     searchPhrase : string,
     setClicked: Dispatch<SetStateAction<boolean>>,
     data : RecipeType[] ,
+    filters: String[],
 }
 
-export const ListRecipes = ({ searchPhrase, setClicked, data }: ListProps) => {
+export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListProps) => {
   const renderItem = ({ item  }:any): ReactElement<any, string | JSXElementConstructor<any>> | null=> {
     // when no input, show all
     if (searchPhrase === "") {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
+  Pressable,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -12,6 +13,9 @@ import { RecipeType } from "../types/recipe";
 import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import SearchBar from "./SearchBar";
 import { ListRecipes } from "./ListRecipes";
+import Filter from '../assets/images/filter.svg';
+import { RecipeFilters } from "./RecipeFilters";
+
 
 export const MyRecipes = () => {
 
@@ -20,6 +24,25 @@ export const MyRecipes = () => {
   const [listRecipe, setListRecipe] = useState<RecipeType[]>([])
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false)
+  const [selectedFiltersInModal, setSelectedFiltersInModal]= React.useState<string[]>([])
+  const [selectedFilters, setSelectedFilters]= React.useState<string[]>([])
+
+  const onChange = (category : string, isSelected: boolean) => {
+    if(!isSelected){
+      setSelectedFiltersInModal(Array.from(new Set([...selectedFiltersInModal, category])))
+    }
+    else{
+      const index = selectedFiltersInModal.indexOf(category)
+      const newSelectedFilters = selectedFiltersInModal.filter((element) => element !== category)
+      setSelectedFiltersInModal(newSelectedFilters)
+    }
+  } 
+
+  const onCloseModal = (selectedFilters : string[]) => {
+    setModalVisible(false)
+    setSelectedFilters(selectedFilters)
+  }
 
   const navigation = useNavigation();
 
@@ -97,18 +120,36 @@ export const MyRecipes = () => {
           Quelle recette te ferait envie aujourd'hui ?
         </Text> 
 
-        <SearchBar
+        <View style={styles.filters}>
+          <SearchBar
             searchPhrase={searchPhrase}
             setSearchPhrase={setSearchPhrase}
             clicked={clicked}
             setClicked={setClicked}
           />
+
+            <Pressable
+                style={styles.buttonFilter}
+                onPress={() => setModalVisible(true)}>
+                <Filter style={{borderRadius: 10}} width={50} height={50} />
+            </Pressable>
+
+            <RecipeFilters 
+                visible={modalVisible} 
+                onClose={onCloseModal} 
+                onChange={onChange} 
+                selectedFiltersInModal={selectedFiltersInModal}
+            />
+
+           
+          </View>
         
         {listRecipe.length === 0 ? <EmptyDataRecipe/>: 
           <ListRecipes
             searchPhrase={searchPhrase}
             data={listRecipe}
             setClicked={setClicked}
+            filters={selectedFilters}
           />
         }
 
@@ -129,6 +170,15 @@ const styles = StyleSheet.create({
   container: {
       color: "#FFFFFF",
       paddingHorizontal: 24,
+  },
+  filters: {
+    display: "flex",
+    flexDirection: "row",
+    paddingHorizontal: 5
+  },
+  buttonFilter: {
+    alignSelf: "center",
+    marginLeft: 10 
   },
   button: {
     elevation: 8,
