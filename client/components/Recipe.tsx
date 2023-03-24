@@ -76,7 +76,12 @@ export const Recipe = () => {
     const recipeRemoveIngredients = async() =>{
         (await db).transaction(function (txn) {
             txn.executeSql(
-                'SELECT link'
+                'SELECT linkedIngredients FROM recipes WHERE id='+recipe.id,
+                [],
+                (txn,results) => {
+                    console.log(results);
+                    
+                }
             )
         })
     }
@@ -132,7 +137,8 @@ export const Recipe = () => {
 
             <TouchableOpacity 
                 onPress={() => {
-                    navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
+                    recipeRemoveIngredients();
+                    //navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
                 }
             } 
                 style={styles.prepareButton}

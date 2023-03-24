@@ -30,7 +30,7 @@ export const AdminButton = () => {
         (await db).transaction(function (tx) {
             tx.executeSql(
                 // Supprimer entièrement la table
-                'DROP TABLE recipes',
+                'DROP TABLE ingredients',
                 [],
                 (tx, results) => {
                     console.log("C'est bon ! on l'a descendu la table !");
