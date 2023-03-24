@@ -10,7 +10,7 @@ export const LinkedIngredientCard = (ingredient : IngredientLinkedType  & {onCha
     return (
         <View style={styles.item}>
             <View style={styles.information}>
-                <Text style={styles.name}>{firstLetterInUppercase(ingredient.name)}:</Text>
+                <Text style={styles.name}>{ingredient.name && firstLetterInUppercase(ingredient.name)}:</Text>
                 <View style={styles.quantityContainer} >
                     <TextInput
                         style={styles.input}
