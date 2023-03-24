@@ -119,11 +119,13 @@ export const CreateRecipe = () => {
     }
 
     const renderItem =  (item : any ) =>{
+        console.log('Je suis : ',item.item.name);
+        
         return <LinkedIngredientCard 
-            id={item.id} 
-            name={item.name} 
-            quantityForRecipe={item.quantityForRecipe}
-            unit={item.unit}
+            id={item.item.id} 
+            name={item.item.name} 
+            quantityForRecipe={item.item.quantityForRecipe}
+            unit={item.item.unit}
             onChangeQuantityRecipe={onChangeQuantityRecipe}
         />
     };
