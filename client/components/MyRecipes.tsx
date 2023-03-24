@@ -53,9 +53,10 @@ export const MyRecipes = () => {
         'SELECT * FROM recipes',
         [],
         (tx : Transaction, results : ResultSet) => {
+          
           var list = results.rows.item;
           var listSQL : RecipeType[] = []
-          
+                    
           for (let i = 0; i < results.rows.length; ++i){
             let listIngredientsBdd = JSON.parse(list(i)['linkedIngredients'])
             let getDataIngredients = []

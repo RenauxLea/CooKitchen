@@ -29,10 +29,10 @@ var db = openDatabase({ name: 'ingredientDatabase.db'});
 const renderItem =  (item  :any) => {
     return <View style={styles.ingredient}>
         <Text style={styles.quantity}>
-            {item.quantityForRecipe} 
-            { (item.unit !== undefined && item.unit !== "aucune") && item.unit}
+            {item.item.quantityForRecipe} 
+            { (item.item.unit !== undefined && item.item.unit !== "aucune") && item.item.unit}
         </Text>
-        <Text style={styles.ingredientName}>{firstLetterInUppercase(item.name)}</Text>
+        <Text style={styles.ingredientName}>{item.item.name}</Text>
     </View>
 } ;
 
@@ -49,7 +49,7 @@ export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params; 
     
-    console.log(recipe);
+    console.log('recipe : ',recipe.preparationTime);
 
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
@@ -102,7 +102,7 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime.name}</Text>
+                        <Text style={styles.time}>{recipe.preparationTime.name}min</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>

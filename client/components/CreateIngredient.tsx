@@ -14,6 +14,8 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import moment from "moment";
 import { DropdownUnit } from "./DropdownUnit";
 import { DropdownRecipe } from "./DropdownRecipe";
+import { Unit } from "../types/ingredient";
+import { Units } from "react-native-svg";
  
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 export const categories = [ 
@@ -27,7 +29,7 @@ export const categories = [
     {name: "autre", id: "other"},
 ]
 
-export const units = [ "g", "cl", "aucune"];
+export const units:Unit[] = [ "g", "cl", "aucune"];
 
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
@@ -36,7 +38,7 @@ export const CreateIngredient = () => {
     const [visibleDate, setVisibleDate] = React.useState(false); 
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState("");
-    const [unit, setUnit] = React.useState("");
+    const [unit, setUnit] = React.useState<Unit>();
     const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
 
     const navigation = useNavigation();
@@ -91,7 +93,8 @@ export const CreateIngredient = () => {
                 <Text style={styles.text}>Catégorie:</Text>
                 <DropdownRecipe
                     label="Sélectionne une catégorie"  
-                    onSelect={setSelectedCategory} data={categories}
+                    onSelect= {setSelectedCategory} data={categories}
+                    current = {selectedCategory}
                 />
 
                 <Text style={styles.text}>Quantité:</Text>
@@ -107,6 +110,7 @@ export const CreateIngredient = () => {
                 <DropdownUnit
                     label="Sélectionne une unité"  
                     onSelect={setUnit} data={units}
+                    current = {unit}
                 />
               
 

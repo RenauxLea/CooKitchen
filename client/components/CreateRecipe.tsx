@@ -202,6 +202,7 @@ export const CreateRecipe = () => {
                     label={"Sélectionne une catégorie"} 
                     data={categories} 
                     onSelect={setCategory}
+                    current = {category}
                 />
    
                 <Text style={styles.text}>Temps de préparation:</Text>
@@ -209,6 +210,7 @@ export const CreateRecipe = () => {
                     label={"Temps de préparation"} 
                     data={preparationTimeData} 
                     onSelect={setPreparationTime}
+                    current={preparationTime}
                 />
                 
 
