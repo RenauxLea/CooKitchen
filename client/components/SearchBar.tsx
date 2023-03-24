@@ -22,7 +22,7 @@ const SearchBar = ({clicked , searchPhrase, setSearchPhrase, setClicked} : Searc
         <Icon name="search"  size={20} color="#000000" />
         <TextInput
           style={styles.input}
-          placeholder="Recherche un élément..."
+          placeholder="Navet, tomate..."
           value={searchPhrase}
           onChangeText={setSearchPhrase}
           onFocus={() => {
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    width: "80%",
 
   },
   searchBar__unclicked: {
