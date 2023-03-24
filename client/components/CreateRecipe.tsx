@@ -164,7 +164,7 @@ export const CreateRecipe = () => {
         db.transaction(function (tx: Transaction) {
             
             tx.executeSql(
-              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
+              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category?.id, preparationTime?.id, cookingTime, objDescription, description],
               (tx: Transaction, results: ResultSet) => {
                 if (results.rowsAffected > 0) {
