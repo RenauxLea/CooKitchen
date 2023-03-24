@@ -186,7 +186,7 @@ export const CreateRecipe = () => {
             <View style={styles.containerForm} >
                 <Text style={styles.title}>Nouvelle recette</Text>
                 <Text style={styles.subtitle}>Créé une nouvelle recette pour l’ajouter à la liste de tes recettes</Text>
-                <Text style={styles.text}>Nom:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Nom:</Text></Text>
                 <TextInput
                     placeholder="gratin dauphinois"
                     style={styles.input}
@@ -293,8 +293,13 @@ export const CreateRecipe = () => {
                     get_data(),
                     navigation.navigate('Mes Recettes' as never)
                 )
-                } style={styles.buttonPrimary}>
-                <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
+                } 
+                style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
+                disabled={name === "" || name === undefined}
+
+                >
+                <Text style={name === "" || name === undefined ? styles.buttonDisabledText : styles.buttonPrimaryText}>Créer la recette</Text>
+
             </Pressable> 
         </View> 
     </SafeAreaView> 
@@ -386,12 +391,34 @@ const styles = StyleSheet.create({
         bottom: 0
        
     },
+    buttonDisabled: {
+        elevation: 8,
+        backgroundColor: "#EEEDED",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
+    },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
         textAlign: "center"
     },
+    buttonDisabledText : {
+        fontSize: 16,
+        fontWeight: "500",
+        color:  "#6B6A6ABF",
+        textAlign: "center"
+    },
+    star: {
+        color : "#F21616",
+        fontSize: 16,
+        fontWeight: '400',
+        paddingTop: 20,
+    }
     
      
 });

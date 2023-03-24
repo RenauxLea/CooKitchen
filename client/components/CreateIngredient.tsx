@@ -49,7 +49,7 @@ export const CreateIngredient = () => {
 
 
     
-    let register_ingredients = async () => {
+    const register_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
@@ -79,7 +79,8 @@ export const CreateIngredient = () => {
             <View style={styles.containerForm}  >
                 <Text style={styles.title}>Nouvel ingrédient</Text>
                 <Text style={styles.subtitle}>Créé un ingrédient pour l'ajouter dans ton garde-manger</Text>
-                <Text style={styles.text}>Nom:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Nom:</Text></Text>
+               
                 <TextInput
                     placeholder="navet"
                     style={styles.input}
@@ -148,8 +149,13 @@ export const CreateIngredient = () => {
                         register_ingredients(),
                         navigation.navigate('Garde-manger' as never)
                     }
-                    } style={styles.buttonPrimary}>
-                <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
+                    } 
+                    
+                    style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
+                    disabled={name === "" || name === undefined}
+                >
+
+                <Text style={name === "" || name === undefined ? styles.buttonDisabledText : styles.buttonPrimaryText}>Créer l'ingrédient</Text>
             </Pressable>
         </View>
     </SafeAreaView> 
@@ -218,6 +224,28 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color:  "#000000",
         textAlign:"center"
+    },
+    buttonDisabled: {
+        elevation: 8,
+        backgroundColor: "#EEEDED",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
+    },
+    buttonDisabledText : {
+        fontSize: 16,
+        fontWeight: "500",
+        color:  "#6B6A6ABF",
+        textAlign: "center"
+    },
+    star: {
+        color : "#F21616",
+        fontSize: 16,
+        fontWeight: '400',
+        paddingTop: 20,
     }
      
 });

@@ -9,7 +9,6 @@ import {
     TextInput,
     View,
  } from 'react-native';
-import SelectDropdown from "react-native-select-dropdown";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
@@ -47,7 +46,6 @@ export const EditRecipe = () => {
     const [preparationTime  , setPreparationTime ] = React.useState(recipe.preparationTime);
     const [cookingTime   , setCookingTime  ] = React.useState(recipe.cookingTime);
     const [quantity, setQuantity] = React.useState(recipe.quantity);
-    //const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<{id : string; quantityRecipe : string}[]>([]);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>(recipe.listIngredients);
     const [description, setDesciption]= React.useState(recipe.description);
 
@@ -189,7 +187,7 @@ export const EditRecipe = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View  >
+            <View style={styles.formContainer} >
                 <Text style={styles.title}>Modification recette</Text>
                 <Text style={styles.subtitle}>Modifier la recette</Text>
                 <Text style={styles.text}>Nom:</Text>
@@ -293,14 +291,16 @@ export const EditRecipe = () => {
                 
         </View>
         </ScrollView>
-        <Pressable onPress={() => 
-            {
-                get_data(),
-                navigation.navigate('Mes Recettes' as never)
-            }
-            } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
-        </Pressable>  
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+            <Pressable onPress={() => 
+                {
+                    get_data(),
+                    navigation.navigate('Mes Recettes' as never)
+                }
+                } style={styles.buttonPrimary}>
+            <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
+            </Pressable> 
+        </View> 
     </SafeAreaView> 
    );
 }
@@ -309,8 +309,9 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
-        marginBottom: 20,
-        height: "85%",  
+    },
+    formContainer: {
+        paddingBottom: 100,
     },
     title: {
         fontSize: 32,
@@ -382,16 +383,17 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         paddingHorizontal: 12,
-        marginHorizontal: 10,
-        display: "flex",
-        alignItems: "center",
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0
     },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
+        textAlign: "center"
     },
     
      
