@@ -8,6 +8,7 @@ import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storag
 import SearchBar from "./SearchBar";
 import  { ListIngredients } from "./ListIngredients";
 import { IngredientFilters } from "./IngredientFilters";
+import Filter from '../assets/images/filter.svg';
 
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
@@ -78,6 +79,7 @@ export const Pantry = () => {
               Liste les ingrédients présents dans ta cuisine
           </Text>
  
+          <View style={styles.filters}>
           <SearchBar
             searchPhrase={searchPhrase}
             setSearchPhrase={setSearchPhrase}
@@ -85,18 +87,19 @@ export const Pantry = () => {
             setClicked={setClicked}
           />
 
-          <Pressable
-              style={styles.button}
-              onPress={() => setModalVisible(true)}>
-              <Text style={styles.subtitle}>Show Modal</Text>
-          </Pressable>
+            <Pressable
+                style={styles.buttonFilter}
+                onPress={() => setModalVisible(true)}>
+                <Filter style={{borderRadius: 10}} width={50} height={50} />
+            </Pressable>
 
-          <IngredientFilters 
-            visible={modalVisible}
-            onClose={onCloseModal}
-            onChange={onChange} 
-            selectedFiltersInModal={selectedFiltersInModal}            
-          />
+            <IngredientFilters 
+              visible={modalVisible}
+              onClose={onCloseModal}
+              onChange={onChange} 
+              selectedFiltersInModal={selectedFiltersInModal}            
+            />
+          </View>
         
         {listItem.length === 0 ? <EmptyDataIngredient/>: 
           <ListIngredients
@@ -122,7 +125,15 @@ const styles = StyleSheet.create({
       color: "#FFFFFF",
       paddingHorizontal: 24,
   },
-
+  filters: {
+    display: "flex",
+    flexDirection: "row",
+    paddingHorizontal: 5
+  },
+  buttonFilter: {
+    alignSelf: "center",
+    marginLeft: 10 
+  },
   button: {
     elevation: 8,
     backgroundColor: "#FFCC29",
