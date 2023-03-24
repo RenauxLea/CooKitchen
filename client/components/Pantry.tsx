@@ -20,8 +20,15 @@ export const Pantry = () => {
   const [selectedFilters, setSelectedFilters]= React.useState<string[]>([])
 
   const onChange = (category : string, isSelected: boolean) => {
-    !isSelected ? setSelectedFiltersInModal([...selectedFiltersInModal, category]) : 
-    setSelectedFiltersInModal(selectedFilters.splice(selectedFiltersInModal.indexOf(category), 1))
+    if(!isSelected){
+      setSelectedFiltersInModal(Array.from(new Set([...selectedFiltersInModal, category])))
+    }
+    else{
+      const index = selectedFiltersInModal.indexOf(category)
+      const newSelectedFilters = selectedFiltersInModal.filter((element) => element !== category)
+      setSelectedFiltersInModal(newSelectedFilters)
+    }
+    
    
   } 
   
@@ -83,11 +90,12 @@ export const Pantry = () => {
               onPress={() => setModalVisible(true)}>
               <Text style={styles.subtitle}>Show Modal</Text>
           </Pressable>
+
           <IngredientFilters 
-          visible={modalVisible}
-          onClose={onCloseModal}
-          onChange={onChange} 
-          selectedFiltersInModal={selectedFiltersInModal}            
+            visible={modalVisible}
+            onClose={onCloseModal}
+            onChange={onChange} 
+            selectedFiltersInModal={selectedFiltersInModal}            
           />
         
         {listItem.length === 0 ? <EmptyDataIngredient/>: 
@@ -95,6 +103,7 @@ export const Pantry = () => {
             searchPhrase={searchPhrase}
             data={listItem}
             setClicked={setClicked}
+            filters={selectedFilters}
           />
         }
       <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
@@ -147,63 +156,12 @@ const styles = StyleSheet.create({
     marginRight: 30,
     marginLeft: 30,
     marginBottom: 10,
-    
     color: "black",
     borderWidth: 0.2,
     borderRadius: 5
    },
-   overlayView: {
-    flex: 1,
-    position:'absolute',
-    bottom:0, 
-    width: "100%",
-    height: "80%",
-    justifyContent: "center",
-    alignSelf: "center",
-    alignItems: "center"
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: "100%",
-    height: "100%"
-  },
 
   buttonOpen: {
     backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  checkboxContainer: {
-      flexDirection: 'row',
-      marginBottom: 20,
-    },
-  checkbox: {
-    alignSelf: 'center',
-  },
-  label: {
-    margin: 8,
   },
 });
