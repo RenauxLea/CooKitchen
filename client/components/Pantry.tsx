@@ -9,6 +9,7 @@ import SearchBar from "./SearchBar";
 import  { ListIngredients } from "./ListIngredients";
 import { IngredientFilters } from "./IngredientFilters";
 import Filter from '../assets/images/filter.svg';
+import FilterDisplay from '../assets/images/filterDisplay.svg'
 
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
@@ -100,6 +101,13 @@ export const Pantry = () => {
               selectedFiltersInModal={selectedFiltersInModal}            
             />
           </View>
+
+            {selectedFilters !== undefined && selectedFilters.length > 0 &&
+              <View style={styles.filterDisplay}>
+                <FilterDisplay  width={15} height={15} />
+                <Text style={styles.filterText}>{selectedFilters.length} filtre(s) actif(s)</Text> 
+             </View>
+            }
         
         {listItem.length === 0 ? <EmptyDataIngredient/>: 
           <ListIngredients
@@ -149,6 +157,17 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontWeight: "500",
     alignSelf: "center",
+  },
+  filterText: {
+    fontSize: 12,
+    color: "#000000",
+    fontWeight: "500",
+    paddingLeft: 5
+  },
+  filterDisplay: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems : "center"
   },
   title: {
     fontSize: 32,
