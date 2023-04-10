@@ -102,11 +102,19 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime.name}min</Text>
+                        { recipe.preparationTime ?
+                            <Text style={styles.time}>{recipe.preparationTime.name}min</Text> 
+                            : 
+                            <Text style={styles.time}>Tps inconnu</Text>
+                        }
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
-                    <Text style={styles.time}>{recipe.cookingTime}min</Text>
+                    { recipe.cookingTime  ?
+                        <Text style={styles.time}>{recipe.cookingTime}min</Text>
+                        :
+                        <Text style={styles.time}>Tps inconnu</Text>
+                    }
                 </View>
             </View>
             <Text style={styles.quantityText}>Pour combien de personnes ?</Text>

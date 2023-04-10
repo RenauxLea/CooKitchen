@@ -15,7 +15,7 @@ import SearchBar from "./SearchBar";
 import { ListRecipes } from "./ListRecipes";
 import Filter from '../assets/images/filter.svg';
 import { RecipeFilters } from "./RecipeFilters";
-
+import FilterDisplay from '../assets/images/filterDisplay.svg'
 
 export const MyRecipes = () => {
 
@@ -140,9 +140,14 @@ export const MyRecipes = () => {
                 onChange={onChange} 
                 selectedFiltersInModal={selectedFiltersInModal}
             />
-
-           
+     
           </View>
+            {selectedFilters !== undefined && selectedFilters.length > 0 &&
+              <View style={styles.filterDisplay}>
+                <FilterDisplay  width={15} height={15} />
+                <Text style={styles.filterText}>{selectedFilters.length} filtre(s) actif(s)</Text> 
+             </View>
+            }
         
         {listRecipe.length === 0 ? <EmptyDataRecipe/>: 
           <ListRecipes
@@ -195,6 +200,17 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontWeight: "500",
     alignSelf: "center",
+  },
+  filterText: {
+    fontSize: 12,
+    color: "#000000",
+    fontWeight: "500",
+    paddingLeft: 5
+  },
+  filterDisplay: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems : "center"
   },
   title: {
     fontSize: 32,

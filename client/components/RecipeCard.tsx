@@ -43,14 +43,19 @@ export const RecipeCard = (  {recipe} : RecipeCardProps )  => {
                 <Text style={styles.title}>{recipe.name}</Text>
                 <Text style={styles.category}>{getCategoryName(recipe.category)}</Text>
                 <View style={styles.containerInformation}>
-                    <View style={styles.timeContainer}>
-                        <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime && recipe.preparationTime.name}</Text>
-                    </View>
-                    <View  style={styles.timeContainer}>
-                        <FourImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.cookingTime}min</Text>
-                    </View>
+                    { recipe.preparationTime && 
+                        <View style={styles.timeContainer}>
+                            
+                            <ClockImage style={styles.image } width={20}  height={20}/>
+                            <Text style={styles.time}>{recipe.preparationTime.name}</Text>
+                        </View>
+                    } 
+                    { recipe.cookingTime &&  
+                        <View  style={styles.timeContainer}>
+                            <FourImage style={styles.image } width={20}  height={20}/>
+                            <Text style={styles.time}>{recipe.cookingTime}min</Text>
+                        </View>
+                    }
                 </View>
             </View>
           
