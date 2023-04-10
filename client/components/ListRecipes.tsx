@@ -20,12 +20,76 @@ export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListPro
   const renderItem = ({ item  }:any): ReactElement<any, string | JSXElementConstructor<any>> | null=> {
     // when no input, show all
     if (searchPhrase === "") {
-       return <RecipeCard key={item.id} recipe={item} />
-    }
-    // filter of the name
-    if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
-      return <RecipeCard key={item.id} recipe={item} />
+      if(filters?.length > 0){ // Si on a des filtres 
+        if(filters.includes(item.category)){ // Si on a des filtres de catégories
+          if(filters.includes("favorite") ){ 
+            // Si on a le filtre "est favoris"
+            if(item.isFavorite && item.isFavorite === true){
+              return <RecipeCard key={item.id} recipe={item} />
+            }
+          }
+          else {
+            return <RecipeCard key={item.id} recipe={item} />
+          }
+        }
 
+        else if(!filters.includes("entree" ) // Si on a pas de filtres de catégories
+              && !filters.includes("main" ) 
+              && !filters.includes("dessert" ) 
+              && !filters.includes("other" ) 
+            ) {
+          if(filters.includes("favorite")){
+            if(item.isFavorite && item.isFavorite === true){
+              return <RecipeCard key={item.id} recipe={item} />
+            }
+          }
+          
+        }
+      }
+      else {
+        return <RecipeCard key={item.id} recipe={item} />
+      }
+    }
+
+    else {
+    // filter of the name
+      if(filters.length > 0){
+        if(filters.includes(item.category)){
+          if(filters.includes("favorite") ){ 
+            // Si on a le filtre "favoris"
+            if(item.isFavorite && item.isFavorite === true){
+              if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
+                return <RecipeCard key={item.id} recipe={item} />
+              }
+            }
+          }
+          else {
+            if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
+              return <RecipeCard key={item.id} recipe={item} />
+            }
+          }
+        }
+      
+      
+        else if(!filters.includes("entree" ) // Si on a pas de filtres de catégories
+        && !filters.includes("dessert" ) 
+        && !filters.includes("main" ) 
+        && !filters.includes("other" ) 
+         ) {
+          if(filters.includes("favorite")){
+            if(item.isFavorite && item.isFavorite === true){
+              if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
+                return <RecipeCard key={item.id} recipe={item} />
+              }
+            }
+          }
+        }
+      }
+      else {
+        if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
+          return <RecipeCard key={item.id} recipe={item} />
+        }
+      }
     }
     return null
   
