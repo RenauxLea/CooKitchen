@@ -24,7 +24,7 @@ import { openDatabase } from "react-native-sqlite-storage";
 import { IngredientLinkedType } from "../types/ingredient";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
-  
+
 
 const renderItem =  (item  :any) => {
     return <View style={styles.ingredient}>
@@ -36,7 +36,16 @@ const renderItem =  (item  :any) => {
     </View>
 } ;
 
-const getFavoriteIcon = (isFavorite: boolean) => {
+const getFavoriteIcon = async (isFavorite: boolean, IdRecipe : any) => {
+    (await db).transaction(function (txn) {
+        txn.executeSql(
+            'SELECT favorite FROM recipes WHERE id=?',
+            [],
+            (txn,results) => {
+
+            }
+        )
+    })
     return (
         isFavorite === true ? 
             <IsFavorite style={styles.icon } width={30}  height={30}/> 
@@ -45,19 +54,19 @@ const getFavoriteIcon = (isFavorite: boolean) => {
     )
 }
 
-export const Recipe = () => {
+export const Recipe = async () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params; 
     
     console.log('recipe : ',recipe.preparationTime);
-
+    
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
     const [isFavorite, setIsFavorite] = React.useState(recipe.isFavorite)
     
     React.useEffect(() => {
-        getFavoriteIcon(isFavorite)
-    }, [isFavorite])
+        getFavoriteIcon(isFavorite,recipe.id)
+    }, [isFavorite,recipe.id])
 
     const deleteRecipe = async() => {
         console.log(recipe.name);
@@ -74,13 +83,46 @@ export const Recipe = () => {
     }
 
     const recipeRemoveIngredients = async() =>{
+        // recupère l'ensemble des informations des ingredients
         (await db).transaction(function (txn) {
             txn.executeSql(
-                'SELECT linkedIngredients FROM recipes WHERE id='+recipe.id,
+                'SELECT * FROM ingredients',
                 [],
                 (txn,results) => {
-                    console.log(results);
                     
+                    var qteRecipe : number      = parseInt(recipe.quantity) 
+                    var qteRecipeNeed : number  = parseInt(quantity) 
+                    var ingredientsRecipe : any = recipe.listIngredients;
+                    var qteRatio :number        = qteRecipeNeed/qteRecipe
+                    
+                    var frigo :any =  results.rows
+                    
+                    for (let i = 0; i < ingredientsRecipe.length; i++) {
+                        for (let j = 0; j < frigo.length; j++) {
+                            const aliment = frigo.item(j);
+                            if (aliment.id != ingredientsRecipe[i].id && ingredientsRecipe.length) {
+                                console.log("continu");
+                                continue;
+                            }else{
+                                console.log('it a match');
+                                var newQteRecipe :number   = Math.round(ingredientsRecipe[i].quantityForRecipe*qteRatio)
+                                if (aliment.quantity < newQteRecipe) {
+                                    newQteRecipe = aliment.quantity
+                                }else{
+                                    newQteRecipe = aliment.quantity - newQteRecipe
+                                }
+                                txn.executeSql(
+                                    'UPDATE ingredients SET quantity = ? WHERE id = ?',
+                                    [newQteRecipe, aliment.id],
+                                    (txn,results) => {
+                                    }
+                                )
+                                
+                            }
+                            
+                        }
+                        
+                    }
                 }
             )
         })
@@ -95,7 +137,7 @@ export const Recipe = () => {
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{firstLetterInUppercase(recipe.name)}</Text>
                 <Pressable onPress={() => setIsFavorite(!isFavorite)}>
-                    {getFavoriteIcon(isFavorite)}
+                    {await getFavoriteIcon(isFavorite,recipe.id)}
                 </Pressable>
             </View>
             <Text style={styles.category}>{getCategoryName(recipe.category)}</Text>
