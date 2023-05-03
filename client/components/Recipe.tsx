@@ -24,7 +24,7 @@ import { openDatabase } from "react-native-sqlite-storage";
 import { IngredientLinkedType } from "../types/ingredient";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
-
+  
 
 const renderItem =  (item  :any) => {
     return <View style={styles.ingredient}>
@@ -36,16 +36,10 @@ const renderItem =  (item  :any) => {
     </View>
 } ;
 
-const getFavoriteIcon = async (isFavorite: boolean, IdRecipe : any) => {
-    (await db).transaction(function (txn) {
-        txn.executeSql(
-            'SELECT favorite FROM recipes WHERE id=?',
-            [],
-            (txn,results) => {
-
-            }
-        )
-    })
+const getFavoriteIcon = (isFavorite: boolean) => {
+    console.log('getFavorite : ', isFavorite);
+    isFavorite = isFavorite ? true : false;
+    console.log('Update getFavorite : ', isFavorite);
     return (
         isFavorite === true ? 
             <IsFavorite style={styles.icon } width={30}  height={30}/> 
@@ -54,19 +48,19 @@ const getFavoriteIcon = async (isFavorite: boolean, IdRecipe : any) => {
     )
 }
 
-export const Recipe = async () => {
+export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params; 
     
     console.log('recipe : ',recipe.preparationTime);
-    
+
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
     const [isFavorite, setIsFavorite] = React.useState(recipe.isFavorite)
     
     React.useEffect(() => {
-        getFavoriteIcon(isFavorite,recipe.id)
-    }, [isFavorite,recipe.id])
+        getFavoriteIcon(isFavorite)
+    }, [isFavorite])
 
     const deleteRecipe = async() => {
         console.log(recipe.name);
@@ -128,6 +122,25 @@ export const Recipe = async () => {
         })
     }
     
+    const updateFavorite = async (isFavorite : boolean) => {
+        console.log(recipe.id);
+        console.log('Favorite : ',isFavorite);
+        
+        (await db).transaction(function(txn){
+            console.log('excute SQL');
+            console.log('this', isFavorite);
+                        
+            txn.executeSql(
+                'UPDATE recipes SET favorite = ? WHERE id = ?',
+                [isFavorite,recipe.id],
+                (txn,results) => {
+                    setIsFavorite(isFavorite)
+                }
+            )
+            console.log('end SQL');
+        })
+    }
+
    return (
     <SafeAreaView>
     <ScrollView  
@@ -136,27 +149,19 @@ export const Recipe = async () => {
         <View style={styles.container} >
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{firstLetterInUppercase(recipe.name)}</Text>
-                <Pressable onPress={() => setIsFavorite(!isFavorite)}>
-                    {await getFavoriteIcon(isFavorite,recipe.id)}
+                <Pressable onPress={() => updateFavorite(!isFavorite)}>
+                    {getFavoriteIcon(isFavorite)}
                 </Pressable>
             </View>
             <Text style={styles.category}>{getCategoryName(recipe.category)}</Text>
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        { recipe.preparationTime ?
-                            <Text style={styles.time}>{recipe.preparationTime.name}min</Text> 
-                            : 
-                            <Text style={styles.time}>Tps inconnu</Text>
-                        }
+                        <Text style={styles.time}>{recipe.preparationTime.name}min</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
-                    { recipe.cookingTime  ?
-                        <Text style={styles.time}>{recipe.cookingTime}min</Text>
-                        :
-                        <Text style={styles.time}>Tps inconnu</Text>
-                    }
+                    <Text style={styles.time}>{recipe.cookingTime}min</Text>
                 </View>
             </View>
             <Text style={styles.quantityText}>Pour combien de personnes ?</Text>
