@@ -59,16 +59,45 @@ export const Ingredient = () => {
 
     const deleteIngredient = async() => {
         console.log("Long vie au roi !");
-            await (await db).transaction(function (txn) {
-                txn.executeSql(
-                    // Supprimer entièrement la table
-                    'DELETE FROM ingredients WHERE id = '+ingredient.id+'',
-                    [],
-                    (txn, results) => {
-                        console.log("Adieux");
+        await (await db).transaction(function (txn) {
+            txn.executeSql(
+                // Supprimer entièrement la table
+                'SELECT id, linkedIngredients FROM recipes',
+                [],
+                (txn, results) => {
+                    var listRecipes = results.rows
+                    
+                    for (let i = 0; i < listRecipes.length; i++) {
+                        var thisListRecipe :any= [];
+                        const thisRecipe = JSON.parse(listRecipes.item(i).linkedIngredients);
+                        for (let j = 0; j < thisRecipe.length; j++) {
+                            
+                            if(thisRecipe[j].id == ingredient.id){
+                                thisRecipe.splice(j,1)
+                            }else{
+                                thisListRecipe.push(thisRecipe[j])
+                            }
+                        }
+                        var listRecipeStringify : string = JSON.stringify(thisListRecipe)
+                        var idRecipe = JSON.stringify(listRecipes.item(i).id)
+                        
+                        txn.executeSql(
+                            'UPDATE recipes SET linkedIngredients = ? WHERE id = ?',
+                            [listRecipeStringify,idRecipe],
+                            (txn,results) => {}
+                        )
+
+                    }
+
+                    txn.executeSql(
+                        // Supprimer entièrement la table
+                        'DELETE FROM ingredients WHERE id = ?',
+                        [ingredient.id],
+                        (txn, results) => {}
+                    )
                 }
-              );
-            });
+            );
+        });
     }
 
     const navigation = useNavigation();
