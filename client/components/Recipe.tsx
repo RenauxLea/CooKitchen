@@ -37,9 +37,8 @@ const renderItem =  (item  :any) => {
 } ;
 
 const getFavoriteIcon = (isFavorite: boolean) => {
-    console.log('getFavorite : ', isFavorite);
+    // SQLITE retourne 1 ou 0, remise à la mise en forme pour les icones
     isFavorite = isFavorite ? true : false;
-    console.log('Update getFavorite : ', isFavorite);
     return (
         isFavorite === true ? 
             <IsFavorite style={styles.icon } width={30}  height={30}/> 
@@ -83,7 +82,10 @@ export const Recipe = () => {
                 'SELECT * FROM ingredients',
                 [],
                 (txn,results) => {
-                    
+                    // qteRecipe         = Qte pour X personne BDD
+                    // qteRecipeNeed     = Qte pour X persone voulu
+                    // ingredientsRecipe = Liste des ingredients
+                    // qteRatio          = le coefficient multiplicateur
                     var qteRecipe : number      = parseInt(recipe.quantity) 
                     var qteRecipeNeed : number  = parseInt(quantity) 
                     var ingredientsRecipe : any = recipe.listIngredients;
@@ -94,20 +96,21 @@ export const Recipe = () => {
                     for (let i = 0; i < ingredientsRecipe.length; i++) {
                         for (let j = 0; j < frigo.length; j++) {
                             const aliment = frigo.item(j);
+                            //  SI la liste ne conrresont pas -> Passe
                             if (aliment.id != ingredientsRecipe[i].id && ingredientsRecipe.length) {
-                                console.log("continu");
                                 continue;
                             }else{
-                                console.log('it a match');
-                                var newQteRecipe :number   = Math.round(ingredientsRecipe[i].quantityForRecipe*qteRatio)
-                                if (aliment.quantity < newQteRecipe) {
-                                    newQteRecipe = 0
+                                //correspondance -> Verification de la quantité dans le frigo + update BDD
+                                var newQteFrigo :number   = Math.round(ingredientsRecipe[i].quantityForRecipe*qteRatio)
+                                // Si quantité insuffisante, Qte dans le frigo = 0 
+                                if (aliment.quantity < newQteFrigo) {
+                                    newQteFrigo = 0
                                 }else{
-                                    newQteRecipe = aliment.quantity - newQteRecipe
+                                    newQteFrigo = aliment.quantity - newQteFrigo
                                 }
                                 txn.executeSql(
                                     'UPDATE ingredients SET quantity = ? WHERE id = ?',
-                                    [newQteRecipe, aliment.id],
+                                    [newQteFrigo, aliment.id],
                                     (txn,results) => {
                                     }
                                 )
@@ -121,15 +124,9 @@ export const Recipe = () => {
             )
         })
     }
-    
+    // mettre à jour les favoris dans la bdd
     const updateFavorite = async (isFavorite : boolean) => {
-        console.log(recipe.id);
-        console.log('Favorite : ',isFavorite);
-        
         (await db).transaction(function(txn){
-            console.log('excute SQL');
-            console.log('this', isFavorite);
-                        
             txn.executeSql(
                 'UPDATE recipes SET favorite = ? WHERE id = ?',
                 [isFavorite,recipe.id],
@@ -137,7 +134,6 @@ export const Recipe = () => {
                     setIsFavorite(isFavorite)
                 }
             )
-            console.log('end SQL');
         })
     }
 
