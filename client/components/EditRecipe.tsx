@@ -66,6 +66,7 @@ export const EditRecipe = () => {
     //@ts-expect-error
     db.transaction((tx : any) => {
       tx.executeSql(
+        // Recupéré la liste des ingredients pour l'affichage de l'edit
         'SELECT * FROM ingredients',
         [],
         (tx : any, results : any) => {
@@ -80,6 +81,7 @@ export const EditRecipe = () => {
               unit: list(i)['unit'],
               expiration: list(i)['expiration'],
             }
+            // mettre la liste des ingredients dans une nouvelle liste
             listSQL.push(sqlObj)
           }
           // @ts-expect-error
@@ -132,6 +134,7 @@ export const EditRecipe = () => {
 
     const keyExtractor = (item :any) => item.id;
 
+    // quand une valeur change dans l'edition
     const onSelectedIngredientsChange = (selectedItems : string[]) => {
         let ingredients : IngredientLinkedType[] = [];
         let listOnRecipe = linkedIngredients;
@@ -145,8 +148,6 @@ export const EditRecipe = () => {
                             getQuantityForRecipe = thisElementList['quantityForRecipe']  
                         }
                     });
-                    
-                    const test = selectedItems.find( id => id === isSelected)
                     
                     ingredients.push( {
                             id : element['id'],
@@ -169,14 +170,14 @@ export const EditRecipe = () => {
         
         //@ts-expect-error
         db.transaction(function (tx) {
+            // Requete SQL pour mettre a jour la recette
             tx.executeSql(
               'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
               [name, quantity, category!.id, preparationTime, cookingTime, objDescription, description],
               (tx:any, results:any) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette Update');
-  
-                } else console.log('Recette reject');
+                }
               }
             );
           });

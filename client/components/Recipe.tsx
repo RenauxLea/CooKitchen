@@ -101,7 +101,7 @@ export const Recipe = () => {
                                 console.log('it a match');
                                 var newQteRecipe :number   = Math.round(ingredientsRecipe[i].quantityForRecipe*qteRatio)
                                 if (aliment.quantity < newQteRecipe) {
-                                    newQteRecipe = aliment.quantity
+                                    newQteRecipe = 0
                                 }else{
                                     newQteRecipe = aliment.quantity - newQteRecipe
                                 }
