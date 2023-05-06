@@ -10,6 +10,7 @@ type RecipeFiltersProps = {
 }
 
 export const RecipeFilters = ({visible, onClose, onChange, selectedFiltersInModal}: RecipeFiltersProps) => {
+     // useState permettant de savoir quels filtres sont cochés ou non, ils sont non coché par défaut
     const [isSelectedDessert, setIsSelectedDessert] = React.useState(false);
     const [isSelectedMain, setIsSelectedMain] = React.useState(false);
     const [isSelectedOther, setIsSelectedOther] = React.useState(false);
@@ -28,6 +29,7 @@ export const RecipeFilters = ({visible, onClose, onChange, selectedFiltersInModa
                 <View >   
                     <Text style={styles.titleStyle}>Catégories: </Text>
                     <View style={styles.filters}>
+                      {/* lorsque l'on coche une checkbox, on change le state correspondant à ce filtre en particulier */}
                         <CheckBox
                             value={isSelectedEntree}
                             onValueChange={() =>{setIsSelectedEntree(!isSelectedEntree),
@@ -84,7 +86,8 @@ export const RecipeFilters = ({visible, onClose, onChange, selectedFiltersInModa
 
               <Pressable
                 style={styles.buttonClose}
-                onPress={() => onClose(selectedFiltersInModal)}>
+                 // lorsque l'on appuie sur Valider, on passe les filtres au composant parent qui est la liste des ingrédients pour pouvoir filtrer
+               onPress={() => onClose(selectedFiltersInModal)}>
                 <Text style={styles.textStyle}>Valider</Text>
             </Pressable>
             </View>

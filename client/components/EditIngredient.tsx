@@ -142,9 +142,9 @@ export const EditIngredient = () => {
             </View>
         </ScrollView>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
-        <Pressable onPress={() => 
+        <Pressable onPress={async() => 
             {
-                update_ingredients(),
+                await update_ingredients(),
                 navigation.navigate('Ingredient' as never, {ingredient} as never)} 
             
             } style={styles.buttonPrimary}>

@@ -13,6 +13,7 @@ export const DropdownRecipe: FC<Props> = ({ label , onSelect, data, current}) =>
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState<{id: string , name: string}>();
 
+    //fonction permettant d'ouvrir ou fermer le select
     const toggleDropdown = (): void => {
         visible ? setVisible(false) : openDropdown();
     };
@@ -21,6 +22,7 @@ export const DropdownRecipe: FC<Props> = ({ label , onSelect, data, current}) =>
         setVisible(true);
     };
 
+    // lorsqu'on choisi un item il est sélectionné et le select se ferme
     const onItemPress = (item : any): void => {
         setSelected(item);
         onSelect(item);

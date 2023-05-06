@@ -10,6 +10,7 @@ type IngredientFiltersProps = {
 }
 
 export const IngredientFilters = ({visible, onClose, onChange, selectedFiltersInModal}: IngredientFiltersProps) => {
+    // useState permettant de savoir quels filtres sont cochés ou non, ils sont non coché par défaut
     const [isSelectedVegetable, setIsSelectedVegetable] = React.useState(false);
     const [isSelectedFruit, setIsSelectedFruit] = React.useState(false);
     const [isSelectedOther, setIsSelectedOther] = React.useState(false);
@@ -33,6 +34,7 @@ export const IngredientFilters = ({visible, onClose, onChange, selectedFiltersIn
                 <View >   
                     <Text style={styles.titleStyle}>Stocks des ingrédients: </Text>
                     <View style={styles.filters}>
+                        {/* lorsque l'on coche une checkbox, on change le state correspondant à ce filtre en particulier */}
                         <CheckBox
                             value={isSelectedInStock}
                             onValueChange={() =>{setIsSelectedIsInStock(!isSelectedInStock),
@@ -131,6 +133,7 @@ export const IngredientFilters = ({visible, onClose, onChange, selectedFiltersIn
 
               <Pressable
                 style={styles.buttonClose}
+                // lorsque l'on appuie sur Valider, on passe les filtres au composant parent qui est la liste des ingrédients pour pouvoir filtrer
                 onPress={() => onClose(selectedFiltersInModal)}>
                 <Text style={styles.textStyle}>Valider</Text>
             </Pressable>

@@ -27,6 +27,7 @@ export const Preparation = () => {
 
             <View style={styles.ingredientsContainer}>
                 {
+                    // affichage des différents ingrédients dont on a besoin pour la recette
                     recipe.listIngredients.map((ingredient) => {
                         return <PreparationIngredientCard ingredient={ingredient}/>
                     })
@@ -34,6 +35,7 @@ export const Preparation = () => {
             </View>
         </ScrollView>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+            {/* bouton permettant de supprimer automatiquement les ingrédients du garde-manger */}
           <TouchableOpacity 
                 onPress={() => 
                     Popup.show({

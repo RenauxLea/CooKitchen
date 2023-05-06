@@ -42,7 +42,7 @@ export const categories = [
 ]
 
 export const CreateRecipe = () => {
-
+    // useState permettant de stocker temporairement les informations de la nouvelle recette
     const [name, setName] = React.useState('');
     const [category , setCategory] = React.useState<{name: string, id: string}>();
     const [preparationTime  , setPreparationTime ] = React.useState<{id: string, name : string}>();
@@ -51,7 +51,7 @@ export const CreateRecipe = () => {
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
 
-    let [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
+    const [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
     useEffect( () => {
    
     //@ts-expect-error    
@@ -86,12 +86,12 @@ export const CreateRecipe = () => {
         return item.id
     })
     
+    // trie les ingrédients par catégories
     const ingredientsByCategories = IngredientsByCategory(listIngredientBdd)
-
-    
+ 
     const navigation = useNavigation();
    
-
+    // constante contenant les temps de préparation par défaut
     const preparationTimeData = [
         {name : "15min", id: "15"},
         {name : "30min", id: "30"},
@@ -295,9 +295,10 @@ export const CreateRecipe = () => {
             <Pressable onPress={() => 
                 (
                     get_data(),
-                    navigation.navigate('Mes Recettes' as never)
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 )
                 } 
+                //Une recette ne peut pas être créée s'il n'y a pas de nom saisie, donc le bouton est disable et grisé
                 style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
                 disabled={name === "" || name === undefined}
 

@@ -22,12 +22,14 @@ export const Homepage = () => {
                 L'application qui te permet de gérer ta cuisine facilement
             </Text>
 
+            {  /* card pour accéder aux recettes */}
             <HomepageCard 
                 title={"Mes recettes"} 
                 description={"Ajoute une recette"} 
                 link={"Mes Recettes"} 
             /> 
 
+            {  /* card pour accéder aux ingrédients */}
             <HomepageCard 
                 title={"Garde-manger"} 
                 description={"Ajoute un aliment à ton garde-manger"} 
