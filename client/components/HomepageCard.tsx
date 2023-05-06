@@ -39,11 +39,13 @@ export const HomepageCard = (  {title, description, link} : HomepageCardprops ) 
 
     return (
        
+      // navigue vers la page que l'on a donné en paramétre
         <Pressable 
             style= {styles.item}
             onPress={() => navigation.navigate( link as never )}
         >
       
+          {/*ternaire permettant de savoir quelle icône affichée  */}
           {title === "Mes recettes" ?  
             <Image style={styles.image}  source={require("../assets/images/recipes.png")}/> :  
             <Pantry width={100} height={100} style={styles.image} />

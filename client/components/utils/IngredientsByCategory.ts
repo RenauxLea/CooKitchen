@@ -6,7 +6,7 @@ type IngredientsByCategoryPropstype= Array<{
     children: {name : string , id: string}[]
 }>
 
-
+// fonction permettant de triéer les ingrédients par catégorie pour le select d'ingrédients
 export const IngredientsByCategory = (ingredients : IngredientType[]) : IngredientsByCategoryPropstype => {
     const categories = [
         {

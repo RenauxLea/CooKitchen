@@ -145,7 +145,8 @@ export const Recipe = () => {
         <View style={styles.container} >
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{firstLetterInUppercase(recipe.name)}</Text>
-                <Pressable onPress={() => updateFavorite(!isFavorite)}>
+                {/* permet de mettre la recette en favoris */}
+                <Pressable onPress={async () => await updateFavorite(!isFavorite)}>
                     {getFavoriteIcon(isFavorite)}
                 </Pressable>
             </View>
@@ -153,22 +154,13 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime.name}min</Text>
+                        <Text style={styles.time}>{recipe.preparationTime && recipe.preparationTime.name}min</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
                     <Text style={styles.time}>{recipe.cookingTime}min</Text>
                 </View>
             </View>
-            <Text style={styles.quantityText}>Pour combien de personnes ?</Text>
-            <TextInput
-                style={styles.input}
-                keyboardType='numeric'
-                onChangeText={number  => setQuantity(number)}
-                value={quantity}
-                placeholder='2'
-                maxLength={10}
-            />
             
             <Text style={styles.subtitle}>Ingrédients: </Text>
             {
@@ -185,7 +177,7 @@ export const Recipe = () => {
                 
             <Text style={styles.subtitle}>Description: </Text>
             <Text style={styles.description}>{recipe.description} </Text>
-
+            {/* bouton permettant d'ouvrir le récapitulatif des ingrédients utilisés pour pouvoir retirer automatiquement les quantités du garde-manger  */}
             <TouchableOpacity 
                 onPress={() => {
                     recipeRemoveIngredients();
@@ -196,15 +188,17 @@ export const Recipe = () => {
             >
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
             </TouchableOpacity>
+            {/* bouton pour naviguer vers la page d'éditon d'une recette */}
             <TouchableOpacity 
                 onPress={() => navigation.navigate('Modifier Recette' as never, {recipe} as never)} 
                 style={styles.editButton}>
                 <Text style={styles.buttonText}>Modifier cette recette</Text>
             </TouchableOpacity>
+             {/* bouton pour supprimer une recette */}
             <TouchableOpacity 
                 onPress={async() => {
                     await deleteRecipe(),
-                    navigation.navigate('Mes Recettes' as never)
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 }} 
                 style={styles.deleteButton}>
                 <Text style={styles.deleteButtonText}>Supprimer cette recette</Text>

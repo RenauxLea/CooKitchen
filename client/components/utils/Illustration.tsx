@@ -12,6 +12,7 @@ import MilkProduct from '../../assets/images/categories/ingredients/milkProduct.
 import SweetProduct from '../../assets/images/categories/ingredients/sweetProduct.svg';
 import OtherIngredient from '../../assets/images/categories/ingredients/other.svg';
 
+// Retourne l'illustration correspondant à la catégorie de la recette
 export const IllustrationRecipe = (category  : string | undefined)  => {
     switch (category) {
         case "entree":
@@ -29,6 +30,8 @@ export const IllustrationRecipe = (category  : string | undefined)  => {
     }
 }
 
+
+// Retourne l'illustration correspondant à la catégorie de l'ingrédient
 export const Illustration = (category  : string | undefined, width : number,height : number)  => {
     switch (category) {
         case "vegetable":
