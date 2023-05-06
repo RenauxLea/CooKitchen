@@ -23,14 +23,17 @@ const IngredientCard = (  {ingredient} : IngredientCardprops )  => {
             style= {styles.item}
             onPress={() => navigation.navigate('Ingredient' as never, {ingredient: ingredient} as never )}
         >
+            {/* appel à la fonction permettant d'avoir l'icone selon la catégorie */}
             {Illustration(ingredient.category, 60, 60)}
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
                 <Text style={styles.quantity}>Quantité: 
+                {/* si la quantité n'est pas défini on affiche 0 sinon la quantité saisie */}
                     {
                      ingredient.quantity === undefined || ingredient.quantity=== "" ? "0" 
                         : ingredient.quantity
                     } 
+                {/* s'il n'y a pas d'unité on n'affiche rien */}
                     {(ingredient.unit === undefined || ingredient.unit === "aucune" ) ? "" : ingredient.unit}
                 </Text> 
                 

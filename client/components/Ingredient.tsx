@@ -114,7 +114,7 @@ export const Ingredient = () => {
         <View style={styles.container} >
             <View style={styles.header}>
                 {Illustration(ingredient.category, 40, 40) }
-                <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
+                <Text style={styles.title}>{ingredient.name && firstLetterInUppercase(ingredient.name)}</Text>
             </View>
             <Text style={styles.titleInformation}>Catégorie:</Text>
             <Text style={styles.information}>{getCategoryIngredientByName(ingredient.category)}</Text>
@@ -141,15 +141,17 @@ export const Ingredient = () => {
                         <Text style={styles.expirationDate}>Aucune date </Text>  
                     </View>
             }
+            {/* Bouton permettant d'éditer un ingrédient */}
             <TouchableOpacity 
                 onPress={() => navigation.navigate('Modifier Ingrédient' as never, {ingredient} as never)} 
                 style={styles.editButton}>
                 <Text style={styles.buttonText}>Modifier cet ingrédient</Text>
             </TouchableOpacity>
+             {/* Bouton permettant de supprimer un ingrédient et de retourner sur la liste des ingrédients */}
             <TouchableOpacity 
                 onPress={async() => {
                     await deleteIngredient(),
-                    navigation.goBack()
+                    navigation.navigate('Garde-manger' as never, {refetch: true} as never)
                 }}
                 style={styles.deleteButton}>
             <Text style={styles.deleteButtonText}>Supprimer</Text>

@@ -38,11 +38,14 @@ export const RecipeCard = (  {recipe} : RecipeCardProps )  => {
             style= {styles.item}
             onPress={() => navigation.navigate('Recette' as never, {recipe: recipe} as never )}
         >
+            {/* appel à la fonction pour afficher la bonne illustration selon la catégorie */}
             {IllustrationRecipe(recipe.category)}
             <View style={styles.information}>
                 <Text style={styles.title}>{recipe.name}</Text>
+                {/* appel à la fonction pour connaitre le nom de la catégorie d'après son id */}
                 <Text style={styles.category}>{getCategoryName(recipe.category)}</Text>
                 <View style={styles.containerInformation}>
+                    {/* s'il y a un temps de cuisson nous l'affichons ainsi qu'une icône associée */}
                     { recipe.preparationTime && 
                         <View style={styles.timeContainer}>
                             
@@ -50,6 +53,8 @@ export const RecipeCard = (  {recipe} : RecipeCardProps )  => {
                             <Text style={styles.time}>{recipe.preparationTime.name}</Text>
                         </View>
                     } 
+                     {/* s'il y a un temps de préparation nous l'affichons ainsi qu'une icône associée */}
+                   
                     { recipe.cookingTime &&  
                         <View  style={styles.timeContainer}>
                             <FourImage style={styles.image } width={20}  height={20}/>
