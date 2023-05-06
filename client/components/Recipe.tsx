@@ -37,6 +37,8 @@ const renderItem =  (item  :any) => {
 } ;
 
 const getFavoriteIcon = (isFavorite: boolean) => {
+    // SQLITE retourne 1 ou 0, remise à la mise en forme pour les icones
+    isFavorite = isFavorite ? true : false;
     return (
         isFavorite === true ? 
             <IsFavorite style={styles.icon } width={30}  height={30}/> 
@@ -74,18 +76,67 @@ export const Recipe = () => {
     }
 
     const recipeRemoveIngredients = async() =>{
+        // recupère l'ensemble des informations des ingredients
         (await db).transaction(function (txn) {
             txn.executeSql(
-                'SELECT linkedIngredients FROM recipes WHERE id='+recipe.id,
+                'SELECT * FROM ingredients',
                 [],
                 (txn,results) => {
-                    console.log(results);
+                    // qteRecipe         = Qte pour X personne BDD
+                    // qteRecipeNeed     = Qte pour X persone voulu
+                    // ingredientsRecipe = Liste des ingredients
+                    // qteRatio          = le coefficient multiplicateur
+                    var qteRecipe : number      = parseInt(recipe.quantity) 
+                    var qteRecipeNeed : number  = parseInt(quantity) 
+                    var ingredientsRecipe : any = recipe.listIngredients;
+                    var qteRatio :number        = qteRecipeNeed/qteRecipe
                     
+                    var frigo :any =  results.rows
+                    
+                    for (let i = 0; i < ingredientsRecipe.length; i++) {
+                        for (let j = 0; j < frigo.length; j++) {
+                            const aliment = frigo.item(j);
+                            //  SI la liste ne conrresont pas -> Passe
+                            if (aliment.id != ingredientsRecipe[i].id && ingredientsRecipe.length) {
+                                continue;
+                            }else{
+                                //correspondance -> Verification de la quantité dans le frigo + update BDD
+                                var newQteFrigo :number   = Math.round(ingredientsRecipe[i].quantityForRecipe*qteRatio)
+                                // Si quantité insuffisante, Qte dans le frigo = 0 
+                                if (aliment.quantity < newQteFrigo) {
+                                    newQteFrigo = 0
+                                }else{
+                                    newQteFrigo = aliment.quantity - newQteFrigo
+                                }
+                                txn.executeSql(
+                                    'UPDATE ingredients SET quantity = ? WHERE id = ?',
+                                    [newQteFrigo, aliment.id],
+                                    (txn,results) => {
+                                    }
+                                )
+                                
+                            }
+                            
+                        }
+                        
+                    }
                 }
             )
         })
     }
-    
+    // mettre à jour les favoris dans la bdd
+    const updateFavorite = async (isFavorite : boolean) => {
+        (await db).transaction(function(txn){
+            txn.executeSql(
+                'UPDATE recipes SET favorite = ? WHERE id = ?',
+                [isFavorite,recipe.id],
+                (txn,results) => {
+                    setIsFavorite(isFavorite)
+                }
+            )
+        })
+    }
+
    return (
     <SafeAreaView>
     <ScrollView  
@@ -94,7 +145,7 @@ export const Recipe = () => {
         <View style={styles.container} >
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{firstLetterInUppercase(recipe.name)}</Text>
-                <Pressable onPress={() => setIsFavorite(!isFavorite)}>
+                <Pressable onPress={() => updateFavorite(!isFavorite)}>
                     {getFavoriteIcon(isFavorite)}
                 </Pressable>
             </View>
@@ -102,19 +153,11 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        { recipe.preparationTime ?
-                            <Text style={styles.time}>{recipe.preparationTime.name}min</Text> 
-                            : 
-                            <Text style={styles.time}>Tps inconnu</Text>
-                        }
+                        <Text style={styles.time}>{recipe.preparationTime.name}min</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
-                    { recipe.cookingTime  ?
-                        <Text style={styles.time}>{recipe.cookingTime}min</Text>
-                        :
-                        <Text style={styles.time}>Tps inconnu</Text>
-                    }
+                    <Text style={styles.time}>{recipe.cookingTime}min</Text>
                 </View>
             </View>
             <Text style={styles.quantityText}>Pour combien de personnes ?</Text>
