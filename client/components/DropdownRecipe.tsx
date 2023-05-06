@@ -5,10 +5,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 interface Props {
     label: string;
     data: Array<{ name: string; id: string }>;
-    onSelect: Dispatch<SetStateAction<any>>;
+    onSelect: Dispatch<SetStateAction<{name : string, id:string} | undefined>>;
+    current : {name: string; id: string} | undefined
 }
 
-export const DropdownRecipe: FC<Props> = ({ label , onSelect, data}) => {
+export const DropdownRecipe: FC<Props> = ({ label , onSelect, data, current}) => {
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState<{id: string , name: string}>();
 
@@ -25,6 +26,10 @@ export const DropdownRecipe: FC<Props> = ({ label , onSelect, data}) => {
         onSelect(item);
         setVisible(false);
     };
+
+    if (current && selected===undefined) {
+      setSelected(current)
+    }
 
     const renderItem = ({ item  }:any): ReactElement<any, any> => (
         <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>

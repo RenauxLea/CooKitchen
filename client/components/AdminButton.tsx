@@ -25,15 +25,16 @@ export const AdminButton = () => {
         });
       };
       let delete_bdd= async () => {
+        const tableDelete = "recipes"
         console.log('EXTERMINATE ! EXTERMINATE ! EXTERMINATE !');
 
         (await db).transaction(function (tx) {
             tx.executeSql(
                 // Supprimer entièrement la table
-                'DROP TABLE recipes',
+                `'DROP TABLE ${tableDelete}'`,
                 [],
                 (tx, results) => {
-                    console.log("C'est bon ! on l'a descendu la table !");
+                    console.log(`C'est bon ! on l'a descendu la table ${tableDelete}!`);
             }
           );
         });

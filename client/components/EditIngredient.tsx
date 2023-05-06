@@ -31,9 +31,9 @@ export const EditIngredient = () => {
     const [date, setDate] = React.useState(new Date());
     const [visibleDate, setVisibleDate] = React.useState(false); 
     const [open, setOpen] = React.useState(false);
-    const [category , setCategory] = React.useState(ingredient.category);
+    //const [category , setCategory] = React.useState(ingredient.category);
     const [unit, setUnit] = React.useState(ingredient.unit);
-    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
+    const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string} |undefined> (categories.find(c=>c.id === ingredient.category));
 
 
     const navigation = useNavigation();
@@ -44,7 +44,7 @@ export const EditIngredient = () => {
     }   
   
     const update_ingredients = async () => {
-        console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
+        console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', selectedCategory,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
@@ -56,7 +56,6 @@ export const EditIngredient = () => {
             'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
             [name, quantity, selectedCategory?.id, unit, expirationDate],
             (tx , results) => {
-              console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
                 console.log('Votre appareil apple à bien été mise à jour');
 
@@ -66,7 +65,10 @@ export const EditIngredient = () => {
         });
       };
     
-
+    console.log('je suis category : ',selectedCategory);
+    console.log('je suis unit : ', setUnit);
+    
+    
    return (
     <SafeAreaView>
         <ScrollView  
@@ -87,6 +89,7 @@ export const EditIngredient = () => {
                 <DropdownRecipe
                     label="Sélectionne une catégorie"  
                     onSelect={setSelectedCategory} data={categories}
+                    current={selectedCategory} 
                 />
 
                 <Text style={styles.text}>Quantité:</Text>
@@ -102,6 +105,7 @@ export const EditIngredient = () => {
                 <DropdownUnit
                     label="Sélectionne une unité"  
                     onSelect={setUnit} data={units}
+                    current={unit}
                 />
                 
                 <Text style={styles.text}>Date de péremption:</Text>

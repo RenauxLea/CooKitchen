@@ -14,6 +14,8 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import moment from "moment";
 import { DropdownUnit } from "./DropdownUnit";
 import { DropdownRecipe } from "./DropdownRecipe";
+import { Unit } from "../types/ingredient";
+import { Units } from "react-native-svg";
  
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 export const categories = [ 
@@ -27,7 +29,7 @@ export const categories = [
     {name: "autre", id: "other"},
 ]
 
-export const units = [ "g", "cl", "aucune"];
+export const units:Unit[] = [ "g", "cl", "aucune"];
 
 export const CreateIngredient = () => { 
     const [name, setName] = React.useState('');
@@ -36,7 +38,7 @@ export const CreateIngredient = () => {
     const [visibleDate, setVisibleDate] = React.useState(false); 
     const [open, setOpen] = React.useState(false);
     const [category , setCategory] = React.useState("");
-    const [unit, setUnit] = React.useState("");
+    const [unit, setUnit] = React.useState<Unit>();
     const [selectedCategory, setSelectedCategory] = React.useState<{name: string , id: string}>();
 
     const navigation = useNavigation();
@@ -49,7 +51,7 @@ export const CreateIngredient = () => {
 
 
     
-    let register_ingredients = async () => {
+    const register_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
@@ -79,7 +81,8 @@ export const CreateIngredient = () => {
             <View style={styles.containerForm}  >
                 <Text style={styles.title}>Nouvel ingrédient</Text>
                 <Text style={styles.subtitle}>Créé un ingrédient pour l'ajouter dans ton garde-manger</Text>
-                <Text style={styles.text}>Nom:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Nom:</Text></Text>
+               
                 <TextInput
                     placeholder="navet"
                     style={styles.input}
@@ -90,7 +93,8 @@ export const CreateIngredient = () => {
                 <Text style={styles.text}>Catégorie:</Text>
                 <DropdownRecipe
                     label="Sélectionne une catégorie"  
-                    onSelect={setSelectedCategory} data={categories}
+                    onSelect= {setSelectedCategory} data={categories}
+                    current = {selectedCategory}
                 />
 
                 <Text style={styles.text}>Quantité:</Text>
@@ -106,6 +110,7 @@ export const CreateIngredient = () => {
                 <DropdownUnit
                     label="Sélectionne une unité"  
                     onSelect={setUnit} data={units}
+                    current = {unit}
                 />
               
 
@@ -148,8 +153,13 @@ export const CreateIngredient = () => {
                         register_ingredients(),
                         navigation.navigate('Garde-manger' as never)
                     }
-                    } style={styles.buttonPrimary}>
-                <Text style={styles.buttonPrimaryText}>Créer l'ingrédient</Text>
+                    } 
+                    
+                    style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
+                    disabled={name === "" || name === undefined}
+                >
+
+                <Text style={name === "" || name === undefined ? styles.buttonDisabledText : styles.buttonPrimaryText}>Créer l'ingrédient</Text>
             </Pressable>
         </View>
     </SafeAreaView> 
@@ -218,6 +228,28 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color:  "#000000",
         textAlign:"center"
+    },
+    buttonDisabled: {
+        elevation: 8,
+        backgroundColor: "#EEEDED",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
+    },
+    buttonDisabledText : {
+        fontSize: 16,
+        fontWeight: "500",
+        color:  "#6B6A6ABF",
+        textAlign: "center"
+    },
+    star: {
+        color : "#F21616",
+        fontSize: 16,
+        fontWeight: '400',
+        paddingTop: 20,
     }
      
 });

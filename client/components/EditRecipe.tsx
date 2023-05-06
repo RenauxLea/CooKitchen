@@ -9,7 +9,6 @@ import {
     TextInput,
     View,
  } from 'react-native';
-import SelectDropdown from "react-native-select-dropdown";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
@@ -20,6 +19,8 @@ import { openDatabase } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { RecipeType } from "../types/recipe";
 import { categories } from "./CreateRecipe";
+import { getCategoryIngredientByName } from "./Ingredient";
+import { getCategoryName } from "./RecipeCard";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -38,16 +39,25 @@ const FlatListItemSeparator = () => {
   }
 
 export const EditRecipe = () => {
+    
+    const preparationTimeData = [
+        {name : "15min", id: "15"},
+        {name : "30min", id: "30"},
+        {name : "45min", id: "45"},
+        {name : "1h", id: "60"},
+        {name : "1h30", id: "90"},
+        {name : "plus de 1h30", id: "more"},
+    ]
+
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params;
 
     const id = recipe.id; 
     const [name, setName] = React.useState(recipe.name);
-    const [category , setCategory] = React.useState(recipe.category);
-    const [preparationTime  , setPreparationTime ] = React.useState(recipe.preparationTime);
+    const [category , setCategory] = React.useState(categories.find(c=>c.id === recipe.category));
+    const [preparationTime  , setPreparationTime ] = React.useState<{name:string, id:string} | undefined>(recipe.preparationTime);
     const [cookingTime   , setCookingTime  ] = React.useState(recipe.cookingTime);
     const [quantity, setQuantity] = React.useState(recipe.quantity);
-    //const [linkedIngredientIds, setLinkedIngredientIds] = React.useState<{id : string; quantityRecipe : string}[]>([]);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>(recipe.listIngredients);
     const [description, setDesciption]= React.useState(recipe.description);
 
@@ -90,16 +100,6 @@ export const EditRecipe = () => {
 
     
     const navigation = useNavigation();
-   
-
-    const preparationTimeData = [
-        {name : "15min", id: "15"},
-        {name : "30min", id: "30"},
-        {name : "45min", id: "45"},
-        {name : "1h", id: "60"},
-        {name : "1h30", id: "90"},
-        {name : "plus de 1h30", id: "more"},
-    ]
 
     // Modifié la qte d'un ingredient dans le tableau d'ingredient
     const onChangeQuantityRecipe = (qte : string, id : string) => {
@@ -121,10 +121,10 @@ export const EditRecipe = () => {
     const renderItem =  ({item } : any) =>{
 
         return <LinkedIngredientCard 
-            id={item.id} 
-            name={item.name} 
-            quantityForRecipe={item.quantityForRecipe}
-            unit={item.unit}
+            id={item.item.id} 
+            name={item.item.name} 
+            quantityForRecipe={item.item.quantityForRecipe}
+            unit={item.item.unit}
             onChangeQuantityRecipe={onChangeQuantityRecipe}
         />
     };
@@ -170,7 +170,7 @@ export const EditRecipe = () => {
         db.transaction(function (tx) {
             tx.executeSql(
               'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
-              [name, quantity, category, preparationTime, cookingTime, objDescription, description],
+              [name, quantity, category!.id, preparationTime, cookingTime, objDescription, description],
               (tx:any, results:any) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette Update');
@@ -189,7 +189,7 @@ export const EditRecipe = () => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.container}
         > 
-            <View  >
+            <View style={styles.formContainer} >
                 <Text style={styles.title}>Modification recette</Text>
                 <Text style={styles.subtitle}>Modifier la recette</Text>
                 <Text style={styles.text}>Nom:</Text>
@@ -206,6 +206,7 @@ export const EditRecipe = () => {
                     label={"Sélectionne une catégorie"} 
                     data={categories} 
                     onSelect={setCategory}
+                    current={category}
                 />
    
                 <Text style={styles.text}>Temps de préparation:</Text>
@@ -213,6 +214,7 @@ export const EditRecipe = () => {
                     label={"Temps de préparation"} 
                     data={preparationTimeData} 
                     onSelect={setPreparationTime}
+                    current={preparationTime}
                 />
                 
 
@@ -293,14 +295,16 @@ export const EditRecipe = () => {
                 
         </View>
         </ScrollView>
-        <Pressable onPress={() => 
-            {
-                get_data(),
-                navigation.navigate('Mes Recettes' as never)
-            }
-            } style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
-        </Pressable>  
+        <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+            <Pressable onPress={() => 
+                {
+                    get_data(),
+                    navigation.navigate('Mes Recettes' as never)
+                }
+                } style={styles.buttonPrimary}>
+            <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
+            </Pressable> 
+        </View> 
     </SafeAreaView> 
    );
 }
@@ -309,8 +313,9 @@ const styles = StyleSheet.create({
     container: {
         color: "#FFFFFF",
         paddingHorizontal: 24,
-        marginBottom: 20,
-        height: "85%",  
+    },
+    formContainer: {
+        paddingBottom: 100,
     },
     title: {
         fontSize: 32,
@@ -382,16 +387,17 @@ const styles = StyleSheet.create({
         elevation: 8,
         backgroundColor: "#FFCC29",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         paddingHorizontal: 12,
-        marginHorizontal: 10,
-        display: "flex",
-        alignItems: "center",
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0
     },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
+        textAlign: "center"
     },
     
      

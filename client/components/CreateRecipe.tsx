@@ -119,11 +119,13 @@ export const CreateRecipe = () => {
     }
 
     const renderItem =  (item : any ) =>{
+        console.log('Je suis : ',item.item.name);
+        
         return <LinkedIngredientCard 
-            id={item.id} 
-            name={item.name} 
-            quantityForRecipe={item.quantityForRecipe}
-            unit={item.unit}
+            id={item.item.id} 
+            name={item.item.name} 
+            quantityForRecipe={item.item.quantityForRecipe}
+            unit={item.item.unit}
             onChangeQuantityRecipe={onChangeQuantityRecipe}
         />
     };
@@ -164,7 +166,7 @@ export const CreateRecipe = () => {
         db.transaction(function (tx: Transaction) {
             
             tx.executeSql(
-              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description,favorite) VALUES (?,?,?,?,?,?,?,0)',
+              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category?.id, preparationTime?.id, cookingTime, objDescription, description],
               (tx: Transaction, results: ResultSet) => {
                 if (results.rowsAffected > 0) {
@@ -186,7 +188,7 @@ export const CreateRecipe = () => {
             <View style={styles.containerForm} >
                 <Text style={styles.title}>Nouvelle recette</Text>
                 <Text style={styles.subtitle}>Créé une nouvelle recette pour l’ajouter à la liste de tes recettes</Text>
-                <Text style={styles.text}>Nom:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Nom:</Text></Text>
                 <TextInput
                     placeholder="gratin dauphinois"
                     style={styles.input}
@@ -200,6 +202,7 @@ export const CreateRecipe = () => {
                     label={"Sélectionne une catégorie"} 
                     data={categories} 
                     onSelect={setCategory}
+                    current = {category}
                 />
    
                 <Text style={styles.text}>Temps de préparation:</Text>
@@ -207,6 +210,7 @@ export const CreateRecipe = () => {
                     label={"Temps de préparation"} 
                     data={preparationTimeData} 
                     onSelect={setPreparationTime}
+                    current={preparationTime}
                 />
                 
 
@@ -293,8 +297,13 @@ export const CreateRecipe = () => {
                     get_data(),
                     navigation.navigate('Mes Recettes' as never)
                 )
-                } style={styles.buttonPrimary}>
-                <Text style={styles.buttonPrimaryText}>Créer la recette</Text>
+                } 
+                style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
+                disabled={name === "" || name === undefined}
+
+                >
+                <Text style={name === "" || name === undefined ? styles.buttonDisabledText : styles.buttonPrimaryText}>Créer la recette</Text>
+
             </Pressable> 
         </View> 
     </SafeAreaView> 
@@ -386,12 +395,34 @@ const styles = StyleSheet.create({
         bottom: 0
        
     },
+    buttonDisabled: {
+        elevation: 8,
+        backgroundColor: "#EEEDED",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
+        marginBottom: 10,
+        marginTop: 30,
+        bottom: 0,
+    },
     buttonPrimaryText: {
         fontSize: 16,
         fontWeight: "500",
         color:  "#000000",
         textAlign: "center"
     },
+    buttonDisabledText : {
+        fontSize: 16,
+        fontWeight: "500",
+        color:  "#6B6A6ABF",
+        textAlign: "center"
+    },
+    star: {
+        color : "#F21616",
+        fontSize: 16,
+        fontWeight: '400',
+        paddingTop: 20,
+    }
     
      
 });

@@ -1,16 +1,19 @@
 import React, { FC, ReactElement, useRef, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Units } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Unit } from '../types/ingredient';
 
 interface Props {
     label: string;
-    data: Array<string>;
-    onSelect: (item: any) => void;
+    data: Array<Unit>;
+    onSelect: (item: Unit) => void;
+    current? : Unit
 }
 
-export const DropdownUnit: FC<Props> = ({ label , onSelect, data}) => {
+export const DropdownUnit: FC<Props> = ({ label , onSelect, data, current}) => {
     const [visible, setVisible] = useState(false);
-    const [selected, setSelected] = useState<string>();
+    const [selected, setSelected] = useState<Unit>();
 
     const toggleDropdown = (): void => {
         visible ? setVisible(false) : openDropdown();
@@ -20,11 +23,15 @@ export const DropdownUnit: FC<Props> = ({ label , onSelect, data}) => {
         setVisible(true);
     };
 
-    const onItemPress = (item : string): void => {
+    const onItemPress = (item : Unit): void => {
         setSelected(item);
         onSelect(item);
         setVisible(false);
     };
+
+    if (current && selected===undefined) {
+      setSelected(current)
+    }
 
     const renderItem = ({ item  }:any): ReactElement<any, any> => (
       <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
