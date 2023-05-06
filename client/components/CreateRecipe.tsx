@@ -164,7 +164,12 @@ export const CreateRecipe = () => {
         const objDescription = JSON.stringify(linkedIngredients)
         //@ts-expect-error
         db.transaction(function (tx: Transaction) {
-            
+            /* 
+                Creation Si vide -> other
+                1 - recupérer les infos de category
+                2 - regarder si infos n'est pas vide
+                3 - SI vide alors == other
+            */
             tx.executeSql(
               'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)',
               [name, quantity, category?.id, preparationTime?.id, cookingTime, objDescription, description],

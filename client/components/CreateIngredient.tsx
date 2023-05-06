@@ -59,6 +59,12 @@ export const CreateIngredient = () => {
 
         (await db).transaction(function (tx) {
           tx.executeSql(
+            /* 
+                Creation Si vide -> other
+                1 - recupérer les infos de category
+                2 - regarder si infos n'est pas vide
+                3 - SI vide alors == other
+            */
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
             [name, quantity, selectedCategory?.id, unit, expirationDate],
             (tx, results) => {
