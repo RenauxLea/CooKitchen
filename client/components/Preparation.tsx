@@ -10,6 +10,7 @@ import {
   } from 'react-native';
 import { RecipeType } from "../types/recipe";
 import { PreparationIngredientCard } from "./PreparationIngredientCard";
+import { recipeRemoveIngredients } from "../../server/recipe/removeIngredient";
 
 export const Preparation = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
@@ -38,7 +39,11 @@ export const Preparation = () => {
             {/* bouton permettant de supprimer automatiquement les ingrédients du garde-manger */}
           <TouchableOpacity 
                 onPress={() => 
-                    Popup.show({
+                    {
+                        recipeRemoveIngredients(recipe.listIngredients),
+                        navigation.navigate('Mes Recettes' as never)
+                    }
+                    /*Popup.show({
                         type: 'success',
                         title: '',
                         textBody:  "Les ingrédients ont été retiré du garde-manger avec succès",
@@ -47,9 +52,8 @@ export const Preparation = () => {
                         callback: () => {
                             Popup.hide();
                              navigation.navigate('Mes Recettes' as never)
-                        },
-                        
-                      })
+                        },    
+                    })*/
                 } 
                 style={styles.prepareButton}>
                 <Text style={styles.buttonText}>Retirer du garde-manger</Text>

@@ -31,7 +31,7 @@ export const getCategoryName = (category : string | undefined) => {
 export const RecipeCard = (  {recipe} : RecipeCardProps )  => {
     
     const navigation = useNavigation();
-  
+    console.log(recipe);
     return (
        
         <Pressable 
@@ -50,7 +50,7 @@ export const RecipeCard = (  {recipe} : RecipeCardProps )  => {
                         <View style={styles.timeContainer}>
                             
                             <ClockImage style={styles.image } width={20}  height={20}/>
-                            <Text style={styles.time}>{recipe.preparationTime.name}</Text>
+                            <Text style={styles.time}>{recipe.preparationTime}min</Text>
                         </View>
                     } 
                      {/* s'il y a un temps de préparation nous l'affichons ainsi qu'une icône associée */}

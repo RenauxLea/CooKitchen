@@ -14,7 +14,7 @@ export const PreparationIngredientCard = (  {ingredient} : PreparationIngredient
             {Illustration(ingredient.category, 80, 80)}
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
-                <Text style={styles.quantity}>{ingredient.quantityForRecipe} {(ingredient.unit !== undefined && ingredient.unit !== "aucune" ) ?? ingredient.unit}</Text>        
+                <Text style={styles.quantity}>{ingredient.quantityForRecipe} {(ingredient.unit !== undefined && ingredient.unit !== "aucune" ) && ingredient.unit}</Text>        
             </View>
         </View>
     )

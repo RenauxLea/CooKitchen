@@ -22,6 +22,9 @@ import ClockImage  from "../assets/images/clock.svg";
 
 import { openDatabase } from "react-native-sqlite-storage";
 import { IngredientLinkedType } from "../types/ingredient";
+import { deleteRecipe } from "../../server/recipe/delete";
+import { favorite } from "../../server/recipe/favorite";
+import { recipeRemoveIngredients } from "../../server/recipe/removeIngredient";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
   
@@ -50,8 +53,6 @@ const getFavoriteIcon = (isFavorite: boolean) => {
 export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params; 
-    
-    console.log('recipe : ',recipe.preparationTime);
 
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
@@ -61,7 +62,7 @@ export const Recipe = () => {
         getFavoriteIcon(isFavorite)
     }, [isFavorite])
 
-    const deleteRecipe = async() => {
+    /*const deleteRecipe = async() => {
         console.log(recipe.name);
             (await db).transaction(function (txn) {
                 txn.executeSql(
@@ -73,8 +74,9 @@ export const Recipe = () => {
                 }
               );
             });
-    }
+    }*/
 
+    /*
     const recipeRemoveIngredients = async() =>{
         // recupère l'ensemble des informations des ingredients
         (await db).transaction(function (txn) {
@@ -124,18 +126,14 @@ export const Recipe = () => {
             )
         })
     }
+
+    */
     // mettre à jour les favoris dans la bdd
     const updateFavorite = async (isFavorite : boolean) => {
-        (await db).transaction(function(txn){
-            txn.executeSql(
-                'UPDATE recipes SET favorite = ? WHERE id = ?',
-                [isFavorite,recipe.id],
-                (txn,results) => {
-                    setIsFavorite(isFavorite)
-                }
-            )
-        })
+        favorite(isFavorite,recipe.id)
+        setIsFavorite(isFavorite)
     }
+
 
    return (
     <SafeAreaView>
@@ -154,7 +152,7 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        <Text style={styles.time}>{recipe.preparationTime && recipe.preparationTime.name}min</Text>
+                        <Text style={styles.time}>{recipe.preparationTime}min</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
@@ -180,8 +178,8 @@ export const Recipe = () => {
             {/* bouton permettant d'ouvrir le récapitulatif des ingrédients utilisés pour pouvoir retirer automatiquement les quantités du garde-manger  */}
             <TouchableOpacity 
                 onPress={() => {
-                    recipeRemoveIngredients();
-                    //navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
+                    //recipeRemoveIngredients(recipe.quantity,quantity,recipe.listIngredients),
+                    navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
                 }
             } 
                 style={styles.prepareButton}
@@ -197,7 +195,7 @@ export const Recipe = () => {
              {/* bouton pour supprimer une recette */}
             <TouchableOpacity 
                 onPress={async() => {
-                    await deleteRecipe(),
+                    await deleteRecipe(recipe.id),
                     navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 }} 
                 style={styles.deleteButton}>

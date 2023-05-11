@@ -149,8 +149,8 @@ export const Ingredient = () => {
             </TouchableOpacity>
              {/* Bouton permettant de supprimer un ingrédient et de retourner sur la liste des ingrédients */}
             <TouchableOpacity 
-                onPress={async() => {
-                    await deleteIngredient(),
+                onPress={() => {
+                    deleteIngredient(),
                     navigation.navigate('Garde-manger' as never, {refetch: true} as never)
                 }}
                 style={styles.deleteButton}>
