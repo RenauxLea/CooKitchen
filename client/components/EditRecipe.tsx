@@ -305,7 +305,7 @@ export const EditRecipe = () => {
             <Pressable onPress={() => 
                 {
                     get_data(name, quantity, category!.id, preparationTime, cookingTime, linkedIngredients, description!,'update',id),
-                    navigation.navigate('Mes Recettes' as never)
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 }
                 } style={styles.buttonPrimary}>
             <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>

@@ -89,7 +89,7 @@ export const CreateIngredient = () => {
                     defaultValue={name}
                 />
 
-                <Text style={styles.text}>Catégorie:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Catégorie:</Text></Text>
                 <DropdownRecipe
                     label="Sélectionne une catégorie"  
                     onSelect= {setSelectedCategory} data={categories}

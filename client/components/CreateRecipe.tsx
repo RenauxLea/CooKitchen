@@ -204,8 +204,7 @@ export const CreateRecipe = () => {
                     defaultValue={name}
                 />
 
-                <Text style={styles.text}>Catégorie:</Text>
-
+                <Text style={styles.star}>*<Text style={styles.text}>Catégorie:</Text></Text>
                 <DropdownRecipe 
                     label={"Sélectionne une catégorie"} 
                     data={categories} 

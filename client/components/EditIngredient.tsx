@@ -66,8 +66,7 @@ export const EditIngredient = () => {
         });
       };
     
-    console.log('je suis category : ',selectedCategory);
-    console.log('je suis unit : ', setUnit);
+    
     */
     
    return (
@@ -146,7 +145,7 @@ export const EditIngredient = () => {
         <Pressable onPress={async() => 
             {
                 register_ingredients(name,quantity,selectedCategory!.id,unit ? unit : "aucune",expirationDate,'update',id),
-                navigation.navigate('Ingredient' as never, {ingredient} as never)} 
+                navigation.navigate('Garde-manger' as never, {refetch:true }   as never)}
             
             } style={styles.buttonPrimary}>
           <Text style={styles.buttonPrimaryText}>Modifier l'ingrédient</Text>
