@@ -14,6 +14,7 @@ import Supprimer from "../assets/images/supprimer.svg";
 import PeremptionImage from '../assets/images/peremption.svg';
 import { Illustration } from "./utils/Illustration";
 import { openDatabase } from "react-native-sqlite-storage";
+import { deleteIngredient } from "../../server/ingredient/delete";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -56,7 +57,7 @@ export const Ingredient = () => {
     if (ingredient.expiration !== undefined) {
         expirationDate = ingredient.expiration
     }
-
+    /*
     const deleteIngredient = async() => {
         await (await db).transaction(function (txn) {
             txn.executeSql(
@@ -102,7 +103,7 @@ export const Ingredient = () => {
                 }
             );
         });
-    }
+    }*/
 
     const navigation = useNavigation();
 
@@ -150,7 +151,7 @@ export const Ingredient = () => {
              {/* Bouton permettant de supprimer un ingrédient et de retourner sur la liste des ingrédients */}
             <TouchableOpacity 
                 onPress={() => {
-                    deleteIngredient(),
+                    deleteIngredient(ingredient.id),
                     navigation.navigate('Garde-manger' as never, {refetch: true} as never)
                 }}
                 style={styles.deleteButton}>

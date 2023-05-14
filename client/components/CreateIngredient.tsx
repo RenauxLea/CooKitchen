@@ -16,6 +16,7 @@ import { DropdownUnit } from "./DropdownUnit";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { Unit } from "../types/ingredient";
 import { Units } from "react-native-svg";
+import { register_ingredients } from "../../server/ingredient/createUpdate";
  
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -50,9 +51,8 @@ export const CreateIngredient = () => {
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }
-   
+   /*
     const register_ingredients = async () => {
-        console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
             expirationDate = ''
         }
@@ -64,21 +64,14 @@ export const CreateIngredient = () => {
                 1 - recupérer les infos de category
                 2 - regarder si infos n'est pas vide
                 3 - SI vide alors == other
-            */
+            *//*
             'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
             [name, quantity, selectedCategory?.id, unit, expirationDate],
-            (tx: Transaction, results: any) => {
-              console.log('Results', results.rowsAffected);
-              if (results.rowsAffected > 0) {
-                console.log('register OK');
-
-              } else console.log('Registration Failed');
-            }
+            (tx: Transaction, results: any) => {}
           );
         });
-      };
-      console.log('data')
-   return (
+    };*/ 
+    return (
     <SafeAreaView>
         <ScrollView  
         contentInsetAdjustmentBehavior="automatic"
@@ -158,7 +151,7 @@ export const CreateIngredient = () => {
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
             <Pressable onPress={() => 
                     {
-                        register_ingredients(),
+                        register_ingredients(name,quantity,selectedCategory!.id,unit ? unit : "aucune",expirationDate,'create'),
                         navigation.navigate('Garde-manger' as never, {refetch : true} as never)
                     }
                     } 

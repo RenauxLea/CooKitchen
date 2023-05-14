@@ -18,6 +18,7 @@ import { IngredientType } from "../types/ingredient";
 import { DropdownUnit } from "./DropdownUnit";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { categories, units } from "./CreateIngredient";
+import { register_ingredients } from "../../server/ingredient/createUpdate";
   
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -42,7 +43,7 @@ export const EditIngredient = () => {
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }   
-  
+    /*
     const update_ingredients = async () => {
         console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', selectedCategory,' \nUnit : ', unit);
         if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
@@ -67,7 +68,7 @@ export const EditIngredient = () => {
     
     console.log('je suis category : ',selectedCategory);
     console.log('je suis unit : ', setUnit);
-    
+    */
     
    return (
     <SafeAreaView>
@@ -144,7 +145,7 @@ export const EditIngredient = () => {
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
         <Pressable onPress={async() => 
             {
-                await update_ingredients(),
+                register_ingredients(name,quantity,selectedCategory!.id,unit ? unit : "aucune",expirationDate,'update',id),
                 navigation.navigate('Ingredient' as never, {ingredient} as never)} 
             
             } style={styles.buttonPrimary}>
