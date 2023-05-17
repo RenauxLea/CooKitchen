@@ -51,26 +51,7 @@ export const CreateIngredient = () => {
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }
-   /*
-    const register_ingredients = async () => {
-        if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
-            expirationDate = ''
-        }
-        //@ts-expect-error
-        db.transaction(function (tx) {
-          tx.executeSql(
-            /* 
-                Creation Si vide -> other
-                1 - recupérer les infos de category
-                2 - regarder si infos n'est pas vide
-                3 - SI vide alors == other
-            *//*
-            'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
-            [name, quantity, selectedCategory?.id, unit, expirationDate],
-            (tx: Transaction, results: any) => {}
-          );
-        });
-    };*/ 
+  
     return (
     <SafeAreaView>
         <ScrollView  
@@ -89,7 +70,7 @@ export const CreateIngredient = () => {
                     defaultValue={name}
                 />
 
-                <Text style={styles.text}>Catégorie:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Catégorie:</Text></Text>
                 <DropdownRecipe
                     label="Sélectionne une catégorie"  
                     onSelect= {setSelectedCategory} data={categories}

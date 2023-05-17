@@ -167,26 +167,6 @@ export const EditRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
-    /*const get_data = () => {
-        
-        let objDescription = JSON.stringify(linkedIngredients)
- 
-        db.transaction(function (tx) {
-            // Requete SQL pour mettre a jour la recette
-            tx.executeSql(
-              'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
-              [name, quantity, category?.id, preparationTime, cookingTime, objDescription, description],
-              (tx:any, results:any) => {
-                if (results.rowsAffected > 0) {
-                  console.log('Recette Update');
-                }
-              }
-            );
-          });
-        
-        
-    }*/
-
    return (
     <SafeAreaView>  
         <ScrollView  
@@ -305,7 +285,7 @@ export const EditRecipe = () => {
             <Pressable onPress={() => 
                 {
                     get_data(name, quantity, category!.id, preparationTime, cookingTime, linkedIngredients, description!,'update',id),
-                    navigation.navigate('Mes Recettes' as never)
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 }
                 } style={styles.buttonPrimary}>
             <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>
