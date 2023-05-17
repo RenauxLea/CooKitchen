@@ -167,26 +167,6 @@ export const EditRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
-    /*const get_data = () => {
-        
-        let objDescription = JSON.stringify(linkedIngredients)
- 
-        db.transaction(function (tx) {
-            // Requete SQL pour mettre a jour la recette
-            tx.executeSql(
-              'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
-              [name, quantity, category?.id, preparationTime, cookingTime, objDescription, description],
-              (tx:any, results:any) => {
-                if (results.rowsAffected > 0) {
-                  console.log('Recette Update');
-                }
-              }
-            );
-          });
-        
-        
-    }*/
-
    return (
     <SafeAreaView>  
         <ScrollView  
