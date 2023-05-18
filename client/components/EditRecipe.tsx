@@ -21,6 +21,7 @@ import { RecipeType } from "../types/recipe";
 import { categories } from "./CreateRecipe";
 import { getCategoryIngredientByName } from "./Ingredient";
 import { getCategoryName } from "./RecipeCard";
+import { get_data } from "../../server/recipe/createUpdate";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -55,17 +56,21 @@ export const EditRecipe = () => {
     const id = recipe.id; 
     const [name, setName] = React.useState(recipe.name);
     const [category , setCategory] = React.useState(categories.find(c=>c.id === recipe.category));
-    const [preparationTime  , setPreparationTime ] = React.useState<{name:string, id:string} | undefined>(recipe.preparationTime);
+    const [preparationTime  , setPreparationTime ] = React.useState(recipe.preparationTime);
     const [cookingTime   , setCookingTime  ] = React.useState(recipe.cookingTime);
     const [quantity, setQuantity] = React.useState(recipe.quantity);
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>(recipe.listIngredients);
     const [description, setDesciption]= React.useState(recipe.description);
+
+    console.log(quantity);
+    
 
     let [listIngredientBdd, setListIngredientBdd] = useState([])
     useEffect(() => {
     //@ts-expect-error
     db.transaction((tx : any) => {
       tx.executeSql(
+        // Recupéré la liste des ingredients pour l'affichage de l'edit
         'SELECT * FROM ingredients',
         [],
         (tx : any, results : any) => {
@@ -80,6 +85,7 @@ export const EditRecipe = () => {
               unit: list(i)['unit'],
               expiration: list(i)['expiration'],
             }
+            // mettre la liste des ingredients dans une nouvelle liste
             listSQL.push(sqlObj)
           }
           // @ts-expect-error
@@ -119,18 +125,20 @@ export const EditRecipe = () => {
     }
 
     const renderItem =  ({item } : any) =>{
-
+        console.log(item);
+        
         return <LinkedIngredientCard 
-            id={item.item.id} 
-            name={item.item.name} 
-            quantityForRecipe={item.item.quantityForRecipe}
-            unit={item.item.unit}
+            id={item.id} 
+            name={item.name} 
+            quantityForRecipe={item.quantityForRecipe}
+            unit={item.unit}
             onChangeQuantityRecipe={onChangeQuantityRecipe}
         />
     };
 
     const keyExtractor = (item :any) => item.id;
 
+    // quand une valeur change dans l'edition
     const onSelectedIngredientsChange = (selectedItems : string[]) => {
         let ingredients : IngredientLinkedType[] = [];
         let listOnRecipe = linkedIngredients;
@@ -145,8 +153,6 @@ export const EditRecipe = () => {
                         }
                     });
                     
-                    const test = selectedItems.find( id => id === isSelected)
-                    
                     ingredients.push( {
                             id : element['id'],
                             name : element['name'],
@@ -160,28 +166,6 @@ export const EditRecipe = () => {
         )
         setLinkedIngredients(ingredients);
       };
-
-    const get_data = () => {
-        
-        let objDescription = JSON.stringify(linkedIngredients)
- 
-        
-        //@ts-expect-error
-        db.transaction(function (tx) {
-            tx.executeSql(
-              'UPDATE recipes SET name = ?, quantity = ?, category = ?, preparationTime = ?, cookingTime = ?, linkedIngredients = ?, description = ? WHERE id='+id,
-              [name, quantity, category!.id, preparationTime, cookingTime, objDescription, description],
-              (tx:any, results:any) => {
-                if (results.rowsAffected > 0) {
-                  console.log('Recette Update');
-  
-                } else console.log('Recette reject');
-              }
-            );
-          });
-        
-        
-    }
 
    return (
     <SafeAreaView>  
@@ -210,11 +194,13 @@ export const EditRecipe = () => {
                 />
    
                 <Text style={styles.text}>Temps de préparation:</Text>
-                <DropdownRecipe 
-                    label={"Temps de préparation"} 
-                    data={preparationTimeData} 
-                    onSelect={setPreparationTime}
-                    current={preparationTime}
+                <TextInput
+                    style={styles.input}
+                    keyboardType='numeric'
+                    onChangeText={number  => setPreparationTime(number)}
+                    value={preparationTime}
+                    placeholder='10'
+                    maxLength={10}
                 />
                 
 
@@ -298,8 +284,8 @@ export const EditRecipe = () => {
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
             <Pressable onPress={() => 
                 {
-                    get_data(),
-                    navigation.navigate('Mes Recettes' as never)
+                    get_data(name, quantity, category!.id, preparationTime, cookingTime, linkedIngredients, description!,'update',id),
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 }
                 } style={styles.buttonPrimary}>
             <Text style={styles.buttonPrimaryText}>Modifier la recette</Text>

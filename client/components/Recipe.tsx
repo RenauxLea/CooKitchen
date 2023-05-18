@@ -22,6 +22,9 @@ import ClockImage  from "../assets/images/clock.svg";
 
 import { openDatabase } from "react-native-sqlite-storage";
 import { IngredientLinkedType } from "../types/ingredient";
+import { deleteRecipe } from "../../server/recipe/delete";
+import { favorite } from "../../server/recipe/favorite";
+import { recipeRemoveIngredients } from "../../server/recipe/removeIngredient";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
   
@@ -37,6 +40,8 @@ const renderItem =  (item  :any) => {
 } ;
 
 const getFavoriteIcon = (isFavorite: boolean) => {
+    // SQLITE retourne 1 ou 0, remise à la mise en forme pour les icones
+    isFavorite = isFavorite ? true : false;
     return (
         isFavorite === true ? 
             <IsFavorite style={styles.icon } width={30}  height={30}/> 
@@ -48,8 +53,6 @@ const getFavoriteIcon = (isFavorite: boolean) => {
 export const Recipe = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
     const {recipe} = route.params; 
-    
-    console.log('recipe : ',recipe.preparationTime);
 
     const navigation = useNavigation();
     const [quantity, setQuantity] = React.useState(recipe.quantity);
@@ -59,7 +62,7 @@ export const Recipe = () => {
         getFavoriteIcon(isFavorite)
     }, [isFavorite])
 
-    const deleteRecipe = async() => {
+    /*const deleteRecipe = async() => {
         console.log(recipe.name);
             (await db).transaction(function (txn) {
                 txn.executeSql(
@@ -71,21 +74,67 @@ export const Recipe = () => {
                 }
               );
             });
-    }
+    }*/
 
+    /*
     const recipeRemoveIngredients = async() =>{
+        // recupère l'ensemble des informations des ingredients
         (await db).transaction(function (txn) {
             txn.executeSql(
-                'SELECT linkedIngredients FROM recipes WHERE id='+recipe.id,
+                'SELECT * FROM ingredients',
                 [],
                 (txn,results) => {
-                    console.log(results);
+                    // qteRecipe         = Qte pour X personne BDD
+                    // qteRecipeNeed     = Qte pour X persone voulu
+                    // ingredientsRecipe = Liste des ingredients
+                    // qteRatio          = le coefficient multiplicateur
+                    var qteRecipe : number      = parseInt(recipe.quantity) 
+                    var qteRecipeNeed : number  = parseInt(quantity) 
+                    var ingredientsRecipe : any = recipe.listIngredients;
+                    var qteRatio :number        = qteRecipeNeed/qteRecipe
                     
+                    var frigo :any =  results.rows
+                    
+                    for (let i = 0; i < ingredientsRecipe.length; i++) {
+                        for (let j = 0; j < frigo.length; j++) {
+                            const aliment = frigo.item(j);
+                            //  SI la liste ne conrresont pas -> Passe
+                            if (aliment.id != ingredientsRecipe[i].id && ingredientsRecipe.length) {
+                                continue;
+                            }else{
+                                //correspondance -> Verification de la quantité dans le frigo + update BDD
+                                var newQteFrigo :number   = Math.round(ingredientsRecipe[i].quantityForRecipe*qteRatio)
+                                // Si quantité insuffisante, Qte dans le frigo = 0 
+                                if (aliment.quantity < newQteFrigo) {
+                                    newQteFrigo = 0
+                                }else{
+                                    newQteFrigo = aliment.quantity - newQteFrigo
+                                }
+                                txn.executeSql(
+                                    'UPDATE ingredients SET quantity = ? WHERE id = ?',
+                                    [newQteFrigo, aliment.id],
+                                    (txn,results) => {
+                                    }
+                                )
+                                
+                            }
+                            
+                        }
+                        
+                    }
                 }
             )
         })
     }
-    
+
+    */
+    // mettre à jour les favoris dans la bdd
+    const updateFavorite = async (isFavorite : boolean) => {
+        favorite(isFavorite,recipe.id)
+        setIsFavorite(isFavorite)
+    }
+
+
    return (
     <SafeAreaView>
     <ScrollView  
@@ -94,7 +143,8 @@ export const Recipe = () => {
         <View style={styles.container} >
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{firstLetterInUppercase(recipe.name)}</Text>
-                <Pressable onPress={() => setIsFavorite(!isFavorite)}>
+                {/* permet de mettre la recette en favoris */}
+                <Pressable onPress={async () => await updateFavorite(!isFavorite)}>
                     {getFavoriteIcon(isFavorite)}
                 </Pressable>
             </View>
@@ -102,30 +152,13 @@ export const Recipe = () => {
             <View style={styles.CookingAndPreparation}>
                 <View style={styles.timeContainer}>
                         <ClockImage style={styles.image } width={20}  height={20}/>
-                        { recipe.preparationTime ?
-                            <Text style={styles.time}>{recipe.preparationTime.name}min</Text> 
-                            : 
-                            <Text style={styles.time}>Tps inconnu</Text>
-                        }
+                        <Text style={styles.time}>{recipe.preparationTime}min</Text>
                 </View>
                 <View  style={styles.timeContainer}>
                     <FourImage style={styles.image } width={20}  height={20}/>
-                    { recipe.cookingTime  ?
-                        <Text style={styles.time}>{recipe.cookingTime}min</Text>
-                        :
-                        <Text style={styles.time}>Tps inconnu</Text>
-                    }
+                    <Text style={styles.time}>{recipe.cookingTime}min</Text>
                 </View>
             </View>
-            <Text style={styles.quantityText}>Pour combien de personnes ?</Text>
-            <TextInput
-                style={styles.input}
-                keyboardType='numeric'
-                onChangeText={number  => setQuantity(number)}
-                value={quantity}
-                placeholder='2'
-                maxLength={10}
-            />
             
             <Text style={styles.subtitle}>Ingrédients: </Text>
             {
@@ -142,26 +175,28 @@ export const Recipe = () => {
                 
             <Text style={styles.subtitle}>Description: </Text>
             <Text style={styles.description}>{recipe.description} </Text>
-
+            {/* bouton permettant d'ouvrir le récapitulatif des ingrédients utilisés pour pouvoir retirer automatiquement les quantités du garde-manger  */}
             <TouchableOpacity 
                 onPress={() => {
-                    recipeRemoveIngredients();
-                    //navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
+                    //recipeRemoveIngredients(recipe.quantity,quantity,recipe.listIngredients),
+                    navigation.navigate('Recette Préparée' as never,  {recipe: recipe} as never)
                 }
             } 
                 style={styles.prepareButton}
             >
                 <Text  style={styles.buttonText} >J'ai préparé cette recette</Text>
             </TouchableOpacity>
+            {/* bouton pour naviguer vers la page d'éditon d'une recette */}
             <TouchableOpacity 
                 onPress={() => navigation.navigate('Modifier Recette' as never, {recipe} as never)} 
                 style={styles.editButton}>
                 <Text style={styles.buttonText}>Modifier cette recette</Text>
             </TouchableOpacity>
+             {/* bouton pour supprimer une recette */}
             <TouchableOpacity 
                 onPress={async() => {
-                    await deleteRecipe(),
-                    navigation.navigate('Mes Recettes' as never)
+                    await deleteRecipe(recipe.id),
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 }} 
                 style={styles.deleteButton}>
                 <Text style={styles.deleteButtonText}>Supprimer cette recette</Text>

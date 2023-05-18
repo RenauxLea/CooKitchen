@@ -31,14 +31,14 @@ export const AdminButton = () => {
         (await db).transaction(function (tx) {
             tx.executeSql(
                 // Supprimer entièrement la table
-                `'DROP TABLE ${tableDelete}'`,
+                'DROP TABLE '+tableDelete+'',
                 [],
                 (tx, results) => {
-                    console.log(`C'est bon ! on l'a descendu la table ${tableDelete}!`);
-            }
-          );
-        });
-      }
+                        console.log(`C'est bon ! on l'a descendu la table ${tableDelete}!`);
+                    }
+                );
+            });
+        }
 
       let this_bdd = async () => {
         console.log('il y a un return la');

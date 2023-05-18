@@ -24,7 +24,7 @@ export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListPro
         if(filters.includes(item.category)){ // Si on a des filtres de catégories
           if(filters.includes("favorite") ){ 
             // Si on a le filtre "est favoris"
-            if(item.isFavorite && item.isFavorite === true){
+            if(item.isFavorite && item.isFavorite === 1){
               return <RecipeCard key={item.id} recipe={item} />
             }
           }
@@ -39,7 +39,7 @@ export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListPro
               && !filters.includes("other" ) 
             ) {
           if(filters.includes("favorite")){
-            if(item.isFavorite && item.isFavorite === true){
+            if(item.isFavorite && item.isFavorite === 1){
               return <RecipeCard key={item.id} recipe={item} />
             }
           }
@@ -47,6 +47,7 @@ export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListPro
         }
       }
       else {
+        console.log(item)
         return <RecipeCard key={item.id} recipe={item} />
       }
     }
@@ -57,7 +58,7 @@ export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListPro
         if(filters.includes(item.category)){
           if(filters.includes("favorite") ){ 
             // Si on a le filtre "favoris"
-            if(item.isFavorite && item.isFavorite === true){
+            if(item.isFavorite && item.isFavorite === 1){
               if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
                 return <RecipeCard key={item.id} recipe={item} />
               }
@@ -77,7 +78,7 @@ export const ListRecipes = ({ searchPhrase, setClicked, data, filters }: ListPro
         && !filters.includes("other" ) 
          ) {
           if(filters.includes("favorite")){
-            if(item.isFavorite && item.isFavorite === true){
+            if(item.isFavorite && item.isFavorite === 1){
               if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
                 return <RecipeCard key={item.id} recipe={item} />
               }

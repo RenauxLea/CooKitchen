@@ -9,15 +9,18 @@ import {
     View } from 'react-native';
 import DatePicker from "react-native-date-picker";
 import { useNavigation } from "@react-navigation/native";
-import { openDatabase } from 'react-native-sqlite-storage';
+import { Transaction, openDatabase } from 'react-native-sqlite-storage';
 
 import moment from "moment";
 import { DropdownUnit } from "./DropdownUnit";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { Unit } from "../types/ingredient";
 import { Units } from "react-native-svg";
+import { register_ingredients } from "../../server/ingredient/createUpdate";
  
 var db = openDatabase({ name: 'ingredientDatabase.db'});
+
+// liste des catégories d'ingrédients
 export const categories = [ 
     {name: "légume", id: "vegetable"} ,
     {name: "fruit", id:"fruit"},
@@ -32,6 +35,7 @@ export const categories = [
 export const units:Unit[] = [ "g", "cl", "aucune"];
 
 export const CreateIngredient = () => { 
+    // les useState permettant de stocker temporairement les informations du nouvel ingrédient
     const [name, setName] = React.useState('');
     const [quantity, setQuantity] = React.useState('');
     const [date, setDate] = React.useState(new Date());
@@ -47,32 +51,8 @@ export const CreateIngredient = () => {
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
     }
-   
-
-
-    
-    const register_ingredients = async () => {
-        console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', category,' \nUnit : ', unit);
-        if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
-            expirationDate = ''
-        }
-
-        (await db).transaction(function (tx) {
-          tx.executeSql(
-            'INSERT INTO ingredients (name, quantity, category, unit, expiration) VALUES (?,?,?,?,?)',
-            [name, quantity, selectedCategory?.id, unit, expirationDate],
-            (tx, results) => {
-              console.log('Results', results.rowsAffected);
-              if (results.rowsAffected > 0) {
-                console.log('register OK');
-
-              } else console.log('Registration Failed');
-            }
-          );
-        });
-      };
-      console.log('data')
-   return (
+  
+    return (
     <SafeAreaView>
         <ScrollView  
         contentInsetAdjustmentBehavior="automatic"
@@ -90,7 +70,7 @@ export const CreateIngredient = () => {
                     defaultValue={name}
                 />
 
-                <Text style={styles.text}>Catégorie:</Text>
+                <Text style={styles.star}>*<Text style={styles.text}>Catégorie:</Text></Text>
                 <DropdownRecipe
                     label="Sélectionne une catégorie"  
                     onSelect= {setSelectedCategory} data={categories}
@@ -118,6 +98,7 @@ export const CreateIngredient = () => {
                 <Text style={styles.textDate} >
                     {visibleDate ? expirationDate : "Aucune date sélectionnée"} 
                 </Text> 
+                {/* pressable permettant d'ouvrir le date picker de date de péremption */}
                 <Pressable
                     style={styles.button}
                     onPress={() => setOpen(true)}
@@ -131,6 +112,7 @@ export const CreateIngredient = () => {
                     title={"Sélectionne une date"}
                     confirmText={"valider"}
                     cancelText={"annuler"}
+                    // minimum date pour ne pas avoir de date de péremption incohérente
                     minimumDate={new Date("2023-05-19")}
                     open={open}
                     date={date}
@@ -150,11 +132,11 @@ export const CreateIngredient = () => {
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
             <Pressable onPress={() => 
                     {
-                        register_ingredients(),
-                        navigation.navigate('Garde-manger' as never)
+                        register_ingredients(name,quantity,selectedCategory!.id,unit ? unit : "aucune",expirationDate,'create'),
+                        navigation.navigate('Garde-manger' as never, {refetch : true} as never)
                     }
                     } 
-                    
+                    // le nom est obligatoire, on ne peut donc pas cliquer sur le bouton lorsqu'il n'y a pas de nom et le bouton est grisé
                     style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
                     disabled={name === "" || name === undefined}
                 >

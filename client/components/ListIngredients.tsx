@@ -24,7 +24,7 @@ export const ListIngredients = ({ searchPhrase, setClicked, data, filters }: Lis
         if(filters.includes(item.category)){ // Si on a des filtres de catégories
           if(filters.includes("outOfStock") ){ 
             // Si on a le filtre "rupture de stock"
-            if(item.quantity && item.quantity <= 0){
+            if((item.quantity && item.quantity === 0 )||item.quantity === "" ){
               return <IngredientCard key={item.id} ingredient={item} />
             }
           }
@@ -48,7 +48,8 @@ export const ListIngredients = ({ searchPhrase, setClicked, data, filters }: Lis
               && !filters.includes("sweetProduct" )
               && !filters.includes("other" )) {
           if(filters.includes("outOfStock")){
-            if(item.quantity && item.quantity <= 0){
+            if((item.quantity && item.quantity === 0) || item.quantity === ""){
+             
               return <IngredientCard key={item.id} ingredient={item} />
             }
           }
@@ -70,7 +71,7 @@ export const ListIngredients = ({ searchPhrase, setClicked, data, filters }: Lis
       if(filters.includes(item.category)){
         if(filters.includes("outOfStock") ){ 
           // Si on a le filtre "rupture de stock"
-          if(item.quantity && item.quantity <= 0){
+          if((item.quantity && item.quantity === "") || item.quantity === 0){
             if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
               return <IngredientCard key={item.id} ingredient={item} />
             }
@@ -101,7 +102,7 @@ export const ListIngredients = ({ searchPhrase, setClicked, data, filters }: Lis
       && !filters.includes("sweetProduct" )
       && !filters.includes("other" )) {
         if(filters.includes("outOfStock")){
-          if(item.quantity && item.quantity <= 0){
+          if((item.quantity === "") || item.quantity === 0 ){
             if (item.name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
               return <IngredientCard key={item.id} ingredient={item} />
             }

@@ -14,6 +14,7 @@ import Supprimer from "../assets/images/supprimer.svg";
 import PeremptionImage from '../assets/images/peremption.svg';
 import { Illustration } from "./utils/Illustration";
 import { openDatabase } from "react-native-sqlite-storage";
+import { deleteIngredient } from "../../server/ingredient/delete";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -56,20 +57,53 @@ export const Ingredient = () => {
     if (ingredient.expiration !== undefined) {
         expirationDate = ingredient.expiration
     }
-
+    /*
     const deleteIngredient = async() => {
-        console.log("Long vie au roi !");
-            await (await db).transaction(function (txn) {
-                txn.executeSql(
-                    // Supprimer entièrement la table
-                    'DELETE FROM ingredients WHERE id = '+ingredient.id+'',
-                    [],
-                    (txn, results) => {
-                        console.log("Adieux");
+        await (await db).transaction(function (txn) {
+            txn.executeSql(
+                // Recupérer l'id ainsi que la liste des recettes
+                'SELECT id, linkedIngredients FROM recipes',
+                [],
+                (txn, results) => {
+                    var listRecipes = results.rows
+                    
+                    // 1-Parcours la liste des recettes
+                    for (let i = 0; i < listRecipes.length; i++) {
+                        var thisListRecipe :any= [];
+                        // 2 - Format String -> JSON
+                        const thisRecipe = JSON.parse(listRecipes.item(i).linkedIngredients);
+                        for (let j = 0; j < thisRecipe.length; j++) {
+                            
+                            // 3 - Si dans la liste, retirer l'ingredients
+                            if(thisRecipe[j].id == ingredient.id){
+                                thisRecipe.splice(j,1)
+                            }else{
+                                thisListRecipe.push(thisRecipe[j])
+                            }
+                        }
+                        // 4 - Format JSON -> String
+                        var listRecipeStringify : string = JSON.stringify(thisListRecipe)
+                        var idRecipe = JSON.stringify(listRecipes.item(i).id)
+                        
+                        txn.executeSql(
+                            // 5 - Mise a jour des recettes afin de retiré l'ingredient
+                            'UPDATE recipes SET linkedIngredients = ? WHERE id = ?',
+                            [listRecipeStringify,idRecipe],
+                            (txn,results) => {}
+                        )
+
+                    }
+
+                    txn.executeSql(
+                        // Supprimer l'un ingredient de la liste
+                        'DELETE FROM ingredients WHERE id = ?',
+                        [ingredient.id],
+                        (txn, results) => {}
+                    )
                 }
-              );
-            });
-    }
+            );
+        });
+    }*/
 
     const navigation = useNavigation();
 
@@ -81,7 +115,7 @@ export const Ingredient = () => {
         <View style={styles.container} >
             <View style={styles.header}>
                 {Illustration(ingredient.category, 40, 40) }
-                <Text style={styles.title}>{firstLetterInUppercase(ingredient.name)}</Text>
+                <Text style={styles.title}>{ingredient.name && firstLetterInUppercase(ingredient.name)}</Text>
             </View>
             <Text style={styles.titleInformation}>Catégorie:</Text>
             <Text style={styles.information}>{getCategoryIngredientByName(ingredient.category)}</Text>
@@ -108,15 +142,17 @@ export const Ingredient = () => {
                         <Text style={styles.expirationDate}>Aucune date </Text>  
                     </View>
             }
+            {/* Bouton permettant d'éditer un ingrédient */}
             <TouchableOpacity 
                 onPress={() => navigation.navigate('Modifier Ingrédient' as never, {ingredient} as never)} 
                 style={styles.editButton}>
                 <Text style={styles.buttonText}>Modifier cet ingrédient</Text>
             </TouchableOpacity>
+             {/* Bouton permettant de supprimer un ingrédient et de retourner sur la liste des ingrédients */}
             <TouchableOpacity 
-                onPress={async() => {
-                    await deleteIngredient(),
-                    navigation.goBack()
+                onPress={() => {
+                    deleteIngredient(ingredient.id),
+                    navigation.navigate('Garde-manger' as never, {refetch: true} as never)
                 }}
                 style={styles.deleteButton}>
             <Text style={styles.deleteButtonText}>Supprimer</Text>

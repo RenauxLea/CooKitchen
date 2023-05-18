@@ -17,6 +17,7 @@ import { LinkedIngredientCard } from "./LinkedIngredientCard";
 import { openDatabase, ResultSet, Transaction } from "react-native-sqlite-storage";
 import { DropdownRecipe } from "./DropdownRecipe";
 import { Pressable } from "react-native";
+import { get_data } from "../../server/recipe/createUpdate";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
@@ -42,16 +43,16 @@ export const categories = [
 ]
 
 export const CreateRecipe = () => {
-
+    // useState permettant de stocker temporairement les informations de la nouvelle recette
     const [name, setName] = React.useState('');
     const [category , setCategory] = React.useState<{name: string, id: string}>();
-    const [preparationTime  , setPreparationTime ] = React.useState<{id: string, name : string}>();
+    const [preparationTime  , setPreparationTime ] = React.useState("");
     const [cookingTime   , setCookingTime  ] = React.useState("");
     const [quantity, setQuantity] = React.useState('');
     const [linkedIngredients, setLinkedIngredients] = React.useState<IngredientLinkedType[]>([]);
     const [description, setDesciption]= React.useState("");
 
-    let [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
+    const [listIngredientBdd, setListIngredientBdd] = useState<IngredientType[]>([])
     useEffect( () => {
    
     //@ts-expect-error    
@@ -86,12 +87,12 @@ export const CreateRecipe = () => {
         return item.id
     })
     
+    // trie les ingrédients par catégories
     const ingredientsByCategories = IngredientsByCategory(listIngredientBdd)
-
-    
+ 
     const navigation = useNavigation();
    
-
+    // constante contenant les temps de préparation par défaut
     const preparationTimeData = [
         {name : "15min", id: "15"},
         {name : "30min", id: "30"},
@@ -160,14 +161,21 @@ export const CreateRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
+    /*
     const get_data =  () => {
         const objDescription = JSON.stringify(linkedIngredients)
         //@ts-expect-error
         db.transaction(function (tx: Transaction) {
-            
+            /* 
+                Creation Si vide -> other
+                1 - recupérer les infos de category
+                2 - regarder si infos n'est pas vide
+                3 - SI vide alors == other
+            *//*
+            var requete = 'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)'               
             tx.executeSql(
-              'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)',
-              [name, quantity, category?.id, preparationTime?.id, cookingTime, objDescription, description],
+              requete,
+              [name, quantity, category?.id, preparationTime, cookingTime, objDescription, description],
               (tx: Transaction, results: ResultSet) => {
                 if (results.rowsAffected > 0) {
                   console.log('Recette create');
@@ -177,7 +185,7 @@ export const CreateRecipe = () => {
             );
           });
         
-    }
+    }*/
 
    return (
     <SafeAreaView>  
@@ -196,8 +204,7 @@ export const CreateRecipe = () => {
                     defaultValue={name}
                 />
 
-                <Text style={styles.text}>Catégorie:</Text>
-
+                <Text style={styles.star}>*<Text style={styles.text}>Catégorie:</Text></Text>
                 <DropdownRecipe 
                     label={"Sélectionne une catégorie"} 
                     data={categories} 
@@ -206,11 +213,13 @@ export const CreateRecipe = () => {
                 />
    
                 <Text style={styles.text}>Temps de préparation:</Text>
-                <DropdownRecipe 
-                    label={"Temps de préparation"} 
-                    data={preparationTimeData} 
-                    onSelect={setPreparationTime}
-                    current={preparationTime}
+                <TextInput
+                    style={styles.input}
+                    keyboardType='numeric'
+                    onChangeText={number  => setPreparationTime(number)}
+                    value={preparationTime}
+                    placeholder='10'
+                    maxLength={10}
                 />
                 
 
@@ -294,12 +303,13 @@ export const CreateRecipe = () => {
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
             <Pressable onPress={() => 
                 (
-                    get_data(),
-                    navigation.navigate('Mes Recettes' as never)
+                    get_data(name, quantity, category!.id, preparationTime, cookingTime, linkedIngredients, description,'create'),
+                    navigation.navigate('Mes Recettes' as never, {refetch: true} as never)
                 )
                 } 
-                style={name === "" || name === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
-                disabled={name === "" || name === undefined}
+                //Une recette ne peut pas être créée s'il n'y a pas de nom saisie, donc le bouton est disable et grisé
+                style={name === "" || name === undefined || category?.id === "" || category?.id === undefined ? styles.buttonDisabled : styles.buttonPrimary} 
+                disabled={name === "" || name === undefined || category?.id === "" || category?.id === undefined }
 
                 >
                 <Text style={name === "" || name === undefined ? styles.buttonDisabledText : styles.buttonPrimaryText}>Créer la recette</Text>

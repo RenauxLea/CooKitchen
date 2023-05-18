@@ -3,7 +3,7 @@ export type RecipeType = {
     name: string,
     isFavorite: boolean,
     category?: "dessert" | "main" | "entree" | "other",
-    preparationTime : {name:string, id :string},
+    preparationTime : string,
     cookingTime : string,
     quantity: string,
     description? : string

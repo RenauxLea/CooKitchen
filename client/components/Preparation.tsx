@@ -10,6 +10,7 @@ import {
   } from 'react-native';
 import { RecipeType } from "../types/recipe";
 import { PreparationIngredientCard } from "./PreparationIngredientCard";
+import { recipeRemoveIngredients } from "../../server/recipe/removeIngredient";
 
 export const Preparation = () => {
     const route : RouteProp<{ params: { recipe : RecipeType } }, 'params'> = useRoute();
@@ -27,6 +28,7 @@ export const Preparation = () => {
 
             <View style={styles.ingredientsContainer}>
                 {
+                    // affichage des différents ingrédients dont on a besoin pour la recette
                     recipe.listIngredients.map((ingredient) => {
                         return <PreparationIngredientCard ingredient={ingredient}/>
                     })
@@ -34,9 +36,14 @@ export const Preparation = () => {
             </View>
         </ScrollView>
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+            {/* bouton permettant de supprimer automatiquement les ingrédients du garde-manger */}
           <TouchableOpacity 
                 onPress={() => 
-                    Popup.show({
+                    {
+                        recipeRemoveIngredients(recipe.listIngredients),
+                        navigation.navigate('Mes Recettes' as never)
+                    }
+                    /*Popup.show({
                         type: 'success',
                         title: '',
                         textBody:  "Les ingrédients ont été retiré du garde-manger avec succès",
@@ -45,9 +52,8 @@ export const Preparation = () => {
                         callback: () => {
                             Popup.hide();
                              navigation.navigate('Mes Recettes' as never)
-                        },
-                        
-                      })
+                        },    
+                    })*/
                 } 
                 style={styles.prepareButton}>
                 <Text style={styles.buttonText}>Retirer du garde-manger</Text>

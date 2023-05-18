@@ -6,14 +6,15 @@ import { Illustration } from "./utils/Illustration";
 export type PreparationIngredientCardprops = {
     ingredient : IngredientLinkedType, 
 }
-
+// Composant permettant d'afficher les ingrédients dont on a besoin pour une recette et ses informations
+// dans le récapitulatif de la préparation de la recette
 export const PreparationIngredientCard = (  {ingredient} : PreparationIngredientCardprops )  => { 
     return (
         <View style={styles.container}>
             {Illustration(ingredient.category, 80, 80)}
             <View style={styles.information}>
                 <Text style={styles.title}>{ingredient.name}</Text>
-                <Text style={styles.quantity}>{ingredient.quantityForRecipe} {(ingredient.unit !== undefined && ingredient.unit !== "aucune" ) ?? ingredient.unit}</Text>        
+                <Text style={styles.quantity}>{ingredient.quantityForRecipe} {(ingredient.unit !== undefined && ingredient.unit !== "aucune" ) && ingredient.unit}</Text>        
             </View>
         </View>
     )

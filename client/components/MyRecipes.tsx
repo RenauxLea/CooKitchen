@@ -17,7 +17,7 @@ import Filter from '../assets/images/filter.svg';
 import { RecipeFilters } from "./RecipeFilters";
 import FilterDisplay from '../assets/images/filterDisplay.svg'
 
-export const MyRecipes = () => {
+export const MyRecipes = (refetch : boolean = false) => {
 
   var db = openDatabase({ name: 'ingredientDatabase.db'});
   
@@ -29,9 +29,11 @@ export const MyRecipes = () => {
   const [selectedFilters, setSelectedFilters]= React.useState<string[]>([])
 
   const onChange = (category : string, isSelected: boolean) => {
+    // si isSelected est égal à false, ça veut dire qu'on a retiré ce filtre donc on le retire du tableau de filtres sélectionnés
     if(!isSelected){
       setSelectedFiltersInModal(Array.from(new Set([...selectedFiltersInModal, category])))
     }
+    // à l'inverse on l'ajoute dans le tableau s'il est sélectionné
     else{
       const index = selectedFiltersInModal.indexOf(category)
       const newSelectedFilters = selectedFiltersInModal.filter((element) => element !== category)
@@ -39,6 +41,7 @@ export const MyRecipes = () => {
     }
   } 
 
+  // Quand on ferme la modal de filtre, on met à jour les filtres sélectionnés
   const onCloseModal = (selectedFilters : string[]) => {
     setModalVisible(false)
     setSelectedFilters(selectedFilters)
@@ -110,8 +113,49 @@ export const MyRecipes = () => {
         );
       }
   )
-  },[listRecipe])
+  },[])
   
+  useEffect(() => {//@ts-expect-error
+    db.transaction(function (txn) {
+      
+      txn.executeSql(
+        'SELECT * FROM recipes',
+        [],
+        (tx : Transaction, results : ResultSet) => {
+          
+          var list = results.rows.item;
+          var listSQL : RecipeType[] = []
+                    
+          for (let i = 0; i < results.rows.length; ++i){
+            let listIngredientsBdd = JSON.parse(list(i)['linkedIngredients'])
+            let getDataIngredients = []
+            for (let j = 0; j < listIngredientsBdd.length; j++) {
+              const ingredientBdd = listIngredientsBdd[j];
+              getDataIngredients.push(ingredientBdd)
+            }
+            
+            
+            var sqlObj = {
+                id: list(i)['id'],
+                name: list(i)['name'],
+                category: list(i)['category'],
+                isFavorite : list(i)['favorite'],
+                preparationTime : list(i)['preparationTime'],
+                cookingTime: list(i)['cookingTime'],
+                quantity: list(i)['quantity'],
+                listIngredients: getDataIngredients,
+                description : list(i)['description']
+              }
+              listSQL.push(sqlObj)
+              
+            }
+           
+            setListRecipe(listSQL)
+          }
+        
+        );
+      }
+  )},[refetch])
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -121,6 +165,7 @@ export const MyRecipes = () => {
         </Text> 
 
         <View style={styles.filters}>
+          {/* barre de recherche par nom */}
           <SearchBar
             searchPhrase={searchPhrase}
             setSearchPhrase={setSearchPhrase}
@@ -128,12 +173,14 @@ export const MyRecipes = () => {
             setClicked={setClicked}
           />
 
+          {/* bouton permettant d'ouvrir la modal de filtre */}
             <Pressable
                 style={styles.buttonFilter}
                 onPress={() => setModalVisible(true)}>
                 <Filter style={{borderRadius: 10}} width={50} height={50} />
             </Pressable>
 
+          {/* modal de filtre */}
             <RecipeFilters 
                 visible={modalVisible} 
                 onClose={onCloseModal} 
@@ -159,6 +206,7 @@ export const MyRecipes = () => {
         }
 
         <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+          {/* bouton permettant de naviguer vers la pae de création de recette */}
           <TouchableOpacity onPress={() => navigation.navigate('Nouvelle Recette' as never)} style={styles.button}>
             <Text style={styles.buttonText}>Ajouter une recette</Text>
           </TouchableOpacity>

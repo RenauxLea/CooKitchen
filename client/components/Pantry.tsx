@@ -13,7 +13,7 @@ import FilterDisplay from '../assets/images/filterDisplay.svg'
 
 var db = openDatabase({ name: 'ingredientDatabase.db',createFromLocation: 1});
 
-export const Pantry = () => {
+export const Pantry = (refetch : boolean = false) => {
   const [listItem, setListItem] = useState<IngredientType[]>([]) 
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
@@ -22,9 +22,11 @@ export const Pantry = () => {
   const [selectedFilters, setSelectedFilters]= React.useState<string[]>([])
 
   const onChange = (category : string, isSelected: boolean) => {
+    // si isSelected est égal à false, ça veut dire qu'on a retiré ce filtre donc on le retire du tableau de filtres sélectionnés
     if(!isSelected){
       setSelectedFiltersInModal(Array.from(new Set([...selectedFiltersInModal, category])))
     }
+    // à l'inverse on l'ajoute dans le tableau s'il est sélectionné
     else{
       const index = selectedFiltersInModal.indexOf(category)
       const newSelectedFilters = selectedFiltersInModal.filter((element) => element !== category)
@@ -62,6 +64,35 @@ export const Pantry = () => {
       }
       ); 
     },[])
+
+  useEffect(() => {
+      //@ts-expect-error
+      db.transaction((tx : Transaction) => {
+        tx.executeSql(
+          'SELECT * FROM ingredients',
+          [],
+          (tx : Transaction, results : ResultSet) => {
+            var list = results.rows.item;
+            var listSQL = []
+            for (let i = 0; i < results.rows.length; ++i){
+              var sqlObj =   {
+                id: list(i)['id'],
+                name: list(i)['name'],
+                quantity: list(i)['quantity'],
+                category: list(i)['category'],
+                unit: list(i)['unit'],
+                expiration: list(i)['expiration'],
+              }
+              listSQL.push(sqlObj)
+            }
+            setListItem(listSQL)
+            
+          }
+          
+          );
+        }
+        ); 
+  },[refetch])
     
     const onCloseModal = (selectedFilters : string[]) => {
       setModalVisible(false)
@@ -81,19 +112,20 @@ export const Pantry = () => {
           </Text>
  
           <View style={styles.filters}>
+            {/* barre de recherche par nom */}
           <SearchBar
             searchPhrase={searchPhrase}
             setSearchPhrase={setSearchPhrase}
             clicked={clicked}
             setClicked={setClicked}
           />
-
+          {/*bouton permettant d'ouvrir la modal de filtre  */}
             <Pressable
                 style={styles.buttonFilter}
                 onPress={() => setModalVisible(true)}>
                 <Filter style={{borderRadius: 10}} width={50} height={50} />
             </Pressable>
-
+            {/* modal de filtre */}
             <IngredientFilters 
               visible={modalVisible}
               onClose={onCloseModal}
@@ -101,7 +133,7 @@ export const Pantry = () => {
               selectedFiltersInModal={selectedFiltersInModal}            
             />
           </View>
-
+          {/* affichage d'un nombre de filtres actifs */}
             {selectedFilters !== undefined && selectedFilters.length > 0 &&
               <View style={styles.filterDisplay}>
                 <FilterDisplay  width={15} height={15} />
@@ -118,6 +150,7 @@ export const Pantry = () => {
           />
         }
       <View style={{position:'absolute',bottom:0, left: 10, right: 10}}>
+        {/* bouton permettant de naviguer vers la page de création d'un nouvel ingrédient */}
         <TouchableOpacity onPress={() => navigation.navigate('Nouvel Ingrédient' as never)} style={styles.button}>
           <Text style={styles.buttonText}>Ajouter un ingrédient</Text>
         </TouchableOpacity>
