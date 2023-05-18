@@ -2,6 +2,7 @@ import { openDatabase } from "react-native-sqlite-storage";
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
+/* Supprimer un ingredient */
 export const deleteIngredient = async(idIngredient : string) => {
     await (await db).transaction(function (txn) {
         txn.executeSql(

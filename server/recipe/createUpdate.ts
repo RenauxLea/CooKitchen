@@ -2,16 +2,11 @@ import { ResultSet, Transaction, openDatabase } from "react-native-sqlite-storag
 
 var db = openDatabase({ name: 'ingredientDatabase.db'});
 
+/* permet de créer ou de modifiée la bdd de SQLite */
 export const get_data =  (name:string, quantity:string ,category:string, preparationTime:string, cookingTime:string,linkedIngredients:any ,description:string, crud:string, id:string = '') => {
     const objDescription = JSON.stringify(linkedIngredients)
     //@ts-expect-error
     db.transaction(function (tx: Transaction) {
-        /* 
-            Creation Si vide -> other
-            1 - recupérer les infos de category
-            2 - regarder si infos n'est pas vide
-            3 - SI vide alors == other
-        */
        var requete = ''
        if (crud == 'create') {
            requete = 'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)'               

@@ -161,32 +161,6 @@ export const CreateRecipe = () => {
         setLinkedIngredients(ingredients);
       };
 
-    /*
-    const get_data =  () => {
-        const objDescription = JSON.stringify(linkedIngredients)
-        //@ts-expect-error
-        db.transaction(function (tx: Transaction) {
-            /* 
-                Creation Si vide -> other
-                1 - recupérer les infos de category
-                2 - regarder si infos n'est pas vide
-                3 - SI vide alors == other
-            *//*
-            var requete = 'INSERT INTO recipes (name, quantity, category, preparationTime, cookingTime, linkedIngredients, description, favorite) VALUES (?,?,?,?,?,?,?,0)'               
-            tx.executeSql(
-              requete,
-              [name, quantity, category?.id, preparationTime, cookingTime, objDescription, description],
-              (tx: Transaction, results: ResultSet) => {
-                if (results.rowsAffected > 0) {
-                  console.log('Recette create');
-  
-                } else console.log('Recette reject');
-              }
-            );
-          });
-        
-    }*/
-
    return (
     <SafeAreaView>  
         <ScrollView  

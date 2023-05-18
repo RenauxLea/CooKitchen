@@ -30,6 +30,7 @@ export const recipeRemoveIngredients = async(listIngredients : RecipeType["listI
                             }else{
                                 newQteFrigo = aliment.quantity - newQteFrigo
                             }
+                            /* Mise a jour du frigo */
                             txn.executeSql(
                                 'UPDATE ingredients SET quantity = ? WHERE id = ?',
                                 [newQteFrigo, aliment.id],
