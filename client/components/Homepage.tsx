@@ -35,12 +35,14 @@ export const Homepage = () => {
                 description={"Ajoute un aliment à ton garde-manger"} 
                 link={"Garde-manger"}                    
             /> 
-
+            { /* card Admin */}
+            {/*
             <HomepageCard 
                 title={"Admin button sqlite"} 
                 description={"update la bdd"} 
                 link={"Admin button"}                    
             /> 
+            */}
             
         </View>
       </ScrollView> 

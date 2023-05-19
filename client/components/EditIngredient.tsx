@@ -42,32 +42,7 @@ export const EditIngredient = () => {
     let expirationDate = ""
     if (date !== undefined) {
        expirationDate =  moment(date).format("DD-MM-YYYY")
-    }   
-    /*
-    const update_ingredients = async () => {
-        console.log('\nName : ',name,' \nQuantity : ', quantity,' \nDate : ', expirationDate,' \nCategory : ', selectedCategory,' \nUnit : ', unit);
-        if (expirationDate == moment(Date()).format("DD-MM-YYYY")) {
-            expirationDate = ''
-        }
-       
-        (await db).transaction(function (tx) {
-          console.log('MISE A JOUR WINDOW : ');
-            
-          tx.executeSql(
-            'UPDATE ingredients SET name = ?, quantity = ?, category = ?, unit = ?, expiration = ? WHERE id='+id,
-            [name, quantity, selectedCategory?.id, unit, expirationDate],
-            (tx , results) => {
-              if (results.rowsAffected > 0) {
-                console.log('Votre appareil apple à bien été mise à jour');
-
-              } else console.log('BLUE SCREEN');
-            }
-          );
-        });
-      };
-    
-    
-    */
+    }
     
    return (
     <SafeAreaView>
